@@ -1,0 +1,70 @@
+[data-theme="term"] {
+	--command: #26c345;
+	--background-color: #282828;
+}
+
+body,
+html {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+	font-family: "Courier New", monospace;
+}
+
+body {
+	background-color: var(--background-color);
+	color: white;
+}
+
+.command {
+	color: var(--command);
+	text-shadow: 0 0 5px var(--command);
+}
+
+.terminal {
+	padding: 10px;
+	color: var(--command);
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.input-line {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	min-height: 20px;
+}
+
+.prompt {
+	margin-right: 5px;
+}
+
+.input {
+	outline: none;
+	color: var(--command);
+	background: none;
+	border: none;
+	white-space: nowrap;
+	display: inline-block; /* Or 'block' if it suits your layout better */
+	min-width: 50px; /* Set a minimum width to ensure the input is clickable */
+	width: calc(100% - 20px); /* Adjust the width as necessary */
+}
+
+.input {
+	white-space: nowrap;
+	overflow: auto; /* Allow scrolling */
+	overflow-y: hidden; /* Hide vertical scrollbar */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.input::-webkit-scrollbar {
+	display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.input {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+
