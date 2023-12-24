@@ -33,6 +33,41 @@ const themes = {
 	// ... add any other themes here
 };
 
+const welcomeText = `
+<pre class="enter-text">
+     *   .                  .              .        .   *          .
+  .         .                     .       .           .      .        .
+        o                             .                   .
+         .              .                  .           .
+          0     .
+                 .          .                 ,                ,    ,         __ __            __                   _     __          
+ .          \\          .                         .                           / //_/_________ _/ /_____  _________  (_)___/ /__  __  __     
+      .      \\   ,                                                          / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /    
+   .          o     .                 .                   .            .   / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
+     .         \\                 ,             .                .         /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
+               #\\##\\#      .                              .        .                                     /_/                 /____/   
+             #  #O##\\###                .                        .                                                           \u00A9 2024
+   .        #*#  #\\##\\###                       .                     ,
+        .   ##*#  #\\##\\##               .                     .
+      .      ##*#  #o##\\#         .                             ,       .
+          .     *#  #\\#     .                    .             .          ,
+                      \\          .                         .
+____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
+   /\\^   ^  ^    ^                  ^^ ^  '\\ ^          ^       ---
+         --           -            --  -      -         ---  __       ^
+   --  __                      ___--  ^  ^                         --  __
+
+
+<span style="color: white">Welcome to my web terminal porfolio website! (I am working on the name 💀)</span>
+<span style="color: white">---</span>
+<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">---</span>
+<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
+</pre>
+`;
+
+// Use welcomeText in your code where appropriate
+
 const aboutText = `
 <pre class="error-text">
 Hey, I'm Param Makwana! 
@@ -64,7 +99,7 @@ const helpText = `
     <span class="keyword-text">about</span>        - <span class="normal-text">about me!</span>
     <span class="keyword-text">email</span>        - <span class="normal-text">send me an email</span>
     <span class="keyword-text">pwd</span>          - <span class="normal-text">prints the working directory</span>
-    <span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section (!NOT WORKING YET)</span>
+    <span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section</span>
     <span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
 
 
@@ -203,6 +238,11 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
 			return handleThemesCommand(argument);
+
+		case "welcome":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length; // Reset history index to the end
+			return welcomeText;
 
 		default:
 			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
@@ -364,3 +404,38 @@ function handleThemesCommand(argument) {
 		return themeList;
 	}
 }
+
+document.addEventListener("DOMContentLoaded", (event) => {
+	const input = document.getElementById("input"); // The input element where commands are typed
+	const output = document.getElementById("output"); // The output element where results are displayed
+	const terminal = document.querySelector(".terminal"); // The terminal container
+
+	const commandToType = "welcome";
+	let index = 0;
+
+	// Function to simulate typing
+	function typeCommand() {
+		if (index < commandToType.length) {
+			input.textContent += commandToType.charAt(index);
+			index++;
+			setTimeout(typeCommand, 100); // Adjust typing speed as necessary
+		} else {
+			// Once typing is finished, append the command to the output
+			output.innerHTML +=
+				document.querySelector(".prompt").innerHTML +
+				`<span class="active-text">welcome</span>`;
+			displayWelcomeMessage(); // Display the welcome message after typing is done
+			input.textContent = ""; // Clear the input
+		}
+	}
+
+	// Function to display the welcome message
+	function displayWelcomeMessage() {
+		const welcomeOutput = processCommand("welcome");
+		output.innerHTML += welcomeOutput; // Append the welcome message to the output
+		terminal.scrollTop = terminal.scrollHeight; // Scroll to the bottom of the terminal
+	}
+
+	// Start typing the command
+	typeCommand();
+});
