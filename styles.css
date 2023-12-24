@@ -16,6 +16,7 @@ body {
 	color: white;
 }
 
+/* keyword color */
 .command {
 	color: var(--command);
 	text-shadow: 0 0 5px var(--command);
@@ -51,7 +52,6 @@ body {
 }
 
 .input {
-	white-space: nowrap;
 	overflow: auto; /* Allow scrolling */
 	overflow-y: hidden; /* Hide vertical scrollbar */
 }
@@ -66,5 +66,3 @@ body {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
 }
-
-
