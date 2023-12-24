@@ -1,6 +1,127 @@
-[data-theme="term"] {
-	--command: #26c345;
+[data-theme="default"] {
+	--command: #4aa9cf;
+	--active: #4aa9cf;
+	--error: #9c8394;
+	--enter: #519975;
+	--norm: #b89076;
+	--background-color: #211d1b;
+}
+
+[data-theme="monokai"] {
+	--command: #f92672;
+	--active: #a6e22e;
+	--error: #fd971f;
+	--enter: #66d9ef;
+	--norm: #f8f8f2;
+	--background-color: #272822;
+}
+
+[data-theme="solarized-dark"] {
+	--command: #839496;
+	--active: #93a1a1;
+	--error: #dc322f;
+	--enter: #268bd2;
+	--norm: #657b83;
+	--background-color: #002b36;
+}
+
+[data-theme="dracula"] {
+	--command: #50fa7b;
+	--active: #f1fa8c;
+	--error: #ff5555;
+	--enter: #bd93f9;
+	--norm: #f8f8f2;
+	--background-color: #282a36;
+}
+
+[data-theme="gruvbox-dark"] {
+	--command: #fabd2f;
+	--active: #fe8019;
+	--error: #fb4934;
+	--enter: #b8bb26;
+	--norm: #ebdbb2;
 	--background-color: #282828;
+}
+
+[data-theme="nord"] {
+	--command: #81a1c1;
+	--active: #88c0d0;
+	--error: #bf616a;
+	--enter: #a3be8c;
+	--norm: #e5e9f0;
+	--background-color: #2e3440;
+}
+
+[data-theme="catppuccin"] {
+	--command: #f5c2e7; /* Lavender (Rosewater) */
+	--active: #cba6f7; /* Sky (Lavender) */
+	--error: #f28fad; /* Mauve (Flamingo) */
+	--enter: #94e2d5; /* Green (Mint) */
+	--norm: #cdd6f4; /* Text (Text) */
+	--background-color: #1e1e2e; /* Background (Surface) */
+}
+
+[data-theme="tokyo-night"] {
+	--command: #7aa2f7;
+	--active: #bb9af7;
+	--error: #f7768e;
+	--enter: #9ece6a;
+	--norm: #a9b1d6;
+	--background-color: #1a1b26;
+}
+
+[data-theme="one-dark"] {
+	--command: #e06c75;
+	--active: #98c379;
+	--error: #d19a66;
+	--enter: #61afef;
+	--norm: #abb2bf;
+	--background-color: #282c34;
+}
+
+[data-theme="ubuntu"] {
+	--command: #e95420; /* Ubuntu Orange */
+	--active: #fdf6e3; /* Light text */
+	--error: #cc0000; /* Error red */
+	--enter: #77216f; /* Ubuntu Purple */
+	--norm: #ffffff; /* White */
+	--background-color: #300a24; /* Dark Aubergine */
+}
+
+[data-theme="espresso"] {
+	--command: #ffdd00; /* Yellow */
+	--active: #5fcc9c; /* Aqua */
+	--error: #cc7a29; /* Orange */
+	--enter: #e1e1e6; /* Light Gray */
+	--norm: #d0d0d0; /* Gray */
+	--background-color: #2a211c; /* Espresso */
+}
+
+[data-theme="solarized-light"] {
+	--command: #657b83; /* Base00 */
+	--active: #586e75; /* Base01 */
+	--error: #dc322f; /* Red */
+	--enter: #268bd2; /* Blue */
+	--norm: #839496; /* Base0 */
+	--background-color: #fdf6e3; /* Base3 */
+}
+
+[data-theme="github-light"] {
+	--command: #032f62; /* Dark Blue */
+	--active: #586069; /* Gray */
+	--error: #d73a49; /* Error Red */
+	--enter: #28a745; /* Green */
+	--norm: #333333; /* Very Dark Gray */
+	--background-color: #ffffff; /* White */
+}
+
+[data-theme="atom-light"] {
+	--command: #c678dd; /* Purple */
+	--active: #e06c75; /* Soft Red */
+	--error: #d19a66; /* Orange */
+	--enter: #56b6c2; /* Cyan */
+	--norm: #383a42; /* Dark Gray */
+	--background-color: #f9f9f9; /* Light Gray */
 }
 
 body,
@@ -16,17 +137,46 @@ body {
 	color: white;
 }
 
-/* keyword color */
-.command {
-	color: var(--command);
-	text-shadow: 0 0 5px var(--command);
+/* Default command text */
+.enter-text {
+	color: var(--enter); /* Old entered text color */
+}
+
+/* Active text being entered */
+.active-text {
+	color: var(--active); /* Active text color */
+}
+
+/* Keyword text */
+.keyword-text {
+	color: var(--command); /* Keyword color */
+	text-shadow: 0 0 5px var(--command); /* Optional: Remove if you don't want glow */
+}
+
+/* Error text */
+.error-text {
+	color: var(--error); /* Error message color */
+}
+
+.normal-text {
+	color: var(--norm);
 }
 
 .terminal {
+	color: var(--enter);
 	padding: 10px;
-	color: var(--command);
 	height: 100%;
 	box-sizing: border-box;
+	overflow-y: auto;
+
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Hide scrollbar for IE, Edge, and Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }
 
 .input-line {
@@ -65,4 +215,12 @@ body {
 .input {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
+}
+
+.suggestion-item {
+	color: var(--norm);
+}
+
+.suggestion-item.active {
+	color: var(--error); /* Example active style */
 }
