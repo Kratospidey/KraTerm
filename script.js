@@ -27,6 +27,13 @@ const themes = {
 	"one-dark": "One Dark Theme",
 	ubuntu: "Ubuntu Theme",
 	espresso: "Espresso Theme",
+	"atom-dark": "Atom Dark Theme",
+	ayu: "Ayu Theme",
+	material: "Material Theme",
+	zenburn: "Zenburn Theme",
+	"tomorrow-night": "Tomorrow Night Theme",
+	"oceanic-next": "Oceanic Next Theme",
+
 	"solarized-light": "Solarized Light Theme",
 	"github-light": "GitHub Light Theme",
 	"atom-light": "Atom Light Theme",

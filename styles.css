@@ -5,51 +5,63 @@
 	--enter: #519975;
 	--norm: #b89076;
 	--background-color: #211d1b;
+	--selection-background: #519975;
+	--selected-text: #211830;
 }
 
 [data-theme="monokai"] {
-	--command: #f92672;
-	--active: #a6e22e;
-	--error: #fd971f;
-	--enter: #66d9ef;
-	--norm: #f8f8f2;
-	--background-color: #272822;
+	--command: #f92672; /* Pink */
+	--active: #a6e22e; /* Green */
+	--error: #fd971f; /* Orange */
+	--enter: #66d9ef; /* Light Blue */
+	--norm: #f8f8f2; /* Off White */
+	--background-color: #272822; /* Almost Black */
+	--selection-background: #49483e; /* Dark Gray */
+	--selected-text: #f8f8f2; /* Off White */
 }
 
 [data-theme="solarized-dark"] {
-	--command: #839496;
-	--active: #93a1a1;
-	--error: #dc322f;
-	--enter: #268bd2;
-	--norm: #657b83;
-	--background-color: #002b36;
+	--command: #268bd2; /* Blue */
+	--active: #2aa198; /* Cyan */
+	--error: #dc322f; /* Red */
+	--enter: #859900; /* Green */
+	--norm: #839496; /* Base1 */
+	--background-color: #002b36; /* Base03 */
+	--selection-background: #073642; /* Base02 */
+	--selected-text: #93a1a1; /* Base0 */
 }
 
 [data-theme="dracula"] {
-	--command: #50fa7b;
-	--active: #f1fa8c;
-	--error: #ff5555;
-	--enter: #bd93f9;
-	--norm: #f8f8f2;
-	--background-color: #282a36;
+	--command: #50fa7b; /* Green */
+	--active: #f1fa8c; /* Yellow */
+	--error: #ff5555; /* Red */
+	--enter: #bd93f9; /* Purple */
+	--norm: #f8f8f2; /* Foreground */
+	--background-color: #282a36; /* Background */
+	--selection-background: #44475a; /* Current Line */
+	--selected-text: #f8f8f2; /* Foreground */
 }
 
 [data-theme="gruvbox-dark"] {
-	--command: #fabd2f;
-	--active: #fe8019;
-	--error: #fb4934;
-	--enter: #b8bb26;
-	--norm: #ebdbb2;
-	--background-color: #282828;
+	--command: #fabd2f; /* Yellow */
+	--active: #d3869b; /* Pink */
+	--error: #fb4934; /* Bright Red */
+	--enter: #b8bb26; /* Green */
+	--norm: #ebdbb2; /* Light Gray */
+	--background-color: #282828; /* Dark Gray */
+	--selection-background: #3c3836; /* Gray */
+	--selected-text: #ebdbb2; /* Light Gray */
 }
 
 [data-theme="nord"] {
-	--command: #81a1c1;
-	--active: #88c0d0;
-	--error: #bf616a;
-	--enter: #a3be8c;
-	--norm: #e5e9f0;
-	--background-color: #2e3440;
+	--command: #81a1c1; /* Blue */
+	--active: #88c0d0; /* Lighter Blue */
+	--error: #bf616a; /* Red */
+	--enter: #a3be8c; /* Green */
+	--norm: #e5e9f0; /* Text */
+	--background-color: #2e3440; /* Dark Blue Gray */
+	--selection-background: #4c566a; /* Selection */
+	--selected-text: #d8dee9; /* Light Text */
 }
 
 [data-theme="catppuccin"] {
@@ -59,24 +71,30 @@
 	--enter: #94e2d5; /* Green (Mint) */
 	--norm: #cdd6f4; /* Text (Text) */
 	--background-color: #1e1e2e; /* Background (Surface) */
+	--selection-background: #f5e0dc; /* Rosewater */
+	--selected-text: #4c4f69; /* Mantle */
 }
 
 [data-theme="tokyo-night"] {
-	--command: #7aa2f7;
-	--active: #bb9af7;
-	--error: #f7768e;
-	--enter: #9ece6a;
-	--norm: #a9b1d6;
-	--background-color: #1a1b26;
+	--command: #7aa2f7; /* Blue */
+	--active: #bb9af7; /* Purple */
+	--error: #f7768e; /* Red */
+	--enter: #9ece6a; /* Green */
+	--norm: #a9b1d6; /* Light Gray */
+	--background-color: #1a1b26; /* Dark */
+	--selection-background: #33467c; /* Selection */
+	--selected-text: #c0caf5; /* Lighter Text */
 }
 
 [data-theme="one-dark"] {
-	--command: #e06c75;
-	--active: #98c379;
-	--error: #d19a66;
-	--enter: #61afef;
-	--norm: #abb2bf;
-	--background-color: #282c34;
+	--command: #e06c75; /* Soft Red */
+	--active: #98c379; /* Green */
+	--error: #d19a66; /* Orange */
+	--enter: #61afef; /* Blue */
+	--norm: #abb2bf; /* Gray */
+	--background-color: #282c34; /* Dark Gray */
+	--selection-background: #3e4451; /* Selection */
+	--selected-text: #abb2bf; /* Light Gray */
 }
 
 [data-theme="ubuntu"] {
@@ -86,6 +104,8 @@
 	--enter: #77216f; /* Ubuntu Purple */
 	--norm: #ffffff; /* White */
 	--background-color: #300a24; /* Dark Aubergine */
+	--selection-background: #5e2750; /* Selection */
+	--selected-text: #ffffff; /* White */
 }
 
 [data-theme="espresso"] {
@@ -95,6 +115,8 @@
 	--enter: #e1e1e6; /* Light Gray */
 	--norm: #d0d0d0; /* Gray */
 	--background-color: #2a211c; /* Espresso */
+	--selection-background: #423736; /* Darker Brown */
+	--selected-text: #ffffff; /* White */
 }
 
 [data-theme="solarized-light"] {
@@ -104,6 +126,8 @@
 	--enter: #268bd2; /* Blue */
 	--norm: #839496; /* Base0 */
 	--background-color: #fdf6e3; /* Base3 */
+	--selection-background: #eee8d5; /* Base2 */
+	--selected-text: #657b83; /* Base00 */
 }
 
 [data-theme="github-light"] {
@@ -113,6 +137,8 @@
 	--enter: #28a745; /* Green */
 	--norm: #333333; /* Very Dark Gray */
 	--background-color: #ffffff; /* White */
+	--selection-background: #c8e1ff; /* Light Blue */
+	--selected-text: #032f62; /* Dark Blue */
 }
 
 [data-theme="atom-light"] {
@@ -122,6 +148,76 @@
 	--enter: #56b6c2; /* Cyan */
 	--norm: #383a42; /* Dark Gray */
 	--background-color: #f9f9f9; /* Light Gray */
+	--selection-background: #e6e6e6; /* Lighter Gray */
+	--selected-text: #383a42; /* Dark Gray */
+}
+
+[data-theme="atom-dark"] {
+	--command: #528bff; /* Blue */
+	--active: #96cbfe; /* Light Blue */
+	--error: #ff6c60; /* Red */
+	--enter: #98c379; /* Green */
+	--norm: #c5c8c6; /* Foreground Text */
+	--background-color: #1d1f21; /* Background */
+	--selection-background: #373b41; /* Selection */
+	--selected-text: #c5c8c6; /* Selected Text */
+}
+
+[data-theme="ayu"] {
+	--command: #ffcc66; /* Yellow */
+	--active: #5ccfe6; /* Blue */
+	--error: #ff3333; /* Red */
+	--enter: #b8cc52; /* Green */
+	--norm: #e7c787; /* Light Brown */
+	--background-color: #0a0e14; /* Deep Dark */
+	--selection-background: #253340; /* Dark Blue */
+	--selected-text: #cbccc6; /* Off White */
+}
+
+[data-theme="material"] {
+	--command: #80cbc4; /* Teal */
+	--active: #c3e88d; /* Light Green */
+	--error: #ff5370; /* Red Pink */
+	--enter: #82aaff; /* Light Blue */
+	--norm: #eeffff; /* Text Color */
+	--background-color: #263238; /* Background */
+	--selection-background: #546e7a; /* Selection */
+	--selected-text: #eeffff; /* Selected Text */
+}
+
+[data-theme="zenburn"] {
+	--command: #dcdccc; /* Cream */
+	--active: #f0dfaf; /* Light Yellow */
+	--error: #cc9393; /* Soft Red */
+	--enter: #7f9f7f; /* Muted Green */
+	--norm: #dcdccc; /* Light Cream */
+	--background-color: #3f3f3f; /* Very Dark Gray */
+	--selection-background: #506070; /* Dark Blue Gray */
+	--selected-text: #dcdccc; /* Light Cream */
+}
+
+
+
+[data-theme="tomorrow-night"] {
+	--command: #c5c8c6; /* Silver */
+	--active: #81a2be; /* Light Blue */
+	--error: #cc6666; /* Soft Red */
+	--enter: #b5bd68; /* Olive */
+	--norm: #e0e0e0; /* Bright Silver */
+	--background-color: #1d1f21; /* Almost Black */
+	--selection-background: #373b41; /* Dark Gray */
+	--selected-text: #c5c8c6; /* Silver */
+}
+
+[data-theme="oceanic-next"] {
+	--command: #ec5f67; /* Soft Red */
+	--active: #99c794; /* Mint Green */
+	--error: #f99157; /* Orange */
+	--enter: #6699cc; /* Sky Blue */
+	--norm: #c0c5ce; /* Light Gray */
+	--background-color: #1b2b34; /* Deep Sea Blue */
+	--selection-background: #343d46; /* Dark Blue Gray */
+	--selected-text: #c0c5ce; /* Light Gray */
 }
 
 body,
@@ -223,4 +319,18 @@ body {
 
 .suggestion-item.active {
 	color: var(--error); /* Example active style */
+}
+
+@keyframes blinkCursor {
+	from {
+		background-color: transparent;
+	}
+	to {
+		background-color: var(--command);
+	}
+}
+
+::selection {
+	background: var(--selection-background); /* Background color of your choice */
+	color: var(--selected-text); /* Text color of your choice */
 }
