@@ -196,8 +196,6 @@
 	--selected-text: #dcdccc; /* Light Cream */
 }
 
-
-
 [data-theme="tomorrow-night"] {
 	--command: #c5c8c6; /* Silver */
 	--active: #81a2be; /* Light Blue */
@@ -264,6 +262,8 @@ body {
 	height: 100%;
 	box-sizing: border-box;
 	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
 
 	/* Hide scrollbar for Chrome, Safari and Opera */
 	&::-webkit-scrollbar {
@@ -333,4 +333,57 @@ body {
 ::selection {
 	background: var(--selection-background); /* Background color of your choice */
 	color: var(--selected-text); /* Text color of your choice */
+}
+
+html {
+	font-size: clamp(
+		14px,
+		2vw,
+		18px
+	); /* Adjust min, value, and max sizes as needed */
+}
+
+.terminal {
+  padding: 1rem;
+  font-size: clamp(0.8rem, 1vw, 1.2rem);
+  /* Other styles */
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 600px) {
+  .terminal {
+    padding: 0.5rem; /* Smaller padding on small screens */
+  }
+
+  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
+    font-size: clamp(0.7rem, 2.5vw, 1rem); /* Smaller font size on small screens */
+  }
+
+  .input {
+    min-width: 10px; /* Smaller min-width for input */
+    width: calc(100% - 10px); /* Full width minus some padding */
+  }
+}
+
+/* You can add more breakpoints for larger sizes as needed */
+@media (min-width: 601px) and (max-width: 1024px) {
+  /* Adjust styles for tablets and small desktop screens */
+  .terminal {
+    padding: 0.75rem;
+  }
+
+  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+  }
+}
+
+/* Larger desktop screens */
+@media (min-width: 1025px) {
+  .terminal {
+    padding: 1rem;
+  }
+
+  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
+    font-size: clamp(0.9rem, 1vw, 1.2rem);
+  }
 }
