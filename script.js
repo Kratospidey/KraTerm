@@ -278,7 +278,7 @@ function setUsername(newUsername) {
 		// Update the username in the prompt for future input lines
 		const currentPrompt = document.querySelector(".prompt");
 		if (currentPrompt) {
-			currentPrompt.innerHTML = `<span class="username keyword-text">${newUsername.trim()}</span><span style="color: white;">@</span><span class="normal-text">terminal.kratospidey.dev</span>:~$`;
+			currentPrompt.innerHTML = `<span class="username keyword-text">${newUsername.trim()}</span><span style="color: white;">@</span><span class="normal-text">terminal.kratospidey.com</span>:~$`;
 		}
 
 		return `<span class="normal-text">Username changed to </span> <span class="keyword-text">${newUsername.trim()}</span>`;
