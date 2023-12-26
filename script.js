@@ -376,7 +376,7 @@ function handleSocialsCommand(argument) {
 function displayAllSocials() {
 	let socialsText = "Here are my social links:<br>";
 	for (const [platform, url] of Object.entries(socialLinks)) {
-		socialsText += `<span class="keyword-text">${platform}</span> - <a href="${url}" target="_blank">${url}</a><br>`;
+		socialsText += `<span class="keyword-text">${platform}</span> - <a class="error-text" href="${url}" target="_blank">${url}</a><br>`;
 	}
 	socialsText += `<br>Usage: socials [platform]<br>eg: socials github<br>`;
 	return socialsText;
