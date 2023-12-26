@@ -384,11 +384,9 @@ function displayAllSocials() {
 
 function sendEmail() {
 	const emailAddress = "contact@kratospidey.com"; // Replace with your actual email address
-	const subject = encodeURIComponent("Inquiry from Terminal Portfolio");
-	const emailBody = encodeURIComponent("Hello, I'd like to discuss...");
 
 	// Construct the mailto link
-	const mailtoLink = `mailto:${emailAddress}?subject=${subject}&body=${emailBody}`;
+	const mailtoLink = `mailto:${emailAddress}`;
 
 	// Open the default email client with a new email draft
 	window.open(mailtoLink, "_blank");
