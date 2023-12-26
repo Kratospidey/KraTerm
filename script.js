@@ -1,4 +1,4 @@
-console.log("Hello world");
+const startTime = Date.now();
 
 const commands = [
 	"echo",
@@ -13,6 +13,7 @@ const commands = [
 	"pwd",
 	"welcome",
 	"themes",
+	"uptime",
 ];
 
 const themes = {
@@ -344,6 +345,13 @@ function processCommand(command) {
 				return welcomeOutput;
 			}
 
+		case "uptime":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length; // Reset history index to the end
+			const currentTime = Date.now();
+			const uptime = currentTime - startTime;
+			return `Uptime: ${formatUptime(uptime)}`;
+
 		default:
 			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
             <span class="error-text">For a list of commands, type</span> <span class="keyword-text">help</span><span class="error-text">.</span>`;
@@ -547,3 +555,13 @@ window.addEventListener("resize", function () {
 		location.reload(); // Reload only if the width has changed
 	}
 });
+
+function formatUptime(milliseconds) {
+	let seconds = Math.floor(milliseconds / 1000);
+	let minutes = Math.floor(seconds / 60);
+	seconds = seconds % 60;
+	let hours = Math.floor(minutes / 60);
+	minutes = minutes % 60;
+
+	return `${hours}h ${minutes}m ${seconds}s`; // Format as "Xh Xm Xs"
+}
