@@ -65,91 +65,9 @@ ____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
    --  __                      ___--  ^  ^                         --  __
 
 
-<span style="color: white">Welcome to KraTerm!</span>
+<span style="color: white">Welcome to KraTerm! (Yes, it's a word play on my username and the word </span><span class="keyword-text">terminal</span><span style="color: white">)</span>
 <span style="color: white">---</span>
 <span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-<span style="color: white">---</span>
-<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-</pre>
-`;
-
-const midWelcomeText = `
-<pre class="enter-text">
-
-     *   .                  .              .        .   *          .
-  .         .                     .       .           .      .        .
-        o                             .                   .
-         .              .                  .           .
-          0     .
-                 .          .                 ,                ,    ,   
- .          \\\\          .                         .                               
-      .      \\\\   ,                                                           
-   .          o     .                 .                   .            .   
-     .         \\\\                 ,             .                .         
-               #\\\\##\\\\#      .                              .        .                                 
-             #  #O##\\\\###                .                        .                                                      
-   .        #*#  #\\\\##\\\\###                       .                     ,
-        .   ##*#  #\\\\##\\\\##               .                     .
-      .      ##*#  #o##\\\\#         .                             ,       .
-          .     *#  #\\\\#     .                    .             .          ,
-                      \\\\          .                         .
-____^/\\___^--____/\\____O______________/\\\\/\\---/\\___________---______________
-   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^       ---
-         --           -            --  -      -         ---  __       ^
-   --  __                      ___--  ^  ^                         --  __
-        
-    __ __            __                   _     __          
-   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
- / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-                               /_/                 /____/   
-
-
-<span style="color: white">Welcome to KraTerm!</span>
-<span style="color: white">---</span>
-<span style="color: white">This project's source code can be found in this </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-<span style="color: white">---</span>
-<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-</pre>
-`;
-
-const smallWelcomeText = `
-<pre class="enter-text" style="font-size: clamp(0.5rem, 2.9vw, 1rem);">
-
-     *   .                  .              .        .   * 
-  .         .                     .       .           .   
-        o                             .                   
-         .              .                  .           .
-          0     .
-                 .          .                 ,                 
- .          \\\\          .                         .                               
-      .      \\\\   ,                                                           
-   .          o     .                 .                        
-     .         \\\\                 ,             .                   
-               #\\\\##\\\\#      .                                                            
-             #  #O##\\\\###                .                                                                       
-   .        #*#  #\\\\##\\\\###                       .      
-        .   ##*#  #\\\\##\\\\##               .              
-      .      ##*#  #o##\\\\#         .                       
-          .     *#  #\\\\#     .                    .        
-                      \\\\          .                        
-____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
-   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^
-         --           -            --  -      -         --  
-   --  __                      ___--  ^  ^                          
-        
-    __ __            __                   _     __          
-   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
- / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-                               /_/                 /____/   
-
-
-<span style="color: white">Welcome to KraTerm!</span>
-<span style="color: white">---</span>
-<span style="color: white">project's source code - </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
 <span style="color: white">---</span>
 <span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
 </pre>
@@ -332,17 +250,7 @@ function processCommand(command) {
 		case "welcome":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
-			if (command === "welcome") {
-				let welcomeOutput;
-				if (window.innerWidth <= 320) {
-					welcomeOutput = smallWelcomeText; // Use smallWelcomeText for very narrow screens
-				} else if (window.innerWidth <= 1210) {
-					welcomeOutput = midWelcomeText; // Use midWelcomeText for medium screens
-				} else {
-					welcomeOutput = welcomeText; // Use the default welcomeText for larger screens
-				}
-				return welcomeOutput;
-			}
+			return welcomeText;
 
 		default:
 			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
@@ -536,9 +444,4 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 	// Start typing the command
 	typeCommand();
-});
-
-// Event listener for window resize
-window.addEventListener("resize", function () {
-	location.reload(); // Reloads the current document
 });
