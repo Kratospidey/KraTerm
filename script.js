@@ -41,128 +41,128 @@ const themes = {
 };
 
 const welcomeText = `
-	<pre class="enter-text">
-		*   .                  .              .        .   *          .
-	.         .                     .       .           .      .        .
-			o                             .                   .
-			.              .                  .           .
-			0     .
-					.          .                 ,                ,    ,         __ __            __                   _     __          
-	.          \\          .                         .                           / //_/_________ _/ /_____  _________  (_)___/ /__  __  __     
-		.      \\   ,                                                          / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /    
-	.          o     .                 .                   .            .   / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-		.         \\                 ,             .                .         /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-				#\\##\\#      .                              .        .                                     /_/                 /____/   
-				#  #O##\\###                .                        .                                                           \u00A9 2024
-	.        #*#  #\\##\\###                       .                     ,
-			.   ##*#  #\\##\\##               .                     .
-		.      ##*#  #o##\\#         .                             ,       .
-			.     *#  #\\#     .                    .             .          ,
-						\\          .                         .
-	____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
-	/\\^   ^  ^    ^                  ^^ ^  '\\ ^          ^       ---
-			--           -            --  -      -         ---  __       ^
-	--  __                      ___--  ^  ^                         --  __
+<pre class="enter-text">
+     *   .                  .              .        .   *          .
+  .         .                     .       .           .      .        .
+        o                             .                   .
+         .              .                  .           .
+          0     .
+                 .          .                 ,                ,    ,         __ __            __                   _     __          
+ .          \\          .                         .                           / //_/_________ _/ /_____  _________  (_)___/ /__  __  __     
+      .      \\   ,                                                          / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /    
+   .          o     .                 .                   .            .   / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
+     .         \\                 ,             .                .         /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
+               #\\##\\#      .                              .        .                                     /_/                 /____/   
+             #  #O##\\###                .                        .                                                           \u00A9 2024
+   .        #*#  #\\##\\###                       .                     ,
+        .   ##*#  #\\##\\##               .                     .
+      .      ##*#  #o##\\#         .                             ,       .
+          .     *#  #\\#     .                    .             .          ,
+                      \\          .                         .
+____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
+   /\\^   ^  ^    ^                  ^^ ^  '\\ ^          ^       ---
+         --           -            --  -      -         ---  __       ^
+   --  __                      ___--  ^  ^                         --  __
 
 
-	<span style="color: white">Welcome to KraTerm!</span>
-	<span style="color: white">---</span>
-	<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-	<span style="color: white">---</span>
-	<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-	</pre>
-	`;
+<span style="color: white">Welcome to KraTerm!</span>
+<span style="color: white">---</span>
+<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">---</span>
+<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
+</pre>
+`;
 
 const midWelcomeText = `
-	<pre class="enter-text">
+<pre class="enter-text">
 
-		*   .                  .              .        .   *          .
-	.         .                     .       .           .      .        .
-			o                             .                   .
-			.              .                  .           .
-			0     .
-					.          .                 ,                ,    ,   
-	.          \\\\          .                         .                               
-		.      \\\\   ,                                                           
-	.          o     .                 .                   .            .   
-		.         \\\\                 ,             .                .         
-				#\\\\##\\\\#      .                              .        .                                 
-				#  #O##\\\\###                .                        .                                                      
-	.        #*#  #\\\\##\\\\###                       .                     ,
-			.   ##*#  #\\\\##\\\\##               .                     .
-		.      ##*#  #o##\\\\#         .                             ,       .
-			.     *#  #\\\\#     .                    .             .          ,
-						\\\\          .                         .
-	____^/\\___^--____/\\____O______________/\\\\/\\---/\\___________---______________
-	/\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^       ---
-			--           -            --  -      -         ---  __       ^
-	--  __                      ___--  ^  ^                         --  __
-			
-		__ __            __                   _     __          
-	/ //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-	/ ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
-	/ /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-	/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-								/_/                 /____/   
+     *   .                  .              .        .   *          .
+  .         .                     .       .           .      .        .
+        o                             .                   .
+         .              .                  .           .
+          0     .
+                 .          .                 ,                ,    ,   
+ .          \\\\          .                         .                               
+      .      \\\\   ,                                                           
+   .          o     .                 .                   .            .   
+     .         \\\\                 ,             .                .         
+               #\\\\##\\\\#      .                              .        .                                 
+             #  #O##\\\\###                .                        .                                                      
+   .        #*#  #\\\\##\\\\###                       .                     ,
+        .   ##*#  #\\\\##\\\\##               .                     .
+      .      ##*#  #o##\\\\#         .                             ,       .
+          .     *#  #\\\\#     .                    .             .          ,
+                      \\\\          .                         .
+____^/\\___^--____/\\____O______________/\\\\/\\---/\\___________---______________
+   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^       ---
+         --           -            --  -      -         ---  __       ^
+   --  __                      ___--  ^  ^                         --  __
+        
+    __ __            __                   _     __          
+   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
+  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
+ / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
+/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
+                               /_/                 /____/   
 
 
-	<span style="color: white">Welcome to KraTerm!</span>
-	<span style="color: white">---</span>
-	<span style="color: white">This project's source code can be found in this </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-	<span style="color: white">---</span>
-	<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-	</pre>
-	`;
+<span style="color: white">Welcome to KraTerm!</span>
+<span style="color: white">---</span>
+<span style="color: white">This project's source code can be found in this </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">---</span>
+<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
+</pre>
+`;
 
 const smallWelcomeText = `
-	<pre class="enter-text" style="font-size: clamp(0.5rem, 2.9vw, 1rem);">
+<pre class="enter-text" style="font-size: clamp(0.5rem, 2.9vw, 1rem);">
 
-		*   .                  .              .        .   * 
-	.         .                     .       .           .   
-			o                             .                   
-			.              .                  .           .
-			0     .
-					.          .                 ,                 
-	.          \\\\          .                         .                               
-		.      \\\\   ,                                                           
-	.          o     .                 .                        
-		.         \\\\                 ,             .                   
-				#\\\\##\\\\#      .                                                            
-				#  #O##\\\\###                .                                                                       
-	.        #*#  #\\\\##\\\\###                       .      
-			.   ##*#  #\\\\##\\\\##               .              
-		.      ##*#  #o##\\\\#         .                       
-			.     *#  #\\\\#     .                    .        
-						\\\\          .                        
-	____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
-	/\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^
-			--           -            --  -      -         --  
-	--  __                      ___--  ^  ^                          
-			
-		__ __            __                   _     __          
-	/ //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-	/ ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
-	/ /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-	/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-								/_/                 /____/   
+     *   .                  .              .        .   * 
+  .         .                     .       .           .   
+        o                             .                   
+         .              .                  .           .
+          0     .
+                 .          .                 ,                 
+ .          \\\\          .                         .                               
+      .      \\\\   ,                                                           
+   .          o     .                 .                        
+     .         \\\\                 ,             .                   
+               #\\\\##\\\\#      .                                                            
+             #  #O##\\\\###                .                                                                       
+   .        #*#  #\\\\##\\\\###                       .      
+        .   ##*#  #\\\\##\\\\##               .              
+      .      ##*#  #o##\\\\#         .                       
+          .     *#  #\\\\#     .                    .        
+                      \\\\          .                        
+____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
+   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^
+         --           -            --  -      -         --  
+   --  __                      ___--  ^  ^                          
+        
+    __ __            __                   _     __          
+   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
+  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
+ / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
+/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
+                               /_/                 /____/   
 
 
-	<span style="color: white">Welcome to KraTerm!</span>
-	<span style="color: white">---</span>
-	<span style="color: white">project's source code - </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-	<span style="color: white">---</span>
-	<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-	</pre>
-	`;
+<span style="color: white">Welcome to KraTerm!</span>
+<span style="color: white">---</span>
+<span style="color: white">project's source code - </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">---</span>
+<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
+</pre>
+`;
 
 // Use welcomeText in your code where appropriate
 
 const aboutText = `
-	<pre class="error-text">
-	Hey, I'm Param Makwana! 
-	I'm a third year student at Mukesh Patel School of Technology Management & Engineering, currently pursuing a BTECH degree in information technology. 
-	My major interests are creating cools stuff such as bots, interactive websites and tools to name a few. I plan to do a lot more stuff in future!
-	</pre>`;
+<pre class="error-text">
+Hey, I'm Param Makwana! 
+I'm a third year student at Mukesh Patel School of Technology Management & Engineering, currently pursuing a BTECH degree in information technology. 
+My major interests are creating cools stuff such as bots, interactive websites and tools to name a few. I plan to do a lot more stuff in future!
+</pre>`;
 
 const autocompleteWords = commands;
 
@@ -178,27 +178,27 @@ let commandHistory = [];
 let historyIndex = -1; // Will track the current position in the command history
 
 const helpText = `
-	<pre>
-		<span class="keyword-text">echo [text]</span>  - <span class="normal-text">Prints [text] to the terminal.</span>
-		<span class="keyword-text">clear</span>        - <span class="normal-text">Clears the terminal.</span>
-		<span class="keyword-text">history</span>      - <span class="normal-text">Shows your history of entered commands.</span>
-		<span class="keyword-text">uname [name]</span> - <span class="normal-text">Sets your username to [name] for this session.</span>
-		<span class="keyword-text">socials</span>      - <span class="normal-text">check out my social accounts</span>
-		<span class="keyword-text">whoami</span>       - <span class="normal-text">who am i?</span>
-		<span class="keyword-text">about</span>        - <span class="normal-text">about me!</span>
-		<span class="keyword-text">email</span>        - <span class="normal-text">send me an email</span>
-		<span class="keyword-text">pwd</span>          - <span class="normal-text">prints the working directory</span>
-		<span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section</span>
-		<span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
+<pre>
+    <span class="keyword-text">echo [text]</span>  - <span class="normal-text">Prints [text] to the terminal.</span>
+    <span class="keyword-text">clear</span>        - <span class="normal-text">Clears the terminal.</span>
+    <span class="keyword-text">history</span>      - <span class="normal-text">Shows your history of entered commands.</span>
+    <span class="keyword-text">uname [name]</span> - <span class="normal-text">Sets your username to [name] for this session.</span>
+    <span class="keyword-text">socials</span>      - <span class="normal-text">check out my social accounts</span>
+    <span class="keyword-text">whoami</span>       - <span class="normal-text">who am i?</span>
+    <span class="keyword-text">about</span>        - <span class="normal-text">about me!</span>
+    <span class="keyword-text">email</span>        - <span class="normal-text">send me an email</span>
+    <span class="keyword-text">pwd</span>          - <span class="normal-text">prints the working directory</span>
+    <span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section</span>
+    <span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
 
 
-		<span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
-		<span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
-		<span class="error-text">Ctrl + l</span>      => <span class="normal-text">Clear the terminal.</span>
-		<span class="error-text">Ctrl + c</span>      => <span class="normal-text">Reset input.</span>
-		<span class="error-text">Tab</span>           => <span class="normal-text">Autocompletes commands (lists them if multiple completions)</span>
-	</pre>
-	`;
+    <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
+    <span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
+    <span class="error-text">Ctrl + l</span>      => <span class="normal-text">Clear the terminal.</span>
+    <span class="error-text">Ctrl + c</span>      => <span class="normal-text">Reset input.</span>
+    <span class="error-text">Tab</span>           => <span class="normal-text">Autocompletes commands (lists them if multiple completions)</span>
+</pre>
+`;
 
 const unameErrorText = `<span class="error-text">Use</span> <span class="keyword-text">uname &lt;name&gt;</span> <span class="error-text">to set your username</span>`;
 
@@ -346,7 +346,7 @@ function processCommand(command) {
 
 		default:
 			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
-				<span class="error-text">For a list of commands, type</span> <span class="keyword-text">help</span><span class="error-text">.</span>`;
+            <span class="error-text">For a list of commands, type</span> <span class="keyword-text">help</span><span class="error-text">.</span>`;
 	}
 }
 
@@ -504,25 +504,36 @@ function handleThemesCommand(argument) {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
+	const input = document.getElementById("input"); // The input element where commands are typed
 	const output = document.getElementById("output"); // The output element where results are displayed
 	const terminal = document.querySelector(".terminal"); // The terminal container
+
+	const commandToType = "welcome";
+	let index = 0;
+
+	// Function to simulate typing
+	function typeCommand() {
+		if (index < commandToType.length) {
+			input.textContent += commandToType.charAt(index);
+			index++;
+			setTimeout(typeCommand, 100); // Adjust typing speed as necessary
+		} else {
+			// Once typing is finished, append the command to the output
+			output.innerHTML +=
+				document.querySelector(".prompt").innerHTML +
+				`<span class="active-text">welcome</span>`;
+			displayWelcomeMessage(); // Display the welcome message after typing is done
+			input.textContent = ""; // Clear the input
+		}
+	}
 
 	// Function to display the welcome message
 	function displayWelcomeMessage() {
 		const welcomeOutput = processCommand("welcome");
-		output.innerHTML += `<div class="input-line">${getCurrentPrompt()}<div><span class="active-text">welcome</span></div></div>`;
 		output.innerHTML += welcomeOutput; // Append the welcome message to the output
+		terminal.scrollTop = terminal.scrollHeight; // Scroll to the bottom of the terminal
 	}
 
-	displayWelcomeMessage();
-});
-
-let initialWidth = window.innerWidth; // Store the initial width
-
-window.addEventListener("resize", function () {
-	let currentWidth = window.innerWidth; // Get the new width
-
-	if (currentWidth !== initialWidth) {
-		location.reload(); // Reload only if the width has changed
-	}
+	// Start typing the command
+	typeCommand();
 });
