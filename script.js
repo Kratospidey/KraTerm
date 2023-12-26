@@ -537,8 +537,3 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	// Start typing the command
 	typeCommand();
 });
-
-// Event listener for window resize
-window.addEventListener("resize", function () {
-	location.reload(); // Reloads the current document
-});
