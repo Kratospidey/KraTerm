@@ -445,3 +445,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	// Start typing the command
 	typeCommand();
 });
+
+let initialWidth = window.innerWidth; // Store the initial width
+
+window.addEventListener("resize", function () {
+	let currentWidth = window.innerWidth; // Get the new width
+
+	if (currentWidth !== initialWidth) {
+		location.reload(); // Reload only if the width has changed
+	}
+});
