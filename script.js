@@ -1,5 +1,7 @@
 const startTime = Date.now();
 
+const FireStack_apiKey = "AcmKvAKu5QFqHOy2iEMM0z";
+
 const commands = [
 	"echo",
 	"clear",
@@ -15,6 +17,7 @@ const commands = [
 	"themes",
 	"uptime",
 	"projects",
+	"ascii",
 ];
 
 const themes = {
@@ -343,6 +346,11 @@ function processCommand(command) {
 			historyIndex = commandHistory.length; // Reset history index to the end
 			return handleThemesCommand(argument);
 
+		case "ascii":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length; // Reset history index to the end
+			return triggerImageUpload();
+
 		case "welcome":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
@@ -597,4 +605,61 @@ function formatUptime(milliseconds) {
 	minutes = minutes % 60;
 
 	return `${hours}h ${minutes}m ${seconds}s`; // Format as "Xh Xm Xs"
+}
+
+function triggerImageUpload() {
+	document.getElementById("imageInput").click();
+}
+
+document
+	.getElementById("imageInput")
+	.addEventListener("change", function (event) {
+		const file = event.target.files[0];
+		if (file) {
+			uploadFileToFilestack(file);
+		}
+	});
+
+// After image is uploaded to Filestack and you have the handle or use a public image URL
+function convertImageToAscii(handleOrPublicUrl) {
+	const apiKey = FireStack_apiKey;
+	const url = `https://cdn.filestackcontent.com/${apiKey}/ascii=colored:true/${handleOrPublicUrl}`;
+
+	fetch(url)
+		.then((response) => response.text())
+		.then((asciiArt) => displayAsciiArt(asciiArt))
+		.catch((error) => console.error("Error:", error));
+}
+
+// Function to display ASCII art in your terminal
+function uploadFileToFilestack(file) {
+	const apiKey = FireStack_apiKey; // Replace with your Filestack API key
+	const url = `https://www.filestackapi.com/api/store/S3?key=${apiKey}`;
+
+	let reader = new FileReader();
+	reader.onloadend = function () {
+		let arrayBuffer = reader.result;
+
+		fetch(url, {
+			method: "POST",
+			body: arrayBuffer,
+			headers: {
+				"Content-Type": "image/png",
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+				// Call the convertImageToAscii function with the URL from the response
+				convertImageToAscii(data.url);
+			})
+			.catch((error) => console.error("Error:", error));
+	};
+
+	reader.readAsArrayBuffer(file);
+}
+
+function displayAsciiArt(asciiArt) {
+	const terminalOutput = document.getElementById("output"); // Assuming 'output' is the ID of your terminal output element
+	terminalOutput.innerHTML += `<pre class="ascii-art">${asciiArt}</pre>`; // Append ASCII art
 }
