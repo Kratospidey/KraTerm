@@ -175,6 +175,11 @@ const socialLinks = {
 	linkedin: "https://www.linkedin.com/in/kratospidey",
 };
 
+const projects = {
+	duck: "https://github.com/Kratospidey/DUCK",
+	KraTerm: "https://github.com/Kratospidey/terminal-portfolio/"
+}
+
 let commandHistory = [];
 let historyIndex = -1; // Will track the current position in the command history
 
