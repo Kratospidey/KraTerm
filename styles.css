@@ -344,46 +344,71 @@ html {
 }
 
 .terminal {
-  padding: 1rem;
-  font-size: clamp(0.8rem, 1vw, 1.2rem);
-  /* Other styles */
+	padding: 1rem;
+	font-size: clamp(0.8rem, 1vw, 1.2rem);
+	/* Other styles */
 }
 
 /* Adjustments for smaller screens */
 @media (max-width: 600px) {
-  .terminal {
-    padding: 0.5rem; /* Smaller padding on small screens */
-  }
+	.terminal {
+		padding: 0.5rem; /* Smaller padding on small screens */
+	}
 
-  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
-    font-size: clamp(0.7rem, 2.5vw, 1rem); /* Smaller font size on small screens */
-  }
+	.prompt,
+	.input,
+	.output,
+	.enter-text,
+	.active-text,
+	.keyword-text,
+	.error-text,
+	.normal-text {
+		font-size: clamp(
+			0.7rem,
+			2.5vw,
+			1rem
+		); /* Smaller font size on small screens */
+	}
 
-  .input {
-    min-width: 10px; /* Smaller min-width for input */
-    width: calc(100% - 10px); /* Full width minus some padding */
-  }
+	.input {
+		min-width: 10px; /* Smaller min-width for input */
+		width: calc(100% - 10px); /* Full width minus some padding */
+	}
 }
 
 /* You can add more breakpoints for larger sizes as needed */
 @media (min-width: 601px) and (max-width: 1024px) {
-  /* Adjust styles for tablets and small desktop screens */
-  .terminal {
-    padding: 0.75rem;
-  }
+	/* Adjust styles for tablets and small desktop screens */
+	.terminal {
+		padding: 0.75rem;
+	}
 
-  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
-    font-size: clamp(0.8rem, 2vw, 1.1rem);
-  }
+	.prompt,
+	.input,
+	.output,
+	.enter-text,
+	.active-text,
+	.keyword-text,
+	.error-text,
+	.normal-text {
+		font-size: clamp(0.8rem, 2vw, 1.1rem);
+	}
 }
 
 /* Larger desktop screens */
 @media (min-width: 1025px) {
-  .terminal {
-    padding: 1rem;
-  }
+	.terminal {
+		padding: 1rem;
+	}
 
-  .prompt, .input, .output, .enter-text, .active-text, .keyword-text, .error-text, .normal-text {
-    font-size: clamp(0.9rem, 1vw, 1.2rem);
-  }
+	.prompt,
+	.input,
+	.output,
+	.enter-text,
+	.active-text,
+	.keyword-text,
+	.error-text,
+	.normal-text {
+		font-size: clamp(0.9rem, 1vw, 1.2rem);
+	}
 }
