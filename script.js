@@ -14,6 +14,7 @@ const commands = [
 	"welcome",
 	"themes",
 	"uptime",
+	"projects",
 ];
 
 const themes = {
@@ -177,8 +178,8 @@ const socialLinks = {
 
 const projects = {
 	duck: "https://github.com/Kratospidey/DUCK",
-	KraTerm: "https://github.com/Kratospidey/terminal-portfolio/"
-}
+	kraterm: "https://github.com/Kratospidey/KraTerm",
+};
 
 let commandHistory = [];
 let historyIndex = -1; // Will track the current position in the command history
@@ -197,6 +198,7 @@ const helpText = `
     <span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section</span>
     <span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
     <span class="keyword-text">uptime</span>       - <span class="normal-text">shows runtime duration of the website on your browser</span>
+    <span class="keyword-text">projects</span>      - <span class="normal-text">check out my projects</span>
 
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
@@ -308,6 +310,11 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
 			return handleSocialsCommand(argument);
+
+		case "projects":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length; // Reset history index to the end
+			return handleProjectsCommand(argument);
 
 		case "whoami":
 			commandHistory.push(command);
@@ -479,6 +486,17 @@ function handleSocialsCommand(argument) {
 	}
 }
 
+function handleProjectsCommand(argument) {
+	if (argument && projects[argument.toLowerCase()]) {
+		// Open the specific project repo
+		window.open(projects[argument.toLowerCase()], "_blank");
+		return `<span class="normal-text">Opening ${argument} repo...</span>`;
+	} else {
+		// Display all social media links
+		return displayAllPojects();
+	}
+}
+
 function displayAllSocials() {
 	let socialsText = "Here are my social links:<br>";
 	for (const [platform, url] of Object.entries(socialLinks)) {
@@ -486,6 +504,15 @@ function displayAllSocials() {
 	}
 	socialsText += `<br>Usage: socials [platform]<br>eg: socials github<br>`;
 	return socialsText;
+}
+
+function displayAllPojects() {
+	let projectsText = "Here are my projects:<br>";
+	for (const [project, url] of Object.entries(projects)) {
+		projectsText += `<span class="keyword-text">${project}</span> - <a class="error-text" href="${url}" target="_blank">${url}</a><br>`;
+	}
+	projectsText += `<br>Usage: projects [project name]<br>eg: projects duck<br>`;
+	return projectsText;
 }
 
 function sendEmail() {
