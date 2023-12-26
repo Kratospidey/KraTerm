@@ -1,6 +1,6 @@
 const startTime = Date.now();
 
-const FireStack_apiKey = "YOUR_API_KEY_PLACEHOLDER";
+const FireStack_apiKey = "";
 
 const commands = [
 	"echo",
