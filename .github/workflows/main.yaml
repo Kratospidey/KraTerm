@@ -12,9 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          persist-credentials: false # This is important to avoid conflicts when pushing the changes later
+          token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, no need to create it manually
 
       - name: Replace API key in script
         run: sed -i "s/YOUR_API_KEY_PLACEHOLDER/${{ secrets.FireStack_apiKey }}/g" script.js
@@ -25,4 +26,6 @@ jobs:
           git config --global user.name "Your Name"
           git add script.js
           git commit -m "Update API key"
-          git push
+          git push origin main # Ensure you're pushing to the correct branch
+
+      # You can put additional steps here if needed
