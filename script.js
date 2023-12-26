@@ -114,6 +114,7 @@ const helpText = `
     <span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
     <span class="error-text">Ctrl + l</span>      => <span class="normal-text">Clear the terminal.</span>
     <span class="error-text">Ctrl + c</span>      => <span class="normal-text">Reset input.</span>
+    <span class="error-text">Tab</span>      => <span class="normal-text">Autocompletes commands (lists them if multiple completions)</span>
 </pre>
 `;
 
