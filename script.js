@@ -191,6 +191,7 @@ const helpText = `
     <span class="keyword-text">pwd</span>          - <span class="normal-text">prints the working directory</span>
     <span class="keyword-text">welcome</span>      - <span class="normal-text">prints the hero section</span>
     <span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
+    <span class="keyword-text">uptime</span>       - <span class="normal-text">shows runtime duration of the website on your browser</span>
 
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
