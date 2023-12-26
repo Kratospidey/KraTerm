@@ -65,7 +65,7 @@ ____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
    --  __                      ___--  ^  ^                         --  __
 
 
-<span style="color: white">Welcome to KraTerm! (Yes, it's a word play on my username and the word </span><span class="keyword-text">terminal</span><span style="color: white">)</span>
+<span style="color: white">Welcome to KraTerm!</span>
 <span style="color: white">---</span>
 <span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
 <span style="color: white">---</span>
