@@ -18,6 +18,7 @@ const commands = [
 	"uptime",
 	"projects",
 	"ascii",
+	"cowsay"
 ];
 
 const themes = {
@@ -203,6 +204,7 @@ const helpText = `
     <span class="keyword-text">uptime</span>       - <span class="normal-text">shows runtime duration of the website on your browser</span>
     <span class="keyword-text">projects</span>     - <span class="normal-text">check out my projects</span>
     <span class="keyword-text">ascii</span>        - <span class="normal-text">converts image to ascii text</span>
+    <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
@@ -276,9 +278,11 @@ document.getElementById("input").addEventListener("keydown", function (event) {
 });
 function processCommand(command) {
 	// Split the command and its arguments
+	command = command.trim();
 	let tokens = command.split(" ");
 	let cmd = tokens[0].toLowerCase();
 	let argument = tokens.slice(1).join(" ");
+	console.log(argument);
 
 	switch (cmd) {
 		case "help":
@@ -300,7 +304,7 @@ function processCommand(command) {
 			historyIndex = commandHistory.length; // Reset history index to the end
 			if (tokens[1]) {
 				// Call the setUsername function with the new username
-				return setUsername(tokens.slice(1).join(" "));
+				return setUsername(tokens.slice(1).join("_"));
 			} else {
 				return unameErrorText;
 			}
@@ -373,6 +377,13 @@ function processCommand(command) {
 			const currentTime = Date.now();
 			const uptime = currentTime - startTime;
 			return `Uptime: ${formatUptime(uptime)}`;
+		case "cowsay":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			if (argument) {
+				return processCowsayCommand(argument);
+			}
+			return processCowsayCommand("moo");
 
 		default:
 			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
@@ -381,9 +392,7 @@ function processCommand(command) {
 }
 
 function clearTerminal() {
-	// Get the terminal output element
 	const output = document.getElementById("output");
-	// Set the innerHTML of the output element to an empty string, effectively clearing it
 	output.innerHTML = "";
 }
 
@@ -663,4 +672,58 @@ function uploadFileToFilestack(file) {
 function displayAsciiArt(asciiArt) {
 	const terminalOutput = document.getElementById("output"); // Assuming 'output' is the ID of your terminal output element
 	terminalOutput.innerHTML += `<pre class="ascii-art">${asciiArt}</pre>`; // Append ASCII art
+}
+
+function processCowsayCommand(message) {
+	// Split the input text to extract the message
+	return createCowsayMessage(message);
+}
+
+function createCowsayMessage(message) {
+	// Handle wrapping and formatting of message
+	const bubbleWrappedMessage = wrapMessageInSpeechBubble(message);
+
+	const cowAscii = `
+<pre>
+         \\   ^__^
+          \\  (oo)\\_______
+             (__)\\       )\\/\\
+                 ||----w |
+                 ||     ||
+</pre>`;
+
+	// Use <pre> tags to preserve whitespace and line breaks
+	return `<pre>${bubbleWrappedMessage}</pre>` + cowAscii;
+}
+
+function wrapMessageInSpeechBubble(message) {
+	if (message.length >= 40) {
+		let maxLength = 40; // max characters per line
+		let lines = [];
+		while (message.length > maxLength) {
+			let spaceIndex = message.lastIndexOf(" ", maxLength);
+			// Ensure we don't get an infinite loop
+			if (spaceIndex === -1) spaceIndex = maxLength;
+			let line = message.substring(0, spaceIndex);
+			lines.push(line);
+			message = message.substring(spaceIndex + 1);
+		}
+		lines.push(message); // add remaining part if any
+
+		let bubbleLines = lines.map((line) => `| ${line.padEnd(maxLength, " ")} |`);
+		let bubbleTopBottom = `+${"-".repeat(maxLength + 2)}+`;
+		let bubbleText = bubbleLines.join("\n");
+
+		return `${bubbleTopBottom}\n${bubbleText}\n${bubbleTopBottom}`;
+	} else {
+		let messageLength = message.length + 2; // 2 for padding spaces inside the bubble
+
+		// Top of the speech bubble
+		let bubbleTop = " " + "_".repeat(messageLength) + " ";
+		let bubbleBottom = " " + "-".repeat(messageLength) + " ";
+		let textLine = `< ${message} >`;
+
+		// Combine parts to form the speech bubble
+		return bubbleTop + "\n" + textLine + "\n" + bubbleBottom;
+	}
 }
