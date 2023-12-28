@@ -283,6 +283,7 @@ function processCommand(command) {
 	let cmd = tokens[0].toLowerCase();
 	let argument = tokens.slice(1).join(" ");
 	console.log(argument);
+	clearAutocomplete();
 
 	switch (cmd) {
 		case "help":
