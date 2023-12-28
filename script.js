@@ -18,7 +18,7 @@ const commands = [
 	"uptime",
 	"projects",
 	"ascii",
-	"cowsay"
+	"cowsay",
 ];
 
 const themes = {
