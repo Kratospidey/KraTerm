@@ -598,5 +598,86 @@ html {
 	pointer-events: none;
 }
 .crt {
-	animation: textShadow 1.6s infinite;
+	/* stage8: static chromatic fringe - the animated textShadow keyframes jumped
+	   between random RGB-split offsets ~12x/sec and read as strobing on text/face */
+	text-shadow: 0.4px 0 1px rgba(0, 30, 255, 0.35),
+		-0.4px 0 1px rgba(255, 0, 80, 0.22), 0 0 3px;
+}
+
+/* --- KraTerm retro FX (local-only additions) --- */
+html, body, a, button, #input, .terminal, [contenteditable] {
+	cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIiBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiPjxwYXRoIGQ9Ik00IDJoNnYyaC02ek00IDRoMnYyaC0yek04IDRoNHYyaC00ek00IDZoMnYyaC0yek0xMCA2aDR2MmgtNHpNNCA4aDJ2MmgtMnpNMTIgOGg0djJoLTR6TTQgMTBoMnYyaC0yek0xNCAxMGg0djJoLTR6TTQgMTJoMnYyaC0yek0xNiAxMmg0djJoLTR6TTQgMTRoMnYyaC0yek0xOCAxNGg0djJoLTR6TTQgMTZoMnYyaC0yek0yMCAxNmgydjJoLTJ6TTQgMThoMnYyaC0yek0xNiAxOGg2djJoLTZ6TTQgMjBoMnYyaC0yek0xMCAyMGgydjJoLTJ6TTE2IDIwaDR2MmgtNHpNNCAyMmgydjJoLTJ6TTggMjJoNnYyaC02ek0xOCAyMmgydjJoLTJ6TTQgMjRoNnYyaC02ek0xMiAyNGgydjJoLTJ6TTE4IDI0aDJ2MmgtMnpNMTIgMjZoOHYyaC04eiIgZmlsbD0iIzAyMTIwYSIvPjxwYXRoIGQ9Ik02IDRoMnYyaC0yek02IDZoNHYyaC00ek02IDhoNnYyaC02ek02IDEwaDh2MmgtOHpNNiAxMmgxMHYyaC0xMHpNNiAxNGgxMnYyaC0xMnpNNiAxNmgxNHYyaC0xNHpNNiAxOGgxMHYyaC0xMHpNNiAyMGg0djJoLTR6TTEyIDIwaDR2MmgtNHpNNiAyMmgydjJoLTJ6TTE0IDIyaDR2MmgtNHpNMTQgMjRoNHYyaC00eiIgZmlsbD0iIzhmZmZiMCIvPjwvc3ZnPg==") 7 3, auto;
+}
+
+/* moving scanlines: drift the existing 2px tile downward */
+
+/* travelling VHS band layered on the flicker */
+.crt::after {
+	background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.018) 44%, rgba(180,255,210,0.032) 50%, rgba(255,255,255,0.018) 56%, transparent 100%), rgba(18, 16, 16, 0.1);
+	background-size: 100% 20vh, auto;
+	background-repeat: no-repeat, repeat;
+	opacity: 0.6;
+	animation: vhsBand 14s linear infinite;
+}
+@keyframes vhsBand {
+	from { background-position: 0 -25vh, 0 0; }
+	to { background-position: 0 125vh, 0 0; }
+}
+
+/* boot overlay */
+#kraterm-boot {
+	position: fixed; inset: 0; z-index: 9999;
+	background: #050705; color: #8fffb0;
+	font-family: "IBM Plex Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+	font-size: 14px; line-height: 1.5;
+	display: flex; align-items: center; justify-content: center;
+}
+#kraterm-boot pre { margin: 0; text-shadow: 0 0 6px rgba(90,255,150,.5); }
+#kraterm-boot .boot-blink { animation: bootBlink 0.7s steps(1) infinite; }
+@keyframes bootBlink { 50% { opacity: 0; } }
+#kraterm-boot.boot-done { transition: opacity 0.35s ease; opacity: 0; pointer-events: none; }
+
+/* CRT power-on for the terminal itself */
+.terminal.crt-on { animation: crtPowerOn 0.6s cubic-bezier(.23,1,.32,1); transform-origin: 50% 50%; }
+@keyframes crtPowerOn {
+	0% { transform: scaleY(0.004) scaleX(0.75); filter: brightness(7) saturate(0.4); }
+	55% { transform: scaleY(1) scaleX(1); filter: brightness(1.8); }
+	100% { transform: none; filter: none; }
+}
+
+/* sound + music toggles */
+/* sound toggle */
+#kt-sound-toggle, #kt-music-toggle {
+	position: fixed; right: 12px; bottom: 10px; z-index: 10001;
+	font-family: "IBM Plex Mono", Menlo, Consolas, monospace; font-size: 12px;
+	color: #8fffb0; background: rgba(8, 12, 8, 0.78);
+	border: 1px solid rgba(120, 255, 170, 0.35); padding: 3px 8px;
+	user-select: none;
+}
+#kt-sound-toggle:hover, #kt-music-toggle:hover { background: rgba(20, 30, 20, 0.9); }
+
+@media (prefers-reduced-motion: reduce) {
+	.crt::before, .crt::after { animation: none !important; }
+	.terminal.crt-on { animation: none !important; }
+	#kraterm-boot { display: none !important; }
+}
+
+@media (max-width: 480px) {
+	body { display: flex; flex-direction: column; }
+	.terminal { flex: 1 1 auto; min-height: 0; height: auto; }
+	#kt-sound-toggle, #kt-music-toggle {
+		position: static; width: 100%; box-sizing: border-box;
+		font-size: 11px; padding: 4px 10px; opacity: 1;
+		text-align: left; border-left: none; border-right: none; border-bottom: none;
+		background: rgba(8, 12, 8, 0.95);
+	}
+}
+
+/* stack music toggle above the sound toggle (fixed mode; mobile rule below wins) */
+#kt-music-toggle { bottom: 38px; }
+
+/* click pixel burst particles */
+.kt-pixel {
+	position: fixed; width: 4px; height: 4px; z-index: 10002;
+	pointer-events: none; image-rendering: pixelated;
 }

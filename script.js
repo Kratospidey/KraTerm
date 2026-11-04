@@ -1,6 +1,5 @@
+function escapeText(value) { return String(value).replace(/[&<>"\']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#39;"}[c])); }
 const startTime = Date.now();
-
-const FireStack_apiKey = "AcmKvAKu5QFqHOy2iEMM0z";
 
 const commands = [
 	"echo",
@@ -17,6 +16,7 @@ const commands = [
 	"themes",
 	"uptime",
 	"projects",
+	"research",
 	"ascii",
 	"cowsay",
 ];
@@ -46,64 +46,190 @@ const themes = {
 	// ... add any other themes here
 };
 
+
+// Neofetch-style profile card: local ASCII portrait (left) + verified profile fields (right).
+// Portrait generated locally from the owner's approved photo; no external services involved.
+const portraitFull = "=+**#**%%%%@@@@%@*  ::...         ...::::...   .       ..::............=*####**####**+++++**#***\n=+++**+*%####@@*-:.--::---:::::.                  ...:.........        ..:-=+*#****+++++**+*****\n++++**+#%%*===:. .::-=-:.     .::.....          . ... ...      . .  ..    .:::==++++++**+#**+++*\n+=+*++==-::--.    . .                                                 ..    .:-=+*+++=+++*++++++\n++==-=----:..                                                           .      .:-=++====+===+++\n===-=-::::.                                                                        ..::---======\n==-:::=:..                                                                            .:-::----:\n-: :.-.                                              ...                              .:----=-=-\n.  :..                       ...                                                       :-==++*++\n                    ..         .        .... ..                                             ....\n                     .--.                .....     .:--::                                       \n                .:.    .:-.            .     .        .----...                               .  \n                 .::--:.  ..             .                .::.......                       .=+*+\n                   ...--.   ..         .::...          ..  ........::.                       =+=\n.                      .....          .-::::.....     .. ..  .   ... ......       .           :=\n                        .              .::.       .   ...::.       .......:...     .          .=\n                .:.         .        .   .:.:      ::.. ..--.         ..   .        .          .\n.               .....            .. .:-:. ..:.       .....:-:    .  .      .    .    .          \n               .:.....     .   .  ::-----:::::.:..    .:::.:-.. ..  :..    .          .         \n::           ..:.:....... :-:::-.   :-::==-:::---:. .. :-:::.... :. .... ..  .  .     .      .  \n=-. .  .     ..:. ..       ...:-==:. .. .-==:::---: ....::::. .:.......:.:. ... ..  ...         \n=-: .   :.... .:-..:  .. . .....:-=-::.   :=-::==+-. ...::::...--.....:--- .:::..: ..:.         \n+=: .    :::. .:.=. .  . ...:::-...::::... .:. -*+*-.:..---:  -==-....=--=  .....- :..         :\n++-..  .  .::  : .--.   ...::===-::.:-:.... :.. :=+=:.: :::::.--==-.. ::::       :.            +\n+*-.   .:. ... .-..--... :-:::-+=-:...-:.    ..: ::==..  :-+++=**-...                          =\n*+=.   :=:. ..  --.::--:::::--:.-==-:  ..      .::. .:   .-*##+++=.                            -\n===:.. .==-:... .+-::--==--:...  ..:--.           .:     .+@%%+==-:.                   ..      -\n=++=:=--=+---:::.:=-:----::-:.       ...         .+%#*:  -@@@%=-...   .                       .:\n:==--=====+:-=-:-:.::.:-:. .:::.. .  ...:::...:-=*@@@@@*#@@@#=:....:.:----===:.              .-.\n ..--+--=-:. .=-:::.          :.          -*%@@@@@@@@@@@%#*+=--===:.......:-==-.                \n  :.:=:... :  :*+:..  ..::.:-:::::--:::..      .:+@@@%%#*+++==+-:.   .....:---=++=-:::.:.       \n  :  -: :.    :*+=..--+-.... .:--:... ..=+--=##+:..*@%*==-:.--   .==-::...+-:-+#%*-     .-+     \n  .   :.       +=::=*+++:...  .%@@%*:   ++. .+@@@@% -#-:::  .  :-+@=.:.:=:@-  :+*#+.      -*    \n     -%*      =##+.-@@@@@*=#-.:+*%@+    .    -*###@= :     .   .  ..    .--:::-+**+=:    .:*  :-\n     %*+:. . -@@@@-+@@@@@@@@%%%###*++-=-..::-=+**+#= . -   -  .... .:-==+====++=+++=-   ::.*    \n     %@@@:   -@%%@=+@@@@@@@@@@@@@@@@@%#+-----=+++*%: :*=-::.   ...:::-=+**++*+**+====. .-:-*  .=\n     :@#*.   -%%%%=#%@@%@@@@@@@@@@@%%%#*+=--=+**#*+ .%#+=---.  :-:-===++*****++++==-=.    :-    \n      +@.    =%%%@+=@@%%*+#+**#%@@@@@@#++++*####+= .#%*+=---:   =*+===++**++++====---.  . =.    \n       #:    =%#%%#=@@%%##*+#%#%##**##**+**%%%#*= .###*+=----:   ======+++*#*#*+==---.   .=     \n       ..    =########@%@@######*+++**+**##%%@#=.-#***+*+=---::   :=====+++%@@%+--=-=%@@@+:...  \n        ..   -#**##%@##@@@%%%#*####*******#%@#: =%#####%#+===--.:: :=======*@@@%+===#@@%*#@@@@@@\n         *#+-.***##%@%#%@@%%%%#####******+++*-:+%%@@@@%%#**++==-:-----:--==+%@@%*=---*##@@@@@@@@\n         :@@@@*+**#%%@@@@#+**###***+++++=--+#*#@@@@@@@@@%##%#+==::==-----==++**+++-.+@@@@@@@@@@@\n          =@@@%+**#%%%@@@@@%%###**++++=+++++*@@@@@##@@@@@%%#**#*+=-========++==+=--:@@@@@@@@@@@@\n           #@@@****#%@@@@@%%%%####**++======+%@@*. -#@@@%#+. =@@*--=============-::-@@@@@@@@@@@@\n            =@@%#*#%%@@@%%%%%%#****++=========+*+*%@@@@%+==:.:==:---===========--::#@@@@@@@@@@@@\n              :*%#*%%@@@@%%%%%%###*++=-=======-==+#@%+*%%+-:. ..:-----==+==++===---.#@@@@@@@@@@@\n               .#@#%@@@@@@@@%%###**++=-======---=+*%*-:*@+-:....:::----==++++===--:   .=**#%@@@@\n                :@%%@@@@@@@@@@%%##***+======-----=++-. .*+-:.....::::-:--=+++===-=              \n               . %@@@@%%@@@@@@@@%##**++++***++=++*##*-. :==---:::------:-==+++===:              \n               : .@@@@@@%@@@@@@@%###**#*#%%%%%@@%%%%@%#*---==++=+**+++=--=++++===               \n               :  =@@@@@@%@@@@@@%####%@%%@@@@#**#*#*#%@#=-===-:-=***%%#*+=+++==+.               \n               -   +@@@@@@@@%@@@@%%#%%*:........:.. .-+=......      -+##*+++==+:                \n               -    +@@@@@@@%@@@@@@%#=:     :::--:...:::::::.....   .-+****+=+=                 \n               =     %@@@@@@%@@@@@@#*==+#*+====++*#*+++=+*+==+=:.:-===+*#**++- =-               \n               +     ##%@@@@@%@@@@@%###%%%%%%#%#####*+=-===++=--==++******+*-   -*              \n      ..       +     *###%%%@@%@%@%%%%@@@@@@%@@@@@@%%##**##*++++++***+***+*-     =#             \n     =-        *    .*#%###%%%%%%%@@@%%@%%@@@@%####**+*++***+**+****+****+:       %=            \n    #= ...     *     +####*##%%%@@@@%%%%%%%@@%%%#####**++*+*##****++****+.         @            \n   =%.......   *     =###%%##*##%@@@%@%%%@@@%@@%%#%##*++==+***********+-.          *#           \n   %+.::::...  *:    :####%%%##**#%@@@@%@@@@@@@@@@%**+=++==++++******=.            .@           \n   @+.:::::::: ==    .+#####%%##***#%@@@@@@@@@@@@@%##*++++++++++*+**:  .            @=          \n   %* ..::::::.-#     :+#####%%%##*+*#@@@@@@@@@@%#####****++++=+*#+.   .            =@          \n   @: ...:---:::%      :+##########**++#@@@%@@@@@@%%#*###*+++==++-    :             .@:         \n  *@    ..:----:%:     .-+*************+*#%%%%%%%%%#*+*###****+-.    :.              @+         \n .@-     ...:-=-%-      .-=+*******++++++===+**##*****###**+=:       -               %%         \n +@      ...:-==%+       .:-++++++*++====-------===+++==--:.        =                *@.        \n.@#     ....::--%*:       .:-====+++====------========--:.         ::                =@.        ";
+const portraitMid = "=+****%%%@@@@%* .:...    .   ....:..         ...:..........-+**##*###**++++*****\n=+++*+#%#**%*:..--:--:.:::..            . .::........        .-=+*+++++++****++*\n++***+++=--:   :.:.       ....                           ..   ..:==+++++*+**++++\n+++==--:::.                                                      .-=+++===+==+++\n==---:::.                                                            .::---=====\n=-:::-:.                                                                :-::--::\n-..::.                                       ..                         :-======\n. .                      ..      ..                                      .::--=-\n                 .:.              .....   .::..                                 \n             ..    .::                      .:--:..                             \n              ..:-:. ..           .             .::......                   :=+=\n                 ..:.  ..       .:::....      .  ..........                  .==\n.                   ..          .::..        .....     ........      .        .=\n              .                   :..     .. ...::.      ...  ..      .        :\n              ..           .. .::  ..:     ......-:   .        .   .   .        \n            .:......  .     .:----:.::.:.    .::.::.  . .:.            .        \n-.         ..... . .  ::::-.  :-:-+-:::--:... ::::... ...... .  .  .   .        \n=-    ..   .:: ..      ..:-+=:..  :==::==-. ...:::. .:.....::. .:. .  .:        \n=-     .::  ::-..  . .....:.:-::.. .-:.-++-...:--: .-=:...--=: .::.:....       .\n+=..    .:. ...-:   ..::---:..:-:.. .:..-++::..-::..--=:. .--:     ::          =\n++:   .. .:  :..-:.. :-::-==-...:.    ...:-=:. .-=+=+*-...                     -\n++:   :=. .. .-.::-::::::..---:  .      ..  .   -*##++=.                       :\n===::.:+=::.. =-::-==-:...   .::.         =:.   +@@#=-::.               ..     :\n=+=-=====-=-::::-:--:..::.     ....    ..+@@@*:=@@%+:.  ..:.:::..             ::\n .:-=-=--:.--:-..  ..   .:.       .=+#%@@@@@@@@@#*=----:::::::=+=:            . \n  :.=:.: .  =+:.   ....::::::::..   ...:-#@@%%*+++===-:   .....--===-:....      \n .. :. .    =+-.:-==... .:=-::.  -*-:+#*-.:%%+==:.-:  :*=-::.-*.:+##+.    :=    \n     +:     -+:.+#**=::. :%@@#.  :=  :#@@@= +:..     :-*:...:+*  :+**-     --  .\n    +%=    =%@#:*@@@@%%*=++*#=....  .:+***%   .  :  .   ....:---==+*++:   .--  .\n    #%@*   +@@@=*@@@@@@@@@@@@@%#+----==++** .==:.:  .....-=+*+++++++==-  -:==  -\n    :@%-   +%%%=#@@%%@@@@@@@@@%%*+=--=+***. ##=--:. .::-===+**+*+++==--    -:  .\n     *#    *%%%+*@@%***+##%@@@@%*+++*###*: +%*+=--:  :*+===+**+++===---    -    \n      +    +##%#*@%%%#+*%##*+****+*#%%%*: +#*++----:  :=====++*##*==---.::::    \n      .   .+#*##%##@@@###*#********#%@*::*#****+=---:. .-=====+@@%+===#@@@*+**++\n       :=:.:#*##%%*%@@%%%####*******#*.:#%%@%%%*+===-:-:-----==%@@%+--+%##@@@@@@\n        @@@#+**#%@@@@***###**++++=--+**%@@@@@@@##%#==-:==----=++**++-.=@@@@@@@@@\n        .@@@*+*#%%@@@@%%###*+++=+++++%@@@%+%@@@@%#+*#+=-===========--:@@@@@@@@@@\n         -@@@***%%@@@@%%%###**+======+@@+.-#@@%**: +@*--===========-:=@@@@@@@@@@\n          .#@#**%@@@%%%%%##**++=-=======+#@@%@%+=-..:::---====+===--:+@@@@@@@@@@\n             *%*%@@%@@@%%###*++-======--=+%#==%#=:. .::----=++++===-- .=#@@@@@@@\n             :@%%@%@@@@@%%#***+======----=+=. -#=:. ..:::---==++====:         ..\n            . +@@@%%@@@@@@%##**++++*++=++*#*-..-=--:::-----:-=+++===            \n            .  @@@@@%@@@@@@%##*###@@@@@%%%%@%%+--==+=+#***+===+++=+.            \n            :  :@@@@@@%@@@@%##%@#*+**+-=+==-*%+:---:..--+###+=++=+-             \n            :   -@@@@@@%@@@@%%%+.    ...:.  .::....      :+**++=+=              \n            -    +@@@@@%@@@@@%+--++---=++*+===-++===-..:--=***++=.-             \n            -.   -%%@@@@%@@@@%###%%%%#####%#+===+++=--=+*****++=   +.           \n     :.     -.   -###%%%%%@%%%%@@@@@@@@@@@%%#***#*+++++**+**+*=     %           \n   .+.      -:   -###*#%%%%%%@@%%%%%@@%###**++++********+****-      :%          \n   #:....   :-   :########%@@@%%%%%@@@@%%###**+++*#***++***+:        #-         \n  :#.::.... :=    *###%##**#%@@@%%@@@@@@@%#*+++==+++******-          .@         \n  =#..::::...*    -####%%##**#%@@@@@@@@@@@#**++++++++*+*+. .          @:        \n  -% ..:::::.#    .=#####%%#*+*#@@@@@@@@%####***+++==**-   .          +#        \n  #=  ..:---:#:    :=*#***###**++#@@%@@@@@%#**#**++++=.   :           .@        \n :@    ..:--:*=     :=*******++++++**##%%##***###*+-.    ..            @:       \n #*    ...:--*+      :-++++++++===----==++++*++=-:       -             @+       \n.@:    ...::-**.      .:===+++===------======--:.       -              %#       ";
+const portraitSmall = "=+***%%@@@%+.:.::. ..  .....        ..:....... :=**####*++++****\n+++*+%#+++..:--:.. .....          ....           .:=++++++***++*\n++++=--::                                          .:=++++++++++\n==--:::                                                .::--====\n=:::-.                                                   .:-----\n. ..                .                                     :-==++\n              .            ....   ...                           \n           .   .:.                 .:-:..                     . \n           ..::: ..        ..         ........               :++\n               ..        .:::. ..   ...    .......            .=\n           .               :..    . ..::     ... ..     .      :\n           ..         ...:. .:.    ....-:    .    .             \n.        ....... .:... .----:::::   .::::. ....          .      \n=.   .   .:..     ..:=-..:.-=::--:...:::. ........ ...  ..      \n=:   .:. .::..    ...::-::  .-.-++...:-: .=:..:-=  :......     .\n+-.    .. ..::   .:-=-..:-.. ...-+=:.:-:.:==:..::     :        :\n*=   -. . .:.-:..:::-==:...    ..:::  :+*+*=.                  :\n==:. -=:.. --:-=-::.. .::.       ..   :%@*=-.             .    :\n=+--==+---.:-::-:.::.    ...   .:*@@+:#@%=. .....::.          .:\n .:=---: --:.   .  .:. .    -=+#@@@@@%%*=-=-...:::==:.          \n . -..   .*-..::...::::::.::.:-::=@@*+=-=-..:....:--+*+: ..:.   \n .  -.    +-:**+:.. :%#+.  +..#@@*.*-:. . .-#:..:*: -**:    =  .\n   =%:   +%#:%@@@%#=+#%*:..  .=**@: .  .  .  ...-=--=+*+:  .=. .\n   +@@: .%@@=%@@@@@@@@@@%#+---=++# .*-::  ..:-=+*++*++==- .:=. :\n    @+  .#%%+%@%#%#%%@@@@#*+=+*##: %#=--. :====+**++++=--   -   \n    :-   ##%*#@%#*+###**#*+*#%%#:.*#+=---. :====+*##+==--.:::   \n     .  .*###%#@@@%##******##@#:-##***=---. .-====%@%+==#@@#****\n      **-+*##%%%@%%####***+++*-=%@@@@%**+=-------=*@@*=:+%%@@@@@\n      .@@%+*#%@@@####**++++==*%@@@@@@@%%**+-======+++==.%@@@@@@@\n       -@@**#%@@@@%%##**+==+==%@*:+@@%#-.#%=-=========:=@@@@@@@@\n        .*%##%@@%%%%##**========+#@#%#=-..::--====+==-:=@@@@@@@@\n          :@#@@@@@@%%#**+=====--=*#-:%+:. .:::-==++===-  .-=+*##\n           +@@@@@@@@@%#*++=++====**: :=-:..::--:-=+===:         \n            @@@@@@@@@%##*##@@@@%%%@%#=-====***+==+++==          \n          . :@@@@@@@@@%#%%=-==---::=#-:::...:=##+++==           \n          :  :@@@@%@@@@%*:.. .::-:.:-:-:::.  .=***++-           \n          :   #%@@@@@@@%**%%##*##%#+==+++=--+*+***+. -:         \n    .     -   *##%%%%@%%%@@@@@@@@%%#****++++*****+.   =:        \n  .=..    -   *####%%@@@%%%%@@%###**++**********=      #        \n  *-....  =   +##%####@@@%%@@@@@%%#*++=+******+:       -+       \n  %:.:::. +   :###%%#**#@@@@@@@@@%#*++++++***=          %       \n  %..::::.+.   =####%##**#@@@@@@%%##**+++=+*:  .        *-      \n -*  .:--:+=   .=*#***#**+*%%%%@@%#**##*++-   .         -#      \n %:   ..:-++    .=+++**+++====++*++***+=:    ..         .@      \n-%   ...:-+#.    .:==+++===-----=====:.      :           @.     ";
+const artistAccents = [
+    ["Tame Impala", '<span style="color:#e8722a">Tame Impala</span>'],
+    ["TV Girl", '<span style="color:#ff6eb4">TV</span> <span style="color:#b967ff">Girl</span>'],
+    ["Vansire", '<span style="color:#6fc3df">Vansire</span>'],
+    ["Radiohead", '<span style="color:#a3b8c2">Radiohead</span>'],
+    ["Nirvana", '<span style="color:#e6c229">Nirvana</span>'],
+    ["Elden Ring", '<span style="color:#d4af37">Elden Ring</span>'],
+    ["Deadlock", '<span style="color:#f2734c">Deadlock</span>'],
+    ["Clair Obscur: Expedition 33", '<span style="color:#e0a899">Clair Obscur: Expedition 33</span>'],
+    ["Dazz Cam", '<span style="color:#ff8fa3">Dazz Cam</span>'],
+    ["CachyOS", '<span style="color:#3fc7a1">CachyOS</span>'],
+    ["VS Code", '<span style="color:#3794e8">VS Code</span>'],
+    ["JavaScript/TypeScript", '<span style="color:#f0db4f">JavaScript/TypeScript</span>'],
+    ["Python", '<span style="color:#5a9fd4">Python</span>'],
+    ["Java", '<span style="color:#e8833a">Java</span>'],
+    ["C/C++", '<span style="color:#7ea0c4">C/C++</span>'],
+    ["SQL", '<span style="color:#c586c0">SQL</span>'],
+    ["niri + DankMaterialShell", '<span style="color:#8b9ef0">niri + DankMaterialShell</span>'],
+    ["zsh", '<span style="color:#89e051">zsh</span>'],
+    ["AI, gaming", '<span style="color:#b57edc">AI</span><span style="color:white">, </span><span style="color:#4ade80">gaming</span>'],
+    ["Cooking, photography", '<span style="color:#f08c42">Cooking</span><span style="color:white">, </span><span style="color:#9db2c9">photography</span>'],
+    ["KratosSpidey", '<span style="color:#66c0f4">KratosSpidey</span>'],
+];
+function colorizeArtists(v) {
+    for (const [n, h] of artistAccents) {
+        v = v.split(/(<span[^>]*>[\s\S]*?<\/span>)/g).map(p => p.startsWith("<span") ? p : p.split(n).join(h)).join("");
+    }
+    return v;
+}
+
+function neofetchCard(portraitText) {
+    const fields = [
+    [
+        "param@kraterm",
+        ""
+    ],
+    [
+        "-------------------------------",
+        ""
+    ],
+    [
+        "Name",
+        "Param Singh Makwana"
+    ],
+    [
+        "Location",
+        "Mumbai, India"
+    ],
+    [
+        "College",
+        "MPSTME, NMIMS"
+    ],
+    [
+        "Education",
+        "Integrated B.Tech, Information Technology"
+    ],
+    [
+        "Study",
+        "Final year | May 2021 - May 2027"
+    ],
+    [
+        "-------------------------------",
+        ""
+    ],
+    [
+        "OS / distro",
+        "CachyOS"
+    ],
+    [
+        "WM / desktop",
+        "niri + DankMaterialShell"
+    ],
+    [
+        "Shell",
+        "zsh"
+    ],
+    [
+        "Editor",
+        "VS Code"
+    ],
+    [
+        "Building",
+        "IDH brain-tumour MRI project"
+    ],
+    [
+        "Research",
+        "LLM security, reliability & backdoors"
+    ],
+    [
+        "",
+        "Medical imaging & phishing detection"
+    ],
+    [
+        "Languages",
+        "Python, JavaScript/TypeScript, Java"
+    ],
+    [
+        "",
+        "C/C++, SQL"
+    ],
+    [
+        "Hobbies.Software",
+        "AI, gaming"
+    ],
+    [
+        "Hobbies.Offline",
+        "Cooking, photography"
+    ],
+    [
+        "Games",
+        "Elden Ring, Deadlock"
+    ],
+    [
+        "",
+        "Clair Obscur: Expedition 33"
+    ],
+    [
+        "Camera app",
+        "Dazz Cam"
+    ],
+    [
+        "Music",
+        "Tame Impala, TV Girl, Vansire"
+    ],
+    [
+        "",
+        "Radiohead, Nirvana"
+    ],
+    [
+        "-------------------------------",
+        ""
+    ],
+    [
+        "Contact",
+        "contact@kratospidey.com"
+    ],
+    [
+        "Website",
+        "github.com/kratospidey"
+    ],
+    [
+        "LinkedIn",
+        "linkedin.com/in/kratospidey"
+    ],
+    [
+        "Steam",
+        "KratosSpidey"
+    ],
+    [
+        "-------------------------------",
+        ""
+    ],
+    [
+        "Published",
+        "IEEE GCAT 2024 | Progressive Round Robin"
+    ],
+    [
+        "Presented",
+        "DACS 2025 | PhisDOM"
+    ],
+    [
+        "Ongoing",
+        "LLM backdoor auditing & partial recovery"
+    ],
+    [
+        "In preparation",
+        "IDH classification from brain MRI"
+    ]
+];
+    const links = {Contact:"mailto:contact@kratospidey.com",Website:"https://github.com/kratospidey",LinkedIn:"https://www.linkedin.com/in/kratospidey"};
+    const text = fields.map(([k,v]) => `<span class="keyword-text">${k}${v && k ? ":" : ""}</span> ${links[k] ? `<a class="active-text" href="${links[k]}">${v}</a>` : `<span style="color:white">${colorizeArtists(v)}</span>`}`).join("\n");
+    const narrow = window.innerWidth < 900;
+    const size = narrow ? 6 : 7;
+    return `<span style="display:${narrow ? "block" : "inline-block"};vertical-align:top;font-size:${size}px;line-height:${size * 1.15}px;white-space:pre;color:white;" role="img" aria-label="ASCII portrait of Param Singh Makwana">${portraitText}</span>${narrow ? "\n" : "   "}<span style="display:inline-block;vertical-align:top;font-size:${narrow ? 10 : 13}px;line-height:${narrow ? 15 : 14}px;white-space:pre-wrap;max-width:100%;">${text}</span>\n`;
+}
+
 const welcomeText = `
-<pre class="enter-text">
-     *   .                  .              .        .   *          .
-  .         .                     .       .           .      .        .
-        o                             .                   .
-         .              .                  .           .
-          0     .
-                 .          .                 ,                ,    ,         __ __            __                   _     __          
- .          \\          .                         .                           / //_/_________ _/ /_____  _________  (_)___/ /__  __  __     
-      .      \\   ,                                                          / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /    
-   .          o     .                 .                   .            .   / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-     .         \\                 ,             .                .         /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-               #\\##\\#      .                              .        .                                     /_/                 /____/   
-             #  #O##\\###                .                        .                                                           \u00A9 2024
-   .        #*#  #\\##\\###                       .                     ,
-        .   ##*#  #\\##\\##               .                     .
-      .      ##*#  #o##\\#         .                             ,       .
-          .     *#  #\\#     .                    .             .          ,
-                      \\          .                         .
-____^/\\___^--____/\\____O______________/\\/\\---/\\___________---______________
-   /\\^   ^  ^    ^                  ^^ ^  '\\ ^          ^       ---
-         --           -            --  -      -         ---  __       ^
-   --  __                      ___--  ^  ^                         --  __
-
-
-<span style="color: white">Welcome to KraTerm!</span>
-<span style="color: white">---</span>
-<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
-<span style="color: white">---</span>
-<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
-</pre>
-`;
-
-const midWelcomeText = `
-<pre class="enter-text">
-
-     *   .                  .              .        .   *    
-  .         .                     .       .           .      
-        o                             .                   .
-         .              .                  .           .
-          0     .
-                 .          .                 ,                 
- .          \\\\          .                         .                               
-      .      \\\\   ,                                                           
-   .          o     .                 .                   .     
-     .         \\\\                 ,             .                   
-               #\\\\##\\\\#      .                                                            
-             #  #O##\\\\###                .                                                                       
-   .        #*#  #\\\\##\\\\###                       .      
-        .   ##*#  #\\\\##\\\\##               .              
-      .      ##*#  #o##\\\\#         .                       
-          .     *#  #\\\\#     .                    .        
-                      \\\\          .                        
-____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
-   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^
-         --           -            --  -      -         ---  
-   --  __                      ___--  ^  ^                   
-        
+<pre class="enter-text" style="max-width:100%;overflow-x:auto;">
     __ __            __                   _     __          
    / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
   / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
@@ -111,10 +237,28 @@ ____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
 /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
                                /_/                 /____/   
 
-
+${neofetchCard(portraitFull)}
 <span style="color: white">Welcome to KraTerm!</span>
 <span style="color: white">---</span>
-<span style="color: white">This project's source code can be found in this </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/KraTerm">Github repo</a>.
+<span style="color: white">---</span>
+<span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
+</pre>
+`;
+
+const midWelcomeText = `
+<pre class="enter-text" style="max-width:100%;overflow-x:auto;">
+    __ __            __                   _     __          
+   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
+  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
+ / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
+/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
+                               /_/                 /____/   
+
+${neofetchCard(portraitMid)}
+<span style="color: white">Welcome to KraTerm!</span>
+<span style="color: white">---</span>
+<span style="color: white">This project's source code can be found in this project's </span><a class="active-text" href="https://github.com/Kratospidey/KraTerm">Github repo</a>.
 <span style="color: white">---</span>
 <span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
 </pre>
@@ -122,29 +266,6 @@ ____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
 
 const smallWelcomeText = `
 <pre class="enter-text" style="font-size: clamp(0.5rem, 2.9vw, 1rem);">
-
-     *   .                  .              .        .   *    
-  .         .                     .       .           .      
-        o                             .                   .
-         .              .                  .           .
-          0     .
-                 .          .                 ,                 
- .          \\\\          .                         .                               
-      .      \\\\   ,                                                           
-   .          o     .                 .                   .     
-     .         \\\\                 ,             .                   
-               #\\\\##\\\\#      .                                                            
-             #  #O##\\\\###                .                                                                       
-   .        #*#  #\\\\##\\\\###                       .      
-        .   ##*#  #\\\\##\\\\##               .              
-      .      ##*#  #o##\\\\#         .                       
-          .     *#  #\\\\#     .                    .        
-                      \\\\          .                        
-____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
-   /\\^   ^  ^    ^                  ^^ ^  '\\\\ ^          ^
-         --           -            --  -      -         ---  
-   --  __                      ___--  ^  ^                   
-       
     __ __            __                   _     __          
    / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
   / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
@@ -152,10 +273,10 @@ ____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
 /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
                                /_/                 /____/   
 
-
+${neofetchCard(portraitSmall)}
 <span style="color: white">Welcome to KraTerm!</span>
 <span style="color: white">---</span>
-<span style="color: white">project's source code - </span><a class="active-text" href="https://github.com/Kratospidey/terminal-portfolio">Github repo</a>.
+<span style="color: white">project's source code - </span><a class="active-text" href="https://github.com/Kratospidey/KraTerm">Github repo</a>.
 <span style="color: white">---</span>
 <span style="color: white">For a list of available commands, type </span><span class="keyword-text">'help'</span>.
 </pre>
@@ -164,10 +285,11 @@ ____^/\\___^--____/\\____O______________/\\\\/\\---/\\_______
 // Use welcomeText in your code where appropriate
 
 const aboutText = `
-<pre class="error-text">
-Hey, I'm Param Makwana! 
-I'm a third year student at Mukesh Patel School of Technology Management & Engineering, currently pursuing a BTECH degree in information technology. 
-My major interests are creating cools stuff such as bots, interactive websites and tools to name a few. I plan to do a lot more stuff in future!
+<pre class="error-text" style="white-space:pre-wrap;overflow-wrap:anywhere;">
+Hey, I'm Param Singh Makwana! 
+I'm a final-year Integrated B.Tech Information Technology student at Mukesh Patel School of Technology Management & Engineering, NMIMS, Mumbai. 
+I study LLM security and reliability, work on medical imaging, and build practical software tools.
+My major interests are creating cool stuff such as bots, interactive websites and tools to name a few. I plan to do a lot more stuff in future!
 </pre>`;
 
 const autocompleteWords = commands;
@@ -181,12 +303,71 @@ const socialLinks = {
 };
 
 const projects = {
-	duck: "https://github.com/Kratospidey/DUCK",
+	"llm-backdoor": "https://github.com/Kratospidey/llm-backdoor-capstone",
+	"idh-glioma-mri": "https://github.com/Kratospidey/idh-glioma-mri",
+	phisdomjs: "https://github.com/Kratospidey/phisdomjs",
+	corneal_ulcer: "https://github.com/Kratospidey/corneal_ulcer",
+	"smart-round-robin": "https://github.com/Kratospidey/improved-smart-round-robin",
+	ion: "https://github.com/Kratospidey/ion",
 	kraterm: "https://github.com/Kratospidey/KraTerm",
+	termidash: "https://github.com/Kratospidey/TermiDash",
+	"dms-airdrop": "https://github.com/Kratospidey/dms-airdrop",
+	"monster-tracker": "https://github.com/Kratospidey/monster-tracker",
+	"investwise-india": "https://github.com/Kratospidey/investwise-india",
+	sasta_dmart: "https://github.com/Kratospidey/sasta_dmart",
+	duck: "https://github.com/Kratospidey/DUCK",
 };
 
 let commandHistory = [];
 let historyIndex = -1; // Will track the current position in the command history
+
+
+const roboticsText = `
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere;">
+<span class="keyword-text">Arduino Mega-Centric Fire-Fighting Robot</span>
+<span style="color:white">Team project | Robotics &amp; embedded systems</span>
+
+I worked on a team fire-fighting robot using an Arduino Mega 2560,
+IR flame and MQ-series smoke sensing, DHT11 temperature/humidity,
+ultrasonic ranging, servo sensor/nozzle aiming, and a water pump.
+An ESP32-CAM provides video telemetry for remote monitoring.
+
+The report describes a detect-approach-suppress controller and controlled
+indoor trials. This is a student prototype, not a certified emergency
+response system. Learned vision is a proposed upgrade, not an implemented
+AI capability.
+
+<span class="normal-text">Team:</span> Param Singh Makwana, Shrijesh Yadav, Deven Yewale,
+Yash Vyas, Samik Singh Rajput.
+</pre>`;
+
+const researchText = `
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere;">
+    <span class="keyword-text">papers</span>
+
+    <span class="keyword-text">1. Progressive Round Robin CPU Scheduling Algorithm for Operating Systems</span>
+       <span class="normal-text">Co-author · </span><span style="color: white">PUBLISHED - IEEE GCAT 2024, on IEEE Xplore</span>
+       <a class="active-text" href="https://ieeexplore.ieee.org/document/10923888" target="_blank">ieeexplore.ieee.org/document/10923888</a>
+       <span class="normal-text">code: </span><a class="active-text" href="https://github.com/Kratospidey/improved-smart-round-robin" target="_blank">github.com/Kratospidey/improved-smart-round-robin</a>
+
+    <span class="keyword-text">2. PhisDOM: Leak-safe, Multimodal Phishing Detection</span>
+       <span class="normal-text">Lead author · </span><span style="color: white">Presented at DACS 2025</span><span class="normal-text"> (Springer conference; publication/indexing not verified)</span>
+       <span class="normal-text">paper: </span><a class="active-text" href="https://drive.google.com/file/d/1hqDu8lcDDRHoJLPFzg0Hqsv7-BeDAV8a" target="_blank">PhisDOM PDF</a>
+       <span class="normal-text">code: </span><a class="active-text" href="https://github.com/Kratospidey/phisdomjs" target="_blank">github.com/Kratospidey/phisdomjs</a>
+
+    <span class="keyword-text">3. Beyond Backdoor Detection: Lightweight Auditing and Functional Recovery in Backdoored Language Models</span>
+       <span class="normal-text">Lead author, with Yash Kalbhor and Shrijesh Yadav</span>
+       <span class="normal-text">ONGOING / UNPUBLISHED MANUSCRIPT - NMIMS Capstone, 2026</span>
+       <span class="normal-text">Functional recovery is partial; several repair approaches did not restore correct triggered answers.</span>
+       <a class="active-text" href="https://github.com/Kratospidey/llm-backdoor-capstone" target="_blank">Research code</a>
+
+    <span class="keyword-text">ongoing</span>
+
+    <span class="keyword-text">IDH mutation classification from multi-sequence brain MRI</span>
+       <span class="normal-text">In preparation - unpublished. Research use only, not a clinical diagnostic tool.</span>
+       <span class="normal-text">code: </span><a class="active-text" href="https://github.com/Kratospidey/idh-glioma-mri" target="_blank">github.com/Kratospidey/idh-glioma-mri</a>
+</pre>
+`;
 
 const helpText = `
 <pre>
@@ -203,6 +384,7 @@ const helpText = `
     <span class="keyword-text">themes</span>       - <span class="normal-text">check available themes</span>
     <span class="keyword-text">uptime</span>       - <span class="normal-text">shows runtime duration of the website on your browser</span>
     <span class="keyword-text">projects</span>     - <span class="normal-text">check out my projects</span>
+    <span class="keyword-text">research</span>     - <span class="normal-text">my papers and ongoing research</span>
     <span class="keyword-text">ascii</span>        - <span class="normal-text">converts image to ascii text</span>
     <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
@@ -263,7 +445,7 @@ document.getElementById("input").addEventListener("keydown", function (event) {
 		let output = document.getElementById("output");
 
 		// Create the input line with the updated prompt
-		output.innerHTML += `<div class="input-line">${getCurrentPrompt()}<div>${input}</div></div>`;
+		output.innerHTML += `<div class="input-line">${getCurrentPrompt()}<div>${escapeText(input)}</div></div>`;
 
 		let commandOutput = processCommand(input);
 		if (commandOutput !== undefined) {
@@ -294,7 +476,7 @@ function processCommand(command) {
 		case "echo":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
-			return tokens.slice(1).join(" ");
+			return escapeText(tokens.slice(1).join(" "));
 		case "clear":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
@@ -352,6 +534,11 @@ function processCommand(command) {
 			historyIndex = commandHistory.length; // Reset history index to the end
 			return handleThemesCommand(argument);
 
+		case "research":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length; // Reset history index to the end
+			return researchText;
+
 		case "ascii":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length; // Reset history index to the end
@@ -387,7 +574,7 @@ function processCommand(command) {
 			return processCowsayCommand("moo");
 
 		default:
-			return `<span class="error-text">Command</span> <span class="keyword-text">${command}</span> <span class="error-text">not found.</span> 
+			return `<span class="error-text">Command</span> <span class="keyword-text">${escapeText(command)}</span> <span class="error-text">not found.</span> 
             <span class="error-text">For a list of commands, type</span> <span class="keyword-text">help</span><span class="error-text">.</span>`;
 	}
 }
@@ -411,10 +598,10 @@ function setUsername(newUsername) {
 		// Update the username in the prompt for future input lines
 		const currentPrompt = document.querySelector(".prompt");
 		if (currentPrompt) {
-			currentPrompt.innerHTML = `<span class="username keyword-text">${newUsername.trim()}</span><span style="color: white;">@</span><span class="normal-text">terminal.kratospidey.com</span>:~$`;
+			currentPrompt.innerHTML = `<span class="username keyword-text">${escapeText(newUsername.trim())}</span><span style="color: white;">@</span><span class="normal-text">terminal.kratospidey.com</span>:~$`;
 		}
 
-		return `<span class="normal-text">Username changed to </span> <span class="keyword-text">${newUsername.trim()}</span>`;
+		return `<span class="normal-text">Username changed to </span> <span class="keyword-text">${escapeText(newUsername.trim())}</span>`;
 	} else {
 		return unameErrorText; // Error message if no username is provided
 	}
@@ -488,7 +675,7 @@ function placeCaretAtEnd(el) {
 function displayHistory() {
 	let historyString = "<div class='error-text'>";
 	commandHistory.forEach((cmd) => {
-		historyString += `<div>${cmd}</div>`;
+		historyString += `<div>${escapeText(cmd)}</div>`;
 	});
 	historyString += "</div>";
 	return historyString;
@@ -506,6 +693,8 @@ function handleSocialsCommand(argument) {
 }
 
 function handleProjectsCommand(argument) {
+    if (["robo", "robotics", "fire-fighting-robot"].includes(argument.toLowerCase())) return roboticsText;
+
 	if (argument && projects[argument.toLowerCase()]) {
 		// Open the specific project repo
 		window.open(projects[argument.toLowerCase()], "_blank");
@@ -528,8 +717,9 @@ function displayAllSocials() {
 function displayAllPojects() {
 	let projectsText = "Here are my projects:<br>";
 	for (const [project, url] of Object.entries(projects)) {
-		projectsText += `<span class="keyword-text">${project}</span> - <a class="error-text" href="${url}" target="_blank">${url}</a><br>`;
+		projectsText += `<span class="keyword-text">${project === "ion" ? "ion (Ion Chat App)" : project}</span> - <a class="error-text" href="${url}" target="_blank">${url}</a><br>`;
 	}
+	projectsText += `<br><span class="keyword-text">fire-fighting-robot</span> - Arduino Mega fire-fighting robot (team project).<br>Use <span class="keyword-text">projects robo</span> for details.<br>`;
 	projectsText += `<br>Usage: projects [project name]<br>eg: projects duck<br>`;
 	return projectsText;
 }
@@ -591,7 +781,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	function displayWelcomeMessage() {
 		const welcomeOutput = processCommand("welcome");
 		output.innerHTML += welcomeOutput; // Append the welcome message to the output
-		terminal.scrollTop = terminal.scrollHeight; // Scroll to the bottom of the terminal
+		terminal.scrollTop = 0; // Keep the welcome banner visible; commands still scroll normally.
 	}
 
 	// Start typing the command
@@ -622,62 +812,70 @@ function triggerImageUpload() {
 	document.getElementById("imageInput").click();
 }
 
+// Local image-to-ASCII conversion: everything runs in the browser via canvas.
+// No uploads, no external services, no API keys.
+const ASCII_RAMP = " .:-=+*#%@";
+const ASCII_OUTPUT_WIDTH = 96;
+
 document
 	.getElementById("imageInput")
 	.addEventListener("change", function (event) {
 		const file = event.target.files[0];
 		if (file) {
-			uploadFileToFilestack(file);
+			convertFileToAsciiLocally(file);
+            event.target.value = "";
 		}
 	});
 
-// After image is uploaded to Filestack and you have the handle or use a public image URL
-function convertImageToAscii(handleOrPublicUrl) {
-	const apiKey = FireStack_apiKey;
-	const url = `https://cdn.filestackcontent.com/${apiKey}/ascii=colored:true/${handleOrPublicUrl}`;
-
-	fetch(url)
-		.then((response) => response.text())
-		.then((asciiArt) => displayAsciiArt(asciiArt))
-		.catch((error) => console.error("Error:", error));
-}
-
-// Function to display ASCII art in your terminal
-function uploadFileToFilestack(file) {
-	const apiKey = FireStack_apiKey; // Replace with your Filestack API key
-	const url = `https://www.filestackapi.com/api/store/S3?key=${apiKey}`;
-
-	let reader = new FileReader();
-	reader.onloadend = function () {
-		let arrayBuffer = reader.result;
-
-		fetch(url, {
-			method: "POST",
-			body: arrayBuffer,
-			headers: {
-				"Content-Type": "image/png",
-			},
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log(data);
-				// Call the convertImageToAscii function with the URL from the response
-				convertImageToAscii(data.url);
-			})
-			.catch((error) => console.error("Error:", error));
+function convertFileToAsciiLocally(file) {
+	if (file.size > 20 * 1024 * 1024) { displayAsciiArt("Please choose an image smaller than 20 MB."); return; }
+    if (!file.type.startsWith("image/")) {
+		displayAsciiArt("Please choose an image file.");
+		return;
+	}
+	const img = new Image();
+	img.onload = function () {
+		const width = ASCII_OUTPUT_WIDTH;
+		const height = Math.min(200, Math.max(1, Math.round(width * (img.height / img.width) * 0.5)));
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		const ctx = canvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, width, height);
+		const data = ctx.getImageData(0, 0, width, height).data;
+		const lines = [];
+		for (let y = 0; y < height; y++) {
+			let line = "";
+			for (let x = 0; x < width; x++) {
+				const i = (y * width + x) * 4;
+				const alpha = data[i + 3] / 255;
+                const lum = (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) * alpha + 255 * (1 - alpha);
+				line += ASCII_RAMP[Math.min(ASCII_RAMP.length - 1, Math.floor((lum / 256) * ASCII_RAMP.length))];
+			}
+			lines.push(line);
+		}
+		displayAsciiArt(lines.join("\n"));
+		URL.revokeObjectURL(img.src);
 	};
-
-	reader.readAsArrayBuffer(file);
+	img.onerror = function () {
+		displayAsciiArt("Could not read that image locally.");
+		URL.revokeObjectURL(img.src);
+	};
+	img.src = URL.createObjectURL(file);
 }
 
 function displayAsciiArt(asciiArt) {
-	const terminalOutput = document.getElementById("output"); // Assuming 'output' is the ID of your terminal output element
-	terminalOutput.innerHTML += `<pre class="ascii-art">${asciiArt}</pre>`; // Append ASCII art
+    const pre = document.createElement("pre");
+    pre.className = "ascii-art";
+    pre.textContent = asciiArt;
+    pre.style.cssText = "max-width:100%;overflow-x:auto;";
+    document.getElementById("output").append(pre);
+    terminal.scrollTop = terminal.scrollHeight;
 }
 
 function processCowsayCommand(message) {
 	// Split the input text to extract the message
-	return createCowsayMessage(message);
+	return createCowsayMessage(escapeText(message));
 }
 
 function createCowsayMessage(message) {
@@ -728,3 +926,601 @@ function wrapMessageInSpeechBubble(message) {
 		return bubbleTop + "\n" + textLine + "\n" + bubbleBottom;
 	}
 }
+
+/* --- KraTerm retro FX: boot sequence, keyboard sounds, mute toggle (local-only) --- */
+(function kraTermFx() {
+	"use strict";
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	/* sound state */
+	let soundOn = localStorage.getItem("kraterm-sound") !== "off";
+	let actx = null;
+	function ac() {
+		if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+		return actx;
+	}
+	function bus() {
+		const c = ac();
+		if (!c.__ktBus) { const g = c.createGain(); g.gain.value = soundOn ? 1 : 0; g.connect(c.destination); c.__ktBus = g; }
+		return c.__ktBus;
+	}
+	window.__ktBus = bus;
+	window.__ktACState = () => (actx ? actx.state : "none");
+
+	/* ---- keyboard clack: 5 distinct variants, random pick with no immediate repeat ---- */
+	let lastClick = 0;
+	let lastVariant = -1;
+	const clackVariants = [
+		/* thock: low, rounded */
+		{ bp: 850,  q: 1.3, dur: 0.045, decay: 2.2, nGain: 0.26, osc: "triangle", oF: 120, oEnd: 70,  oDur: 0.07,  oGain: 0.14 },
+		/* click: bright, short */
+		{ bp: 2600, q: 1.0, dur: 0.02,  decay: 1.4, nGain: 0.2,  osc: "square",   oF: 190, oEnd: 120, oDur: 0.035, oGain: 0.05 },
+		/* clack: mid, snappy body */
+		{ bp: 1700, q: 1.6, dur: 0.032, decay: 1.8, nGain: 0.24, osc: "square",   oF: 150, oEnd: 90,  oDur: 0.05,  oGain: 0.1 },
+		/* snap: very high, tiny tick */
+		{ bp: 3400, q: 2.0, dur: 0.015, decay: 1.2, nGain: 0.16, osc: "square",   oF: 240, oEnd: 160, oDur: 0.025, oGain: 0.03 },
+		/* thud: deep, soft tail */
+		{ bp: 600,  q: 1.1, dur: 0.055, decay: 2.6, nGain: 0.3,  osc: "sine",     oF: 95,  oEnd: 55,  oDur: 0.09,  oGain: 0.17 }
+	];
+	window.__ktClackPicks = [];
+	function keyClick(isEnter) {
+		if (!soundOn) return;
+		const c = ac();
+		if (c.state === "suspended") { c.resume(); }
+		const t = c.currentTime;
+		if (t - lastClick < 0.02) return;
+		lastClick = t;
+		let vi = Math.floor(Math.random() * clackVariants.length);
+		if (vi === lastVariant) vi = (vi + 1 + Math.floor(Math.random() * (clackVariants.length - 1))) % clackVariants.length;
+		lastVariant = vi;
+		if (window.__ktClackPicks.length < 500) window.__ktClackPicks.push(vi);
+		const v = clackVariants[vi];
+		const jit = () => 0.85 + Math.random() * 0.3;
+		const gBoost = isEnter ? 1.25 : 1;
+		const dur = v.dur * jit();
+		const buf = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate);
+		const d = buf.getChannelData(0);
+		for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, v.decay);
+		const src = c.createBufferSource(); src.buffer = buf;
+		const bp = c.createBiquadFilter(); bp.type = "bandpass";
+		bp.frequency.value = v.bp * jit() * (isEnter ? 0.75 : 1); bp.Q.value = v.q;
+		const g = c.createGain();
+		g.gain.setValueAtTime(v.nGain * gBoost * jit(), t);
+		g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+		src.connect(bp); bp.connect(g); g.connect(bus());
+		src.start(t);
+		const o = c.createOscillator(); o.type = v.osc;
+		o.frequency.setValueAtTime(v.oF * jit(), t);
+		o.frequency.exponentialRampToValueAtTime(v.oEnd, t + v.oDur);
+		const g2 = c.createGain();
+		g2.gain.setValueAtTime(v.oGain * gBoost * jit(), t);
+		g2.gain.exponentialRampToValueAtTime(0.001, t + v.oDur + 0.005);
+		o.connect(g2); g2.connect(bus());
+		o.start(t); o.stop(t + v.oDur + 0.01);
+	}
+	document.addEventListener("keydown", (e) => {
+		musicStart();
+		if (e.metaKey || e.ctrlKey || e.altKey) return;
+		keyClick(e.key === "Enter");
+	}, true);
+
+	/* ---- boot sound: whirr up, beep, hum ---- */
+	function bootSound() {
+		if (!soundOn) return;
+		const c = ac();
+		if (c.state === "suspended") { c.resume().then(() => { if (c.state === "running") bootSoundNow(c); }); return; }
+		bootSoundNow(c);
+	}
+	function bootSoundNow(c) {
+		const t0 = c.currentTime + 0.05;
+		/* fan/disk whirr: filtered noise rising then settling */
+		const dur = 1.5;
+		const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+		const d = buf.getChannelData(0);
+		for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+		const noise = c.createBufferSource(); noise.buffer = buf;
+		const lp = c.createBiquadFilter(); lp.type = "lowpass";
+		lp.frequency.setValueAtTime(220, t0);
+		lp.frequency.exponentialRampToValueAtTime(1400, t0 + 0.9);
+		lp.frequency.exponentialRampToValueAtTime(500, t0 + dur);
+		const ng = c.createGain();
+		ng.gain.setValueAtTime(0.0001, t0);
+		ng.gain.exponentialRampToValueAtTime(0.16, t0 + 0.5);
+		ng.gain.exponentialRampToValueAtTime(0.02, t0 + dur);
+		noise.connect(lp); lp.connect(ng); ng.connect(bus());
+		noise.start(t0); noise.stop(t0 + dur);
+		/* spin-up whine */
+		const o = c.createOscillator(); o.type = "sawtooth";
+		o.frequency.setValueAtTime(70, t0);
+		o.frequency.exponentialRampToValueAtTime(340, t0 + 1.1);
+		const og = c.createGain();
+		og.gain.setValueAtTime(0.0001, t0);
+		og.gain.exponentialRampToValueAtTime(0.05, t0 + 0.6);
+		og.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
+		o.connect(og); og.connect(bus());
+		o.start(t0); o.stop(t0 + 1.5);
+		/* power beep */
+		const b = c.createOscillator(); b.type = "square"; b.frequency.value = 880;
+		const bg = c.createGain();
+		const tb = t0 + 1.55;
+		bg.gain.setValueAtTime(0.0001, tb);
+		bg.gain.exponentialRampToValueAtTime(0.12, tb + 0.01);
+		bg.gain.exponentialRampToValueAtTime(0.0001, tb + 0.11);
+		b.connect(bg); bg.connect(bus());
+		b.start(tb); b.stop(tb + 0.12);
+		/* mains hum settling in */
+		const h = c.createOscillator(); h.type = "triangle"; h.frequency.value = 120;
+		const h2 = c.createOscillator(); h2.type = "sine"; h2.frequency.value = 60;
+		const hg = c.createGain();
+		const th = t0 + 1.7;
+		hg.gain.setValueAtTime(0.0001, th);
+		hg.gain.exponentialRampToValueAtTime(0.045, th + 0.25);
+		hg.gain.exponentialRampToValueAtTime(0.0001, th + 2.9);
+		h.connect(hg); h2.connect(hg); hg.connect(bus());
+		h.start(th); h2.start(th); h.stop(th + 3.0); h2.stop(th + 3.0);
+	}
+
+	/* ---- boot overlay animation ---- */
+	const bootLines = [
+		"KraTerm BIOS v2.11 - kratospidey systems",
+		"Memory check ......... 65536K OK",
+		"Warming up phosphors ...",
+		"Loading /dev/tty ..... OK",
+		"",
+		"[ OK ] display ready",
+	];
+	function runBoot() {
+		if (reducedMotion) { bootSound(); return; }
+		const overlay = document.createElement("div");
+		overlay.id = "kraterm-boot";
+		const pre = document.createElement("pre");
+		overlay.append(pre);
+		document.body.append(overlay);
+		let i = 0;
+		const step = () => {
+			if (i < bootLines.length) {
+				pre.textContent = bootLines.slice(0, i + 1).join("\n") + (i < bootLines.length - 1 ? "\n_" : "");
+				i++;
+				setTimeout(step, i === 1 ? 900 : 750);
+			} else {
+				setTimeout(() => {
+					overlay.classList.add("boot-done");
+					const term = document.querySelector(".terminal");
+					if (term) term.classList.add("crt-on");
+					setTimeout(() => overlay.remove(), 450);
+				}, 1100);
+			}
+		};
+		step();
+		bootSound();
+	}
+
+	/* ---- background music: synthesized chill loop, zero assets (local-only) ---- */
+	let musicOn = localStorage.getItem("kraterm-music") !== "off";
+	let musicLive = null;
+	function musicStart() {
+		if (!musicOn || musicLive) return;
+		const c = ac();
+		if (c.state === "suspended") c.resume();
+		const out = c.createGain();
+		out.gain.setValueAtTime(0.0001, c.currentTime);
+		out.gain.exponentialRampToValueAtTime(0.8, c.currentTime + 5);
+		out.connect(c.destination);
+		const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 720; lp.Q.value = 0.5;
+		lp.connect(out);
+		const lfo = c.createOscillator(); lfo.frequency.value = 0.05;
+		const lfoG = c.createGain(); lfoG.gain.value = 160;
+		lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start();
+		const dly = c.createDelay(1); dly.delayTime.value = 0.42;
+		const fb = c.createGain(); fb.gain.value = 0.3;
+		const wet = c.createGain(); wet.gain.value = 0.22;
+		lp.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(wet); wet.connect(out);
+
+		const chords = [
+			[110.0, 130.81, 164.81],  /* Am */
+			[87.31, 110.0, 130.81],   /* F  */
+			[130.81, 164.81, 196.0],  /* C  */
+			[98.0, 123.47, 146.83],   /* G  */
+		];
+		/* pad: three detuned triangle voices with portamento between chords */
+		const padGain = c.createGain(); padGain.gain.value = 0.05; padGain.connect(lp);
+		const voices = chords[0].map((f, i) => {
+			const o = c.createOscillator(); o.type = "triangle";
+			o.frequency.value = f; o.detune.value = (i - 1) * 4;
+			o.connect(padGain); o.start();
+			return o;
+		});
+		/* arp: soft square plucks on chord tones, 8th notes at 72bpm */
+		let chordIx = 0, tick = 0;
+		const pattern = [0, 1, 2, 1, 0, 2, 1, 2];
+		const timer = setInterval(() => {
+			const t = c.currentTime + 0.06;
+			if (tick % 16 === 0) {
+				chordIx = (tick / 16) % chords.length;
+				voices.forEach((o, i) => {
+					o.frequency.exponentialRampToValueAtTime(chords[chordIx][i], t + 0.09);
+				});
+			}
+			const f = chords[chordIx][pattern[tick % 8]] * 2;
+			const o = c.createOscillator(); o.type = "square"; o.frequency.value = f;
+			const g = c.createGain();
+			g.gain.setValueAtTime(0.045, t);
+			g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+			o.connect(g); g.connect(lp);
+			o.start(t); o.stop(t + 0.26);
+			tick++;
+		}, 417);
+		musicLive = { out, stop() {
+			clearInterval(timer);
+			const t = c.currentTime;
+			out.gain.cancelScheduledValues(t);
+			out.gain.setValueAtTime(Math.max(out.gain.value, 0.0001), t);
+			out.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+			setTimeout(() => {
+				voices.forEach((o) => { try { o.stop(); } catch (e) {} });
+				try { lfo.stop(); } catch (e) {}
+				out.disconnect(); lp.disconnect(); dly.disconnect(); fb.disconnect(); wet.disconnect();
+			}, 700);
+		} };
+	}
+	function musicStop() {
+		if (musicLive) { musicLive.stop(); musicLive = null; }
+	}
+	window.__ktMusic = { state: () => (musicLive ? "on" : "off"), out: () => (musicLive ? musicLive.out : null) };
+	document.addEventListener("pointerdown", musicStart, true);
+
+	function musicToggle() {
+		const el = document.createElement("div");
+		el.id = "kt-music-toggle";
+		el.setAttribute("role", "button");
+		el.setAttribute("tabindex", "0");
+		const label = () => { el.textContent = musicOn ? "[ music: on ]" : "[ music: off ]"; };
+		label();
+		const flip = () => {
+			musicOn = !musicOn;
+			localStorage.setItem("kraterm-music", musicOn ? "on" : "off");
+			if (musicOn) musicStart(); else musicStop();
+			label();
+		};
+		el.addEventListener("click", flip);
+		el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
+		document.body.append(el);
+	}
+
+	/* ---- mute toggle ---- */
+	function soundToggle() {
+		const el = document.createElement("div");
+		el.id = "kt-sound-toggle";
+		el.setAttribute("role", "button");
+		el.setAttribute("tabindex", "0");
+		const label = () => { el.textContent = soundOn ? "[ snd: on ]" : "[ snd: off ]"; };
+		label();
+		const flip = () => {
+			soundOn = !soundOn;
+			localStorage.setItem("kraterm-sound", soundOn ? "on" : "off");
+			if (actx && actx.__ktBus) actx.__ktBus.gain.value = soundOn ? 1 : 0;
+			label();
+		};
+		el.addEventListener("click", flip);
+		el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
+		document.body.append(el);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", () => { runBoot(); soundToggle(); musicToggle(); });
+	} else {
+		runBoot(); soundToggle(); musicToggle();
+	}
+})();
+// oneko.js: https://github.com/adryd325/oneko.js
+
+(function oneko() {
+  const isReducedMotion =
+    window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
+    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+
+  if (isReducedMotion) return;
+
+  const nekoEl = document.createElement("div");
+  let persistPosition = true;
+
+  let nekoPosX = 32;
+  let nekoPosY = 32;
+  
+  let mousePosX = 0;
+  let mousePosY = 0;
+
+  let frameCount = 0;
+  let idleTime = 0;
+  let idleAnimation = null;
+  let idleAnimationFrame = 0;
+
+  const nekoSpeed = 10;
+  const spriteSets = {
+    idle: [[-3, -3]],
+    alert: [[-7, -3]],
+    scratchSelf: [
+      [-5, 0],
+      [-6, 0],
+      [-7, 0],
+    ],
+    scratchWallN: [
+      [0, 0],
+      [0, -1],
+    ],
+    scratchWallS: [
+      [-7, -1],
+      [-6, -2],
+    ],
+    scratchWallE: [
+      [-2, -2],
+      [-2, -3],
+    ],
+    scratchWallW: [
+      [-4, 0],
+      [-4, -1],
+    ],
+    tired: [[-3, -2]],
+    sleeping: [
+      [-2, 0],
+      [-2, -1],
+    ],
+    N: [
+      [-1, -2],
+      [-1, -3],
+    ],
+    NE: [
+      [0, -2],
+      [0, -3],
+    ],
+    E: [
+      [-3, 0],
+      [-3, -1],
+    ],
+    SE: [
+      [-5, -1],
+      [-5, -2],
+    ],
+    S: [
+      [-6, -3],
+      [-7, -2],
+    ],
+    SW: [
+      [-5, -3],
+      [-6, -1],
+    ],
+    W: [
+      [-4, -2],
+      [-4, -3],
+    ],
+    NW: [
+      [-1, 0],
+      [-1, -1],
+    ],
+  };
+
+  function init() {
+    let nekoFile = "data:image/gif;base64,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"
+    const curScript = document.currentScript
+    if (curScript && curScript.dataset.cat) {
+      nekoFile = curScript.dataset.cat
+    }
+    if (curScript && curScript.dataset.persistPosition) {
+      if (curScript.dataset.persistPosition === "") {
+        persistPosition = true;
+      } else {
+        persistPosition = JSON.parse(curScript.dataset.persistPosition.toLowerCase());
+      }
+    }
+  
+    if (persistPosition) {
+      let storedNeko = JSON.parse(window.localStorage.getItem("oneko"));
+      if (storedNeko !== null) {
+        nekoPosX = storedNeko.nekoPosX;
+        nekoPosY = storedNeko.nekoPosY;
+        mousePosX = storedNeko.mousePosX;
+        mousePosY = storedNeko.mousePosY;
+        frameCount = storedNeko.frameCount;
+        idleTime = storedNeko.idleTime;
+        idleAnimation = storedNeko.idleAnimation;
+        idleAnimationFrame = storedNeko.idleAnimationFrame;
+        nekoEl.style.backgroundPosition = storedNeko.bgPos;
+      }
+    }
+  
+    nekoEl.id = "oneko";
+    nekoEl.ariaHidden = true;
+    nekoEl.style.width = "32px";
+    nekoEl.style.height = "32px";
+    nekoEl.style.position = "fixed";
+    nekoEl.style.pointerEvents = "none";
+    nekoEl.style.imageRendering = "pixelated";
+    nekoEl.style.left = `${nekoPosX - 16}px`;
+    nekoEl.style.top = `${nekoPosY - 16}px`;
+    nekoEl.style.zIndex = 2147483647;
+
+    nekoEl.style.backgroundImage = `url(${nekoFile})`;
+    
+    document.body.appendChild(nekoEl);
+
+    document.addEventListener("mousemove", function (event) {
+      mousePosX = event.clientX;
+      mousePosY = event.clientY;
+    });
+    
+    if (persistPosition) {
+      window.addEventListener("beforeunload", function (event) {
+        window.localStorage.setItem("oneko", JSON.stringify({
+          nekoPosX: nekoPosX,
+          nekoPosY: nekoPosY,
+          mousePosX: mousePosX,
+          mousePosY: mousePosY,
+          frameCount: frameCount,
+          idleTime: idleTime,
+          idleAnimation: idleAnimation,
+          idleAnimationFrame: idleAnimationFrame,
+          bgPos: nekoEl.style.backgroundPosition
+        }));
+      });
+    }
+    
+    window.requestAnimationFrame(onAnimationFrame);
+  }
+
+  let lastFrameTimestamp;
+
+  function onAnimationFrame(timestamp) {
+    // Stops execution if the neko element is removed from DOM
+    if (!nekoEl.isConnected) {
+      return;
+    }
+    if (!lastFrameTimestamp) {
+      lastFrameTimestamp = timestamp;
+    }
+    if (timestamp - lastFrameTimestamp > 100) {
+      lastFrameTimestamp = timestamp;
+      frame();
+    }
+    window.requestAnimationFrame(onAnimationFrame);
+  }
+
+  function setSprite(name, frame) {
+    const sprite = spriteSets[name][frame % spriteSets[name].length];
+    nekoEl.style.backgroundPosition = `${sprite[0] * 32}px ${sprite[1] * 32}px`;
+  }
+
+  function resetIdleAnimation() {
+    idleAnimation = null;
+    idleAnimationFrame = 0;
+  }
+
+  function idle() {
+    idleTime += 1;
+
+    // every ~ 20 seconds
+    if (
+      idleTime > 10 &&
+      Math.floor(Math.random() * 200) == 0 &&
+      idleAnimation == null
+    ) {
+      let avalibleIdleAnimations = ["sleeping", "scratchSelf"];
+      if (nekoPosX < 32) {
+        avalibleIdleAnimations.push("scratchWallW");
+      }
+      if (nekoPosY < 32) {
+        avalibleIdleAnimations.push("scratchWallN");
+      }
+      if (nekoPosX > window.innerWidth - 32) {
+        avalibleIdleAnimations.push("scratchWallE");
+      }
+      if (nekoPosY > window.innerHeight - 32) {
+        avalibleIdleAnimations.push("scratchWallS");
+      }
+      idleAnimation =
+        avalibleIdleAnimations[
+          Math.floor(Math.random() * avalibleIdleAnimations.length)
+        ];
+    }
+
+    switch (idleAnimation) {
+      case "sleeping":
+        if (idleAnimationFrame < 8) {
+          setSprite("tired", 0);
+          break;
+        }
+        setSprite("sleeping", Math.floor(idleAnimationFrame / 4));
+        if (idleAnimationFrame > 192) {
+          resetIdleAnimation();
+        }
+        break;
+      case "scratchWallN":
+      case "scratchWallS":
+      case "scratchWallE":
+      case "scratchWallW":
+      case "scratchSelf":
+        setSprite(idleAnimation, idleAnimationFrame);
+        if (idleAnimationFrame > 9) {
+          resetIdleAnimation();
+        }
+        break;
+      default:
+        setSprite("idle", 0);
+        return;
+    }
+    idleAnimationFrame += 1;
+  }
+
+  function frame() {
+    frameCount += 1;
+    const diffX = nekoPosX - mousePosX;
+    const diffY = nekoPosY - mousePosY;
+    const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+
+    if (distance < nekoSpeed || distance < 48) {
+      idle();
+      return;
+    }
+
+    idleAnimation = null;
+    idleAnimationFrame = 0;
+
+    if (idleTime > 1) {
+      setSprite("alert", 0);
+      // count down after being alerted before moving
+      idleTime = Math.min(idleTime, 7);
+      idleTime -= 1;
+      return;
+    }
+
+    let direction;
+    direction = diffY / distance > 0.5 ? "N" : "";
+    direction += diffY / distance < -0.5 ? "S" : "";
+    direction += diffX / distance > 0.5 ? "W" : "";
+    direction += diffX / distance < -0.5 ? "E" : "";
+    setSprite(direction, frameCount);
+
+    nekoPosX -= (diffX / distance) * nekoSpeed;
+    nekoPosY -= (diffY / distance) * nekoSpeed;
+
+    nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth - 16);
+    nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight - 16);
+
+    nekoEl.style.left = `${nekoPosX - 16}px`;
+    nekoEl.style.top = `${nekoPosY - 16}px`;
+  }
+
+  init();
+})();
+
+/* --- click pixel burst: small theme-matched particle pop (local-only) --- */
+(function kraTermClickBurst() {
+	"use strict";
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+	const COLORS = ["#8fffb0", "#8fffb0", "#8fffb0", "#5adfff", "#02120a"];
+	let live = 0;
+	document.addEventListener("pointerdown", (e) => {
+		if (live > 40) return;
+		const n = 8;
+		for (let i = 0; i < n; i++) {
+			const el = document.createElement("div");
+			el.className = "kt-pixel";
+			el.style.background = COLORS[i % COLORS.length];
+			el.style.left = e.clientX - 2 + "px";
+			el.style.top = e.clientY - 2 + "px";
+			document.body.append(el);
+			live++;
+			const ang = (Math.PI * 2 * i) / n + Math.random() * 0.5;
+			const dist = 18 + Math.random() * 26;
+			const dx = Math.cos(ang) * dist;
+			const dy = Math.sin(ang) * dist - 8;
+			const anim = el.animate(
+				[
+					{ transform: "translate(0, 0)", opacity: 1 },
+					{ transform: "translate(" + dx + "px, " + (dy + 14) + "px)", opacity: 0 },
+				],
+				{ duration: 340 + Math.random() * 120, easing: "cubic-bezier(.17,.67,.4,1)" }
+			);
+			anim.onfinish = () => { el.remove(); live--; };
+		}
+	}, true);
+})();
