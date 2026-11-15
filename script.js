@@ -20,6 +20,9 @@ const commands = [
 	"ascii",
 	"cowsay",
 	"critters",
+	"blackhole",
+	"nighttide",
+	"catknight",
 ];
 
 const themes = {
@@ -390,6 +393,11 @@ const helpText = `
     <span class="keyword-text">ascii</span>        - <span class="normal-text">converts image to ascii text</span>
     <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
+    <span class="keyword-text">ascii art</span>
+    <span class="keyword-text">blackhole</span>    - <span class="normal-text">JIN2's accretion disk, drawn in letters.</span>
+    <span class="keyword-text">nighttide</span>    - <span class="normal-text">JIN2's moonlit sea and breaking waves.</span>
+    <span class="keyword-text">catknight</span>    - <span class="normal-text">JIN2's Cat Knight, 600 frames of ASCII art.</span>
+    <span class="normal-text">esc exit · space pause · r restart (tap to exit on touch)</span>
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
     <span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
@@ -571,6 +579,12 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
 			return crittersCommand(argument);
+		case "blackhole":
+		case "nighttide":
+		case "catknight":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return jin2Command(cmd);
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -798,6 +812,11 @@ let initialWidth = window.innerWidth; // Store the initial width
 
 window.addEventListener("resize", function () {
 	let currentWidth = window.innerWidth; // Get the new width
+	// Keep the art overlay open while its full-window canvas resizes.
+	if (window.KraJin2 && window.KraJin2.isOpen()) {
+		initialWidth = currentWidth;
+		return;
+	}
 
 	if (currentWidth !== initialWidth) {
 		location.reload(); // Reload only if the width has changed
@@ -1645,4 +1664,42 @@ function crittersCommand(arg) {
 		const go = () => crittersStart(CRITTER_NAMES[saved]).catch(() => {});
 		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
 	}
+})();
+
+/* JIN2 ASCII code art: loaded only by these commands or the screenshot query. */
+const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight" };
+let jin2Loading;
+function jin2Load() {
+	if (window.KraJin2) return Promise.resolve();
+	if (jin2Loading) return jin2Loading;
+	jin2Loading = new Promise((resolve, reject) => {
+		const el = document.createElement("script");
+		el.src = "jin2.js?v=1";
+		el.onload = resolve;
+		el.onerror = () => { el.remove(); jin2Loading = null; reject(new Error("load failed")); };
+		document.head.appendChild(el);
+	});
+	return jin2Loading;
+}
+function jin2Command(piece, options) {
+	const credit = `${JIN2_PIECES[piece]} — ASCII art by JIN2 (@jin_22ee), adapted under his personal-use license`;
+	// Defer even cached opens so the command's credit is printed first.
+	setTimeout(() => jin2Load().then(() => window.KraJin2.open(piece, options)).catch(() => {
+		const line = document.createElement("div");
+		line.className = "error-text";
+		line.textContent = "Could not load JIN2 ASCII art. Run the command to retry.";
+		document.getElementById("output").appendChild(line);
+	}), 0);
+	return `<span class="normal-text">${credit}</span>`;
+}
+(function jin2ReviewQuery() {
+	const query = new URLSearchParams(location.search), piece = query.get("art");
+	if (!Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece)) return;
+	const start = () => {
+		const rawTime = Number(query.get("t") || 0);
+		const line = document.createElement("div");
+		line.innerHTML = jin2Command(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true});
+		document.getElementById("output").appendChild(line);
+	};
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();
