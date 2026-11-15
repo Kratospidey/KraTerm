@@ -681,3 +681,18 @@ html, body, a, button, #input, .terminal, [contenteditable] {
 	position: fixed; width: 4px; height: 4px; z-index: 10002;
 	pointer-events: none; image-rendering: pixelated;
 }
+
+
+/* --- critters: ambient ASCII animals (see script.js, LICENSE-ascii-animals) --- */
+#critters-canvas {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 0;
+	pointer-events: none;
+	opacity: 0.4;
+	mix-blend-mode: screen;
+}
+body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; z-index: 1; }
+#critters-canvas.light { mix-blend-mode: multiply; opacity: 0.35; }

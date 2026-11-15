@@ -19,6 +19,7 @@ const commands = [
 	"research",
 	"ascii",
 	"cowsay",
+	"critters",
 ];
 
 const themes = {
@@ -373,6 +374,7 @@ const helpText = `
 <pre>
     <span class="keyword-text">echo [text]</span>  - <span class="normal-text">Prints [text] to the terminal.</span>
     <span class="keyword-text">clear</span>        - <span class="normal-text">Clears the terminal.</span>
+    <span class="keyword-text">critters</span>     - <span class="normal-text">Ambient ASCII animals behind the terminal. Try: critters koi | critters off | critters tweaks</span>
     <span class="keyword-text">history</span>      - <span class="normal-text">Shows your history of entered commands.</span>
     <span class="keyword-text">uname [name]</span> - <span class="normal-text">Sets your username to [name] for this session.</span>
     <span class="keyword-text">socials</span>      - <span class="normal-text">check out my social accounts</span>
@@ -565,6 +567,10 @@ function processCommand(command) {
 			const currentTime = Date.now();
 			const uptime = currentTime - startTime;
 			return `Uptime: ${formatUptime(uptime)}`;
+		case "critters":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return crittersCommand(argument);
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -1523,4 +1529,116 @@ function wrapMessageInSpeechBubble(message) {
 			anim.onfinish = () => { el.remove(); live--; };
 		}
 	}, true);
+})();
+
+
+/* --- critters: ambient ASCII animals behind the terminal ---
+   Animation engine from github.com/DesignerStephen1/ascii-animals (MIT, see LICENSE-ascii-animals), bundled in critters.js. Off by default, loaded on first use. */
+const CRITTER_NAMES = {
+	butterflies: "butterflies", butterfly: "butterflies",
+	koi: "koi",
+	jellyfish: "jellyfish",
+	dragonflies: "dragonflies", dragonfly: "dragonflies",
+	frogs: "frogs", frog: "frogs",
+	cranes: "cranes", crane: "cranes",
+	crabs: "crabs", crab: "crabs",
+};
+const critters = { engine: null, canvas: null, loading: null, animal: null };
+function crittersLoad() {
+	if (window.KraCritters) return Promise.resolve();
+	if (critters.loading) return critters.loading;
+	critters.loading = new Promise((resolve, reject) => {
+		const el = document.createElement("script");
+		el.src = "critters.js?v=1";
+		el.onload = resolve;
+		el.onerror = () => { critters.loading = null; reject(new Error("load failed")); };
+		document.head.appendChild(el);
+	});
+	return critters.loading;
+}
+function crittersIsLight() {
+	const m = getComputedStyle(document.body).backgroundColor.match(/\d+/g);
+	if (!m) return false;
+	return (0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2]) > 150;
+}
+function crittersApplyTheme() {
+	if (!critters.canvas) return;
+	const light = crittersIsLight();
+	critters.canvas.classList.toggle("light", light);
+	if (critters.engine) critters.engine.setTheme(light ? "light" : "dark");
+}
+new MutationObserver(crittersApplyTheme).observe(document.body, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
+function crittersStart(animal) {
+	return crittersLoad().then(() => {
+		const K = window.KraCritters;
+		if (!critters.canvas) {
+			const c = document.createElement("canvas");
+			c.id = "critters-canvas";
+			c.setAttribute("aria-hidden", "true");
+			document.body.insertBefore(c, document.body.firstChild);
+			critters.canvas = c;
+		}
+		const tuning = { grid: 0 };
+		if (critters.engine) {
+			critters.engine.setAnimal(animal, tuning);
+		} else {
+			critters.engine = new K.AnimalEngine(critters.canvas, { animal, theme: crittersIsLight() ? "light" : "dark", tuning });
+		}
+		critters.animal = animal;
+		crittersApplyTheme();
+		localStorage.setItem("kraterm-critters", animal);
+	});
+}
+function crittersStop() {
+	if (critters.engine) { critters.engine.destroy(); critters.engine = null; }
+	if (critters.canvas) { critters.canvas.remove(); critters.canvas = null; }
+	critters.animal = null;
+	localStorage.setItem("kraterm-critters", "off");
+}
+function crittersCommand(arg) {
+	const parts = arg.trim().toLowerCase().split(/\s+/).filter(Boolean);
+	const sub = parts[0];
+	const names = "butterflies, koi, jellyfish, dragonflies, frogs, cranes, crabs";
+	const usage = `<span class="normal-text">Usage: critters &lt;${names}&gt; | off | tweaks | set &lt;knob&gt; &lt;value&gt;</span>`;
+	if (!sub) {
+		return (critters.animal ? `<span class="normal-text">Critters: ${critters.animal}. </span>` : `<span class="normal-text">Critters are off. </span>`) + usage;
+	}
+	if (sub === "off") { crittersStop(); return `<span class="normal-text">Critters off.</span>`; }
+	if (CRITTER_NAMES[sub]) {
+		const name = CRITTER_NAMES[sub];
+		crittersStart(name).then(() => {
+			const out = document.getElementById("output");
+			out.innerHTML += `<div><span class="normal-text">Critters: ${name}. Type </span><span class="keyword-text">critters tweaks</span><span class="normal-text"> to adjust them.</span></div>`;
+			terminal.scrollTop = terminal.scrollHeight;
+		}).catch(() => {
+			const out = document.getElementById("output");
+			out.innerHTML += `<div><span class="error-text">Could not load critters.</span></div>`;
+		});
+		return `<span class="normal-text">Summoning ${name}...</span>`;
+	}
+	if (sub === "tweaks") {
+		if (!critters.engine) return `<span class="normal-text">Start some first, e.g. </span><span class="keyword-text">critters koi</span>`;
+		const t = critters.engine.tuning;
+		const rows = Object.keys(t).filter(k => typeof t[k] === "number" || typeof t[k] === "boolean").map(k => `<span class="keyword-text">${escapeText(k)}</span> = <span class="normal-text">${escapeText(t[k])}</span>`);
+		return rows.join("<br>") + `<br><span class="normal-text">Change one: critters set speed 1.5</span>`;
+	}
+	if (sub === "set") {
+		if (!critters.engine) return `<span class="normal-text">Start some first, e.g. </span><span class="keyword-text">critters koi</span>`;
+		const key = parts[1];
+		const t = critters.engine.tuning;
+		if (!key || !(key in t) || parts[2] === undefined) return usage;
+		let v = parts[2];
+		if (typeof t[key] === "boolean") v = v === "on" || v === "true" || v === "1";
+		else { v = parseFloat(v); if (!isFinite(v)) return usage; }
+		critters.engine.set(key, v);
+		return `<span class="normal-text">${escapeText(key)} = ${escapeText(v)}</span>`;
+	}
+	return usage;
+}
+(function crittersRestore() {
+	const saved = localStorage.getItem("kraterm-critters");
+	if (saved && saved !== "off" && CRITTER_NAMES[saved]) {
+		const go = () => crittersStart(CRITTER_NAMES[saved]).catch(() => {});
+		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
+	}
 })();
