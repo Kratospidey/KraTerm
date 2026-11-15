@@ -1,0 +1,412 @@
+{
+  "source": {
+    "url": "https://github.com/JIN2-ASCII/-JIN2-ASCII",
+    "commit": "04119e6e1eec5043cb108a8996eddc84e37d1f87"
+  },
+  "gzip": {
+    "filename": "catknight_frames.bin",
+    "mtime": 1794755388,
+    "compresslevel": 9,
+    "zlib_version": "1.3.2",
+    "numpy_version": "2.3.5",
+    "expanded_bytes": 24121704,
+    "expanded_sha256": "bf8efd2b5b8cc71eeaf0a475d09acdcdc8e4501a450e482c42748d54569c2362"
+  },
+  "files": [
+    {
+      "path": "catknight_frames.bin.gz",
+      "bytes": 5620709,
+      "sha256": "bf790b525c61ca15c7934c46b96d821015ff7a6b7bd580deaf5ee62a3acfa80c"
+    },
+    {
+      "path": "jin2/goodluck-sprites/00.png",
+      "bytes": 4888,
+      "sha256": "acee438e14effbeae5f86d78ffc83aed570d65f59ecccf0a9bcf1fd775fc53bc"
+    },
+    {
+      "path": "jin2/goodluck-sprites/01.png",
+      "bytes": 5292,
+      "sha256": "e211d416ab034e5ca6d0c426a17950d40de4fc0d94eb1509815ebfe775896170"
+    },
+    {
+      "path": "jin2/goodluck-sprites/02.png",
+      "bytes": 6448,
+      "sha256": "0915a33ebf5b952c248d9301093ef1dff93d7980a347df4cf65d3ddf068a7105"
+    },
+    {
+      "path": "jin2/goodluck-sprites/03.png",
+      "bytes": 6748,
+      "sha256": "ebde57c18b24e07719bc13d79ac1e953a35c6b531149d75b6285ffa7cf121387"
+    },
+    {
+      "path": "jin2/goodluck-sprites/04.png",
+      "bytes": 5711,
+      "sha256": "a12192770c4e5ee022429b8d81edf78ec4d89d75f49ec4abffc5f9f9e6952d65"
+    },
+    {
+      "path": "jin2/goodluck-sprites/05.png",
+      "bytes": 5057,
+      "sha256": "ca700674a5ea14e58e7539b939ba6b6394dee65f7a85622167826c6b3aa084bb"
+    },
+    {
+      "path": "jin2/goodluck-sprites/06.png",
+      "bytes": 5675,
+      "sha256": "5f20bc8f9aaf2a89586e304e99f5aad51a1eeb7a99984f11ccb24b03661a308e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/07.png",
+      "bytes": 6579,
+      "sha256": "3a8b77078117d6b64bf7ab358fdba0a644e8c58d3a85aea05a8964bf2911e884"
+    },
+    {
+      "path": "jin2/goodluck-sprites/08.png",
+      "bytes": 5380,
+      "sha256": "1faf226176888cea3d4a2c9095b3dfe82f6f6c3f587afad814644b2faf269325"
+    },
+    {
+      "path": "jin2/goodluck-sprites/09.png",
+      "bytes": 5857,
+      "sha256": "95f516783b2bcf02e976233a9c98242bc692a63b008eb05e3297ec28c7363d6a"
+    },
+    {
+      "path": "jin2/goodluck-sprites/10.png",
+      "bytes": 3468,
+      "sha256": "738ebd486bafefd461b8925d3330c80cc86c9b3cb5fce6e5bb9b6cb904e8e82b"
+    },
+    {
+      "path": "jin2/goodluck-sprites/11.png",
+      "bytes": 4196,
+      "sha256": "1642d07f9540c7cca81c251c419c79b6dcd8362aaa72485c66fe9ab0844bfacc"
+    },
+    {
+      "path": "jin2/goodluck-sprites/12.png",
+      "bytes": 4093,
+      "sha256": "fb804171d38d236fdd58ee559599e255bb3a18e458bb57f7fab81cb2e15bff89"
+    },
+    {
+      "path": "jin2/goodluck-sprites/13.png",
+      "bytes": 7528,
+      "sha256": "cfb04b4f3107db557d17ab3fe6f188de8d20e32487cb3f76024c9b1481f6f9d9"
+    },
+    {
+      "path": "jin2/goodluck-sprites/14.png",
+      "bytes": 5701,
+      "sha256": "1ba61d6194cd45c6bbe4bb4e5d98868c59b9ac07d52c0b33b1dc73904afe209e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/15.png",
+      "bytes": 6594,
+      "sha256": "403e591988e876801ab283cb17ee8c733a7548aadb42dd142bc4caaa263b5496"
+    },
+    {
+      "path": "jin2/goodluck-sprites/16.png",
+      "bytes": 3599,
+      "sha256": "1c52013f2c6f87996d12f8d43bb973e56c04cdef8d52e89fb73294cefab6f440"
+    },
+    {
+      "path": "jin2/goodluck-sprites/17.png",
+      "bytes": 5966,
+      "sha256": "3be18387086a33ea0b2de1d95d70b46af9927ebcecc90ceddef1f3378b1ebe7a"
+    },
+    {
+      "path": "jin2/goodluck-sprites/18.png",
+      "bytes": 4117,
+      "sha256": "9e440cd9a67c3e964791f8de53e18877a353166378e65f8e0d2cfcfddbedfbb2"
+    },
+    {
+      "path": "jin2/goodluck-sprites/19.png",
+      "bytes": 3885,
+      "sha256": "7e2a9658d6d8c25ff8c38f59803eed2cf4d670b40623cbec0b91cd2673ed5b34"
+    },
+    {
+      "path": "jin2/goodluck-sprites/20.png",
+      "bytes": 6999,
+      "sha256": "eddc4a8b4fe44fee344dfdba7dd0c4e98bd75b7aaee6b19fde52bb41ca9aae65"
+    },
+    {
+      "path": "jin2/goodluck-sprites/21.png",
+      "bytes": 4046,
+      "sha256": "88e42dcb5bd21d28460fe57eb3d9163cced3f378627051907c7ee36ff4b38245"
+    },
+    {
+      "path": "jin2/goodluck-sprites/22.png",
+      "bytes": 6539,
+      "sha256": "625697a7cd42dd78afde0be42d7fb45cd18a921751f3004c64b8b428ed54b7eb"
+    },
+    {
+      "path": "jin2/goodluck-sprites/23.png",
+      "bytes": 7077,
+      "sha256": "88ff103de83775022e188971fb630445a05ff433686fedb6f7bcbb1133bd859e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/24.png",
+      "bytes": 6029,
+      "sha256": "1825823eb564775365f2eb868b37c4f1f20ed56eba881b6805ccfb4be07b9ae0"
+    },
+    {
+      "path": "jin2/goodluck-sprites/25.png",
+      "bytes": 7901,
+      "sha256": "7861268fc3e7afa88e09340f5491d9276378e9beff9936d4588e4d0a8120eb0c"
+    },
+    {
+      "path": "jin2/goodluck-sprites/26.png",
+      "bytes": 5191,
+      "sha256": "7347a126f286db21c1a8eee1f6e086e2f310fcdb19fb5b952f7b0527fe611e01"
+    },
+    {
+      "path": "jin2/goodluck-sprites/27.png",
+      "bytes": 8888,
+      "sha256": "b5ca596d4008595eb6a1d6691346320ca1695e9c7970f8d76a47f83e247a3f76"
+    },
+    {
+      "path": "jin2/goodluck-sprites/28.png",
+      "bytes": 9432,
+      "sha256": "a22a7742cdc8aad016897e6440132bcd8a3cb9c99b95f0b807dfeea68ec9872a"
+    },
+    {
+      "path": "jin2/goodluck-sprites/29.png",
+      "bytes": 5825,
+      "sha256": "c647eed4651289e8079dcdfbb7988071242c8ee98654ef8e8c9e6f4aa78caeb3"
+    },
+    {
+      "path": "jin2/goodluck-sprites/30.png",
+      "bytes": 5137,
+      "sha256": "5914509bd07cd1bba6f619909d1d98c230c3bccfd59c5690f199cae95f35dfe7"
+    },
+    {
+      "path": "jin2/goodluck-sprites/31.png",
+      "bytes": 6976,
+      "sha256": "123ddea48516ca06aa6d8698308b52758ac19b0e8c7403c6b55091e518b36e89"
+    },
+    {
+      "path": "jin2/goodluck-sprites/32.png",
+      "bytes": 10531,
+      "sha256": "25a450d83f975920698298953d31c068a47c3860117160a6283606308cf33008"
+    },
+    {
+      "path": "jin2/goodluck-sprites/33.png",
+      "bytes": 3160,
+      "sha256": "8eab96c2d6f59bc247a3507e1c36df450bf001045ce7ce2a5f64c66c35925d73"
+    },
+    {
+      "path": "jin2/goodluck-sprites/34.png",
+      "bytes": 4833,
+      "sha256": "462c0cacb89490098864b3e40e70afd865aef321bfaaee05d22717474e3e6bd8"
+    },
+    {
+      "path": "jin2/goodluck-sprites/35.png",
+      "bytes": 7366,
+      "sha256": "c552595bf6b630bf0199d7f19a5080579fef2e65195aec7e7b9c07a5b4393dbb"
+    },
+    {
+      "path": "jin2/goodluck-sprites/36.png",
+      "bytes": 6063,
+      "sha256": "967155d11f9ac6224c42729914c390bd8658957b8243bf425bd6d560417dc552"
+    },
+    {
+      "path": "jin2/goodluck-sprites/37.png",
+      "bytes": 3583,
+      "sha256": "e3f14226539aebda77035ca1ae4bdb8b0f49ce27efccb8b81ee5bbbf8f661eb7"
+    },
+    {
+      "path": "jin2/goodluck-sprites/38.png",
+      "bytes": 5777,
+      "sha256": "420e1b282e9006d75732651435766b68e4761ee159618f5b355e003a8bd5a92e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/39.png",
+      "bytes": 10062,
+      "sha256": "845dbe44eb31984961f987473844d505c4668fdecd597846dbc3d52ff4ac2284"
+    },
+    {
+      "path": "jin2/goodluck-sprites/40.png",
+      "bytes": 5385,
+      "sha256": "809bf5b0e00b5d9fd5b6a5568aae7099cdc45b272379f7ab182c418bd0342411"
+    },
+    {
+      "path": "jin2/goodluck-sprites/41.png",
+      "bytes": 3844,
+      "sha256": "0fb6b8240b2cd8820873280b105c4f3f6b40e01ac6efa7c903a58db7a5ce4ac5"
+    },
+    {
+      "path": "jin2/goodluck-sprites/42.png",
+      "bytes": 4521,
+      "sha256": "b0b253ec27d192b81a8f2939cd87dfd25785a457c33af8dd7bd878c96ea60d15"
+    },
+    {
+      "path": "jin2/goodluck-sprites/43.png",
+      "bytes": 3912,
+      "sha256": "ee5f585a655b65fd4c27beaf148127d02068a6a7cf8cab2e69009df7565dc1bc"
+    },
+    {
+      "path": "jin2/goodluck-sprites/44.png",
+      "bytes": 4348,
+      "sha256": "189e5de47ffe571bd208bac4c5f50593fe6a53f4ca5641ef688f276192a41816"
+    },
+    {
+      "path": "jin2/goodluck-sprites/45.png",
+      "bytes": 3788,
+      "sha256": "f892a6f7ba995cb084b31bb1c730d8486550063b1e45a8c9b6338e281779adac"
+    },
+    {
+      "path": "jin2/goodluck-sprites/46.png",
+      "bytes": 5082,
+      "sha256": "c8797929b3dc0ed7100e000756a6803989e96107e0a34f5c1a5980576eb32f34"
+    },
+    {
+      "path": "jin2/goodluck-sprites/47.png",
+      "bytes": 4500,
+      "sha256": "a3ca8454d3a2b5b9141adc1f89e18c51d62f2dec6ab876234e6010bd27a751a2"
+    },
+    {
+      "path": "jin2/goodluck-sprites/48.png",
+      "bytes": 1775,
+      "sha256": "51443f4c8768587aab681ebb2a61dca9551ed8f4471354c4e7b391b060bc0850"
+    },
+    {
+      "path": "jin2/goodluck-sprites/49.png",
+      "bytes": 3791,
+      "sha256": "49a12aa42a87563db224e93de33ae870b67cb9300f70ed5b74f74f090d362b47"
+    },
+    {
+      "path": "jin2/goodluck-sprites/50.png",
+      "bytes": 4589,
+      "sha256": "5f6e058e952e128304bde9a0fb55ad15097b76cf37ad870123bbbc47dbf46047"
+    },
+    {
+      "path": "jin2/goodluck-sprites/51.png",
+      "bytes": 4629,
+      "sha256": "20c7094a8eba91e69be7c9ff263e62e47aa54ad92f2c84da3f6d2602199b54d8"
+    },
+    {
+      "path": "jin2/goodluck-sprites/52.png",
+      "bytes": 5929,
+      "sha256": "565e38f62aa037f81465b79add2f5ee49ddb49464a58d5bb39fa3595f178e111"
+    },
+    {
+      "path": "jin2/goodluck-sprites/53.png",
+      "bytes": 3513,
+      "sha256": "fe7b525041d408bae9fb16bf1651cb515da710f0bf203bd88d866c3cdbee5e0e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/54.png",
+      "bytes": 3333,
+      "sha256": "d081575f034388d1ac83c4b86354d76c93aab94c7136110073a897e8c157db62"
+    },
+    {
+      "path": "jin2/goodluck-sprites/55.png",
+      "bytes": 3986,
+      "sha256": "585af4fc13970a9a78e3dd435b3aae1ba97d43c28be0a01517c806f87e619ce0"
+    },
+    {
+      "path": "jin2/goodluck-sprites/56.png",
+      "bytes": 3958,
+      "sha256": "b1f6761a4e15ef8769d2bb870e72df6d14cd33cb2c77b3250ce134b7b5d3e30b"
+    },
+    {
+      "path": "jin2/goodluck-sprites/57.png",
+      "bytes": 4046,
+      "sha256": "62eabfa305efaecda3d0b3f7d6e3c4e54a5ba7e86c48d6b29cbb114a549eda07"
+    },
+    {
+      "path": "jin2/goodluck-sprites/58.png",
+      "bytes": 4506,
+      "sha256": "d39d5fedd54fb579e19ccdc6c266c0faa258644f55958be910197aaa9ca96c33"
+    },
+    {
+      "path": "jin2/goodluck-sprites/59.png",
+      "bytes": 4809,
+      "sha256": "7c403c1a12a3e77b2018f5fe7a36148ff07e51692ebfa547edf3a09c0c7e6fbe"
+    },
+    {
+      "path": "jin2/goodluck-sprites/60.png",
+      "bytes": 6018,
+      "sha256": "d186d87bd27632c9869d5a727fb349979be0e33eb1c7df34bbe324c7a9288c12"
+    },
+    {
+      "path": "jin2/goodluck-sprites/61.png",
+      "bytes": 6047,
+      "sha256": "6abd9ed4188d79fcc4f5e6fd905566b76e1cb8b2fddf4eecc80af58cb0449261"
+    },
+    {
+      "path": "jin2/goodluck-sprites/62.png",
+      "bytes": 10939,
+      "sha256": "6e2e55cb0470dbe971ac5ad8b70d5bde9a56982f7f969d29b1a1062b11a101ca"
+    },
+    {
+      "path": "jin2/goodluck-sprites/63.png",
+      "bytes": 9794,
+      "sha256": "fdb921c611a9fb08111419f398aff345ca78c3ee8c7e5dc037c305d3a605b860"
+    },
+    {
+      "path": "jin2/goodluck-sprites/64.png",
+      "bytes": 12615,
+      "sha256": "48d02f20327a0f2c7345708db696acdd0db02b46c1f4267abb852cac0497061d"
+    },
+    {
+      "path": "jin2/goodluck-sprites/65.png",
+      "bytes": 10830,
+      "sha256": "296338eabc704d12dc772ae6aa974290fc83a89683a026edf0163231ba0e501c"
+    },
+    {
+      "path": "jin2/goodluck-sprites/66.png",
+      "bytes": 5287,
+      "sha256": "a0b9a3e0677219fab47d954307e0b1d8e60a93d4f7dbf94dacc17deb081d5c7f"
+    },
+    {
+      "path": "jin2/goodluck-sprites/67.png",
+      "bytes": 4986,
+      "sha256": "a8cb61db09de4912e9fe88ae99992fd9fabd5423b65038437e09fae9c48ef85b"
+    },
+    {
+      "path": "jin2/goodluck-sprites/68.png",
+      "bytes": 9359,
+      "sha256": "35e3c8f2b80404f8a999e909f189e33e0e157e3680018edb2c7f9131a6da1d60"
+    },
+    {
+      "path": "jin2/goodluck-sprites/69.png",
+      "bytes": 5685,
+      "sha256": "0004a10a9358824a5e0d38e02f9802148e9349548b7fea859ce1ab967865160e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/70.png",
+      "bytes": 9396,
+      "sha256": "1ebea416dad2408ba6839192f19823ff618b0cf7b8d9474a997b99c7dc30fd4c"
+    },
+    {
+      "path": "jin2/goodluck-sprites/71.png",
+      "bytes": 5345,
+      "sha256": "5ae7f14113b143516aa9a9543070e0f6f69c23dda04a5d95fe7b7fb6f3f9df29"
+    },
+    {
+      "path": "jin2/goodluck-sprites/72.png",
+      "bytes": 3633,
+      "sha256": "c75a666ce832d0e5a4c67a5cbe23f7a94302396d136a818ecfbee2b7ab17218e"
+    },
+    {
+      "path": "jin2/goodluck-sprites/73.png",
+      "bytes": 6631,
+      "sha256": "b2b9c1ea9bd45c50895689d9e68f0b34551f73d9bf98cd59867612e303554a6d"
+    },
+    {
+      "path": "jin2/goodluck-sprites/74.png",
+      "bytes": 4942,
+      "sha256": "7419845f52f3ec473f73ca5d8991af0e66a26ca560df731af04bc8ee983405e6"
+    },
+    {
+      "path": "jin2/goodluck-sprites/75.png",
+      "bytes": 5846,
+      "sha256": "1b71bc60c92d3648a68d3d2b24a044c213f4af588dbd3561b7fe7012ee500bd4"
+    },
+    {
+      "path": "jin2/goodluck-sprites/76.png",
+      "bytes": 6365,
+      "sha256": "45b83e5eace33e809272d70ed72216b8fb575621a31cae62a1cf24925590ab52"
+    },
+    {
+      "path": "jin2/goodluck-sprites/phrases.json",
+      "bytes": 3091,
+      "sha256": "8c56681109188bcf5c4080e6a63af485f36a354ddc0f9ed86eee05a09a726558"
+    }
+  ]
+}

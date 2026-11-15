@@ -1,8 +1,9 @@
-/* Black Hole, Night Tide and Cat Knight: adaptations of JIN2's Python ASCII
+/* Seven pieces adapted from JIN2's Python ASCII
  * code art, @jin_22ee (2026). Personal, noncommercial use with credit only.
  * Original artwork/algorithms belong to JIN2; see LICENSE-jin2-ascii.
  * Source: https://github.com/JIN2-ASCII/-JIN2-ASCII
- * Cat Knight's underlying photo belongs to its creator. No source images used.
+ * Cat Knight's underlying photo belongs to its creator.
+ * Good Luck uses the artist's shipped phrase PNG runtime data.
  */
 (() => {
     'use strict';
@@ -19,7 +20,18 @@
     const BH_COLORS = [[190,38,12],[242,78,20],[255,124,34],[255,172,78],[255,222,168],[220,228,255],[130,72,48]];
     const NT_COLORS = [[20,34,64],[28,50,92],[40,72,122],[62,100,152],[98,136,182],[146,176,210],[196,206,218],[236,238,240],[222,230,240],[86,84,98],[170,180,205]];
     const moduleURL = new URL(document.currentScript.src);
-    let catDataPromise, active;
+    let catDataPromise, scenesPromise, active;
+    const EXTRA_PIECES = ['rose', 'snowman', 'goodluck', 'birthday'];
+    function loadScene(piece) {
+        if (!scenesPromise) scenesPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = new URL('jin2-scenes.js?v=1', moduleURL);
+            script.onload = resolve;
+            script.onerror = () => { script.remove(); scenesPromise = null; reject(new Error('Could not load JIN2 scenes. Run the command to retry.')); };
+            document.head.appendChild(script);
+        });
+        return scenesPromise.then(() => window.KraJin2Scenes.create(piece, {AT, FILL, clip, smooth, mod, random, TAU}, moduleURL));
+    }
 
     function random(seed) {
         return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
@@ -307,114 +319,104 @@
         });
     }
 
-    async function open(piece, options = {}) {
-        if (!['blackhole','nighttide','catknight'].includes(piece)) throw new Error('Unknown JIN2 piece.');
-        if (active) active.close();
+    async function start(piece, options = {}) {
+        if (!['blackhole', 'nighttide', 'catknight', ...EXTRA_PIECES].includes(piece)) throw new Error('Unknown JIN2 background.');
+        if (active) active.stop();
         const reduced = matchMedia('(prefers-reduced-motion: reduce)');
         const canvas = document.createElement('canvas');
-        canvas.id = 'jin2-canvas'; canvas.tabIndex = 0;
-        canvas.setAttribute('role', 'dialog'); canvas.setAttribute('aria-modal', 'true');
-        canvas.setAttribute('aria-label', `${piece} — ASCII art by JIN2. Escape or q exits, space pauses, r restarts. Tap to exit.`);
-        canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100dvh;background:#000;z-index:2147483647;outline:none;touch-action:none;';
-        const previousFocus = document.activeElement, selection = getSelection();
-        const ranges = Array.from({length: selection.rangeCount}, (_, i) => selection.getRangeAt(i).cloneRange());
-        const scrolls = [document.scrollingElement, document.querySelector('.terminal')].filter(Boolean).map(el => [el, el.scrollLeft, el.scrollTop]);
-        document.body.appendChild(canvas); canvas.focus({preventScroll: true});
+        canvas.id = 'jin2-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        canvas.dataset.piece = piece;
+        const credit = document.createElement('div');
+        credit.id = 'jin2-credit';
+        document.body.prepend(canvas);
+        document.body.appendChild(credit);
+        document.body.classList.add('has-jin2');
         const ctx = canvas.getContext('2d'), art = surface(W, H), artCtx = art.getContext('2d');
-        const glows = [[4,5,0.75],[8,22,0.45]].map(([k, radius, alpha]) => {
+        const glows = [[4, 5, 0.75], [8, 22, 0.45]].map(([k, radius, alpha]) => {
             const layer = surface(Math.floor(W / k), Math.floor(H / k));
             return {layer, context: layer.getContext('2d'), radius: radius / k, alpha};
         });
-        let cat, g, atlas, pixels, image, colors, cw, ch, fade;
-        let closed = false, raf = 0, last = 0, nextFrame = 0, ready = false, errorText = '';
-        let t = Number.isFinite(options.time) ? mod(options.time, LOOP) : reduced.matches ? 13 : 0;
-        let paused = !!options.paused;
-        let info = {count: 0, hud: 'loading letters…'};
+        let cat, scene, g, atlas, pixels, image, colors, cw, ch, fade, duration = LOOP;
+        let stopped = false, raf = 0, timer = 0, last = 0, nextFrame = 0, ready = false, dirty = true;
+        let t = Number.isFinite(options.time) ? options.time : reduced.matches ? 13 : 0;
+        const paused = !!options.paused;
+        const stats = {frames: 0, frameCostMs: 0, averageCostMs: 0, intervalMs: 1000 / 30};
+        let info = {count: 0, hud: ''};
 
-        function close() {
-            if (closed) return;
-            closed = true; cancelAnimationFrame(raf);
-            window.removeEventListener('keydown', key, true);
-            window.removeEventListener('resize', resize, true);
+        function cancel() {
+            cancelAnimationFrame(raf); clearTimeout(timer); raf = timer = 0;
+        }
+        function stop() {
+            if (stopped) return;
+            stopped = true; cancel();
+            window.removeEventListener('resize', resize);
             document.removeEventListener('visibilitychange', visibility);
             reduced.removeEventListener('change', motionChange);
-            canvas.remove(); if (active?.close === close) active = null;
-            const focus = previousFocus?.isConnected && previousFocus !== document.body ? previousFocus : document.getElementById('input');
-            focus?.focus({preventScroll: true});
-            if (ranges.length) { selection.removeAllRanges(); ranges.forEach(range => selection.addRange(range)); }
-            scrolls.forEach(([el, x, y]) => { el.scrollLeft = x; el.scrollTop = y; });
+            canvas.remove(); credit.remove();
+            if (active?.stop === stop) { active = null; document.body.classList.remove('has-jin2'); }
         }
-        active = {close};
-        function key(e) {
-            e.preventDefault(); e.stopImmediatePropagation();
-            if (e.repeat) return;
-            if (e.key === 'Escape' || e.key.toLowerCase() === 'q') close();
-            else if (e.key === ' ' && !reduced.matches) { paused = !paused; cancelAnimationFrame(raf); raf = 0; resetClock(); schedule(); }
-            else if (e.key.toLowerCase() === 'r' && ready) { t = 0; pixels.fill(0); drawFrame(); resetClock(); schedule(); }
+        function getState() {
+            return {...stats, piece, time: t, ready, paused, reducedMotion: reduced.matches,
+                running: ready && !stopped && !paused && !reduced.matches && !document.hidden,
+                letters: info.count, hud: info.hud, rows: g?.rows, cols: g?.cols};
         }
-        window.addEventListener('keydown', key, true);
-        canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); });
-        canvas.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); }, {passive: false});
-        function resize(e) {
-            // The terminal's existing width-change reload must not interrupt an overlay.
-            e?.stopImmediatePropagation();
+        function seek(time) {
+            if (!Number.isFinite(time)) return;
+            t = mod(time, duration); pixels?.fill(0); dirty = true;
+            if (ready && !document.hidden) drawFrame();
+            resetClock();
+        }
+        active = {stop, getState, seek};
+
+        function updateCredit() {
+            credit.textContent = '@jin_22ee · 2026' + (piece === 'catknight' ? ' · photo belongs to its creator' : '')
+                + (reduced.matches ? ' (still frame — reduced motion)' : '');
+        }
+        function present() {
+            if (stopped || document.hidden) return;
+            const width = innerWidth, height = innerHeight;
+            ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height);
+            const scale = Math.min(width / W, height / H), dw = W * scale, dh = H * scale;
+            const dx = (width - dw) / 2, dy = (height - dh) / 2;
+            ctx.drawImage(art, dx, dy, dw, dh);
+            ctx.globalCompositeOperation = 'lighter';
+            for (const {layer, context, radius, alpha} of glows) {
+                context.clearRect(0, 0, layer.width, layer.height);
+                context.filter = `blur(${radius}px)`;
+                context.drawImage(art, 0, 0, layer.width, layer.height);
+                ctx.globalAlpha = alpha; ctx.drawImage(layer, dx, dy, dw, dh);
+            }
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+        }
+        function resize() {
             const dpr = Math.min(devicePixelRatio || 1, 2);
             canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr);
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0); present();
-        }
-        window.addEventListener('resize', resize, true);
-        function motionChange() {
-            cancelAnimationFrame(raf); raf = 0;
-            if (reduced.matches && ready) { t = 13; pixels.fill(0); drawFrame(); }
-            resetClock(); schedule();
-        }
-        reduced.addEventListener('change', motionChange);
-        function present() {
-            const width = innerWidth, height = innerHeight;
-            ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.filter = 'none';
-            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height);
-            const scale = Math.min(width / W, height / H), dw = W * scale, dh = H * scale, dx = (width - dw) / 2, dy = (height - dh) / 2;
-            ctx.drawImage(art, dx, dy, dw, dh);
-            if (ready) {
-                ctx.globalCompositeOperation = 'lighter';
-                for (const {layer, context, radius, alpha} of glows) {
-                    // Like pygame: blur at 1/4 and 1/8 size, then scale up.
-                    context.clearRect(0, 0, layer.width, layer.height);
-                    context.filter = `blur(${radius}px)`;
-                    context.drawImage(art, 0, 0, layer.width, layer.height);
-                    ctx.globalAlpha = alpha;
-                    ctx.drawImage(layer, dx, dy, dw, dh);
-                }
-                ctx.filter = 'none'; ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-            }
-            const pad = Math.min(32, width * 0.04), font = width < 500 ? 11 : 13;
-            ctx.font = `${font}px Consolas, Menlo, monospace`; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
-            // Solid backing keeps the HUD legible over bright foam and grass.
-            ctx.fillStyle = '#000c'; ctx.fillRect(0, height - 112, width, 112);
-            ctx.fillStyle = '#787080';
-            const photoCredit = '· photo belongs to its creator';
-            ctx.fillText(`@jin_22ee · 2026${piece === 'catknight' && width >= 540 ? ' ' + photoCredit : ''}`, pad, height - 103);
-            if (piece === 'catknight' && width < 540) ctx.fillText(photoCredit, pad, height - 87);
-            ctx.fillStyle = '#6e6878'; ctx.fillText(errorText || info.hud, pad, height - 66, width - 2 * pad);
-            ctx.fillText(`letters ${info.count.toLocaleString('en-US', {minimumIntegerDigits: 5})}`, pad, height - 48);
-            if (reduced.matches) ctx.fillText('(still frame — reduced motion)', pad, height - 30);
-            ctx.fillStyle = '#57505f'; ctx.fillText('esc exit · space pause · r restart', pad, height - 14);
-            ctx.fillStyle = '#ff7ab6'; ctx.textAlign = 'right';
-            ctx.fillText(`${Math.floor(t * 2) % 2 === 0 ? '●' : ' '} t ${t.toFixed(2).padStart(5, '0')}s${paused && !reduced.matches ? ' · paused' : ''}`, width - pad, 24);
-            canvas.dataset.time = t.toFixed(4); canvas.dataset.paused = String(paused || reduced.matches);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            if (ready && !document.hidden) present();
         }
         function drawFrame() {
-            if (!ready || closed) return;
+            if (!ready || stopped || document.hidden) return;
+            const began = performance.now();
             if (cat) {
-                const f = Math.min(Math.floor(t * cat.fps), cat.frames - 1), size = g.cols * g.rows;
-                const start = f * size * 3;
-                g.char = cat.data.subarray(start, start + size); g.tag = cat.data.subarray(start + size * 2, start + size * 3);
+                const f = Math.min(Math.floor(t * cat.fps), cat.frames - 1), size = g.cols * g.rows, offset = f * size * 3;
+                g.char = cat.data.subarray(offset, offset + size);
+                g.tag = cat.data.subarray(offset + size * 2, offset + size * 3);
                 let count = 0;
-                for (let i = 0; i < size; i++) { g.lum[i] = cat.data[start + size + i] / 255; if (g.char[i] !== AT[' ']) count++; }
+                for (let i = 0; i < size; i++) { g.lum[i] = cat.data[offset + size + i] / 255; if (g.char[i] !== AT[' ']) count++; }
                 info = {count, hud: `zoom ${cat.zoom[f].toFixed(2)}   wind ${cat.wind[f].toFixed(2)}`};
-            } else info = piece === 'blackhole' ? blackhole(g, t) : nighttide(g, t);
-            for (let cell = 0; cell < g.char.length; cell++) {
-                const glyph = atlas[g.char[cell]], color = colors[g.tag[cell]], lum = piece === 'blackhole' ? g.lum[cell] : clip(g.lum[cell]);
+            } else info = scene ? scene.frame(g, t) : piece === 'blackhole' ? blackhole(g, t) : nighttide(g, t);
+            if (scene?.pixels) {
+                for (let i = 0; i < pixels.length; i += 4) {
+                    pixels[i] = Math.max(pixels[i] * fade, scene.pixels[i]);
+                    pixels[i + 1] = Math.max(pixels[i + 1] * fade, scene.pixels[i + 1]);
+                    pixels[i + 2] = Math.max(pixels[i + 2] * fade, scene.pixels[i + 2]);
+                    pixels[i + 3] = 255;
+                }
+            } else for (let cell = 0; cell < g.char.length; cell++) {
+                const glyph = atlas[g.char[cell]], color = colors[g.tag[cell]];
+                const lum = piece === 'blackhole' ? g.lum[cell] : clip(g.lum[cell]);
                 const red = clip(color[0] * lum, 0, 255) / 255, green = clip(color[1] * lum, 0, 255) / 255, blue = clip(color[2] * lum, 0, 255) / 255;
                 const x = cell % g.cols * cw, y = Math.floor(cell / g.cols) * ch;
                 for (let gy = 0; gy < ch; gy++) {
@@ -428,45 +430,73 @@
                     }
                 }
             }
-            artCtx.putImageData(image, 0, 0); present();
+            artCtx.putImageData(image, 0, 0); present(); dirty = false;
+            stats.frameCostMs = performance.now() - began;
+            stats.averageCostMs = stats.frames ? stats.averageCostMs * 0.8 + stats.frameCostMs * 0.2 : stats.frameCostMs;
+            stats.frames++;
+            // Ambient duty: at most 30fps, and about 20% synchronous CPU time.
+            // Heavy pieces stay available, with more time for typing and critters.
+            stats.intervalMs = Math.max(1000 / 30, stats.averageCostMs * 5);
+            canvas.dataset.time = t.toFixed(4); canvas.dataset.frames = String(stats.frames);
+            canvas.dataset.paused = String(paused || reduced.matches);
+            canvas.dataset.ready = 'true';
         }
+        function canAnimate() { return ready && !stopped && !paused && !reduced.matches && !document.hidden; }
         function schedule() {
-            if (!closed && ready && !raf) {
-                if (!paused && !reduced.matches && !document.hidden) raf = requestAnimationFrame(tick);
-                else present();
-            }
+            if (!canAnimate() || timer || raf) return;
+            timer = setTimeout(() => {
+                timer = 0;
+                if (canAnimate()) raf = requestAnimationFrame(tick);
+            }, Math.max(0, nextFrame - performance.now()));
         }
         function tick(now) {
             raf = 0;
-            if (closed || paused || reduced.matches) return;
-            if (now >= nextFrame - 0.5) {
-                t += Math.min((now - last) / 1000, 1 / 15); last = now;
-                // Preserve the cadence when rAF arrives a little late.
-                nextFrame = Math.max(nextFrame + 1000 / 30, now);
-                if (t >= LOOP) { t = mod(t, LOOP); if (piece !== 'nighttide') pixels.fill(0); }
-                drawFrame();
-            }
-            schedule();
+            if (!canAnimate()) return;
+            t += Math.max(0, now - last) / 1000; last = now;
+            if (t >= duration) { t = mod(t, duration); if (piece !== 'nighttide' && piece !== 'goodluck') pixels.fill(0); }
+            drawFrame(); nextFrame = now + stats.intervalMs; schedule();
         }
-        function resetClock() { last = performance.now(); nextFrame = last + 1000 / 30; }
-        function visibility() { resetClock(); schedule(); }
+        function resetClock() { last = performance.now(); nextFrame = last + stats.intervalMs; }
+        function visibility() {
+            cancel();
+            if (document.hidden) return;
+            if (dirty && ready) drawFrame();
+            resetClock(); schedule();
+        }
+        function motionChange() {
+            cancel(); updateCredit();
+            if (reduced.matches) { t = 13; pixels?.fill(0); dirty = true; }
+            if (ready && dirty && !document.hidden) drawFrame();
+            resetClock(); schedule();
+        }
+        window.addEventListener('resize', resize);
         document.addEventListener('visibilitychange', visibility);
-        canvas.addEventListener('blur', () => { if (!closed) canvas.focus({preventScroll: true}); });
-        resize();
+        reduced.addEventListener('change', motionChange);
+        updateCredit(); resize();
         try {
             if (piece === 'catknight') cat = await loadCat();
-            if (closed) return;
-            cw = piece === 'nighttide' ? 6 : 7; ch = piece === 'nighttide' ? 9 : 11;
+            if (EXTRA_PIECES.includes(piece)) scene = await loadScene(piece);
+            if (stopped) return;
+            duration = scene?.loop || LOOP;
+            t = Number.isFinite(options.time) ? mod(options.time, duration) : reduced.matches ? 13 : 0;
+            cw = scene?.cw || (piece === 'nighttide' ? 6 : 7); ch = scene?.ch || (piece === 'nighttide' ? 9 : 11);
             g = grid(Math.floor(W / cw), Math.floor(H / ch), cw, ch, piece === 'blackhole' ? 7 : 9);
             if (piece === 'nighttide') prepareTide(g);
-            colors = cat ? cat.colors : piece === 'blackhole' ? BH_COLORS : NT_COLORS;
-            fade = piece === 'nighttide' ? 0.5 : 0.4;
-            atlas = glyphAtlas(cw, ch, piece === 'nighttide' ? 10 : 12);
+            colors = scene ? scene.colors : cat ? cat.colors : piece === 'blackhole' ? BH_COLORS : NT_COLORS;
+            fade = scene ? scene.fade : piece === 'nighttide' ? 0.5 : 0.4;
+            atlas = scene?.pixels ? null : glyphAtlas(cw, ch, scene?.font || (piece === 'nighttide' ? 10 : 12));
             image = artCtx.createImageData(W, H); pixels = image.data; ready = true;
-            canvas.dataset.ready = 'true'; drawFrame(); resetClock(); schedule();
+            if (!document.hidden) drawFrame();
+            resetClock(); schedule();
         } catch (error) {
-            if (!closed) { errorText = `${error.message} Press esc to exit.`; canvas.dataset.error = error.message; present(); }
+            stop(); throw error;
         }
     }
-    window.KraJin2 = {open, close: () => active?.close(), isOpen: () => !!active};
+    window.KraJin2 = {
+        start,
+        stop: () => active?.stop(),
+        getState: () => active?.getState() || null,
+        // Screenshot/measurement aid; never binds terminal keys or pointer events.
+        seek: time => active?.seek(time),
+    };
 })();

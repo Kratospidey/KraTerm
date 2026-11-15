@@ -20,9 +20,7 @@ const commands = [
 	"ascii",
 	"cowsay",
 	"critters",
-	"blackhole",
-	"nighttide",
-	"catknight",
+	"background",
 ];
 
 const themes = {
@@ -394,10 +392,7 @@ const helpText = `
     <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
     <span class="keyword-text">ascii art</span>
-    <span class="keyword-text">blackhole</span>    - <span class="normal-text">JIN2's accretion disk, drawn in letters.</span>
-    <span class="keyword-text">nighttide</span>    - <span class="normal-text">JIN2's moonlit sea and breaking waves.</span>
-    <span class="keyword-text">catknight</span>    - <span class="normal-text">JIN2's Cat Knight, 600 frames of ASCII art.</span>
-    <span class="normal-text">esc exit · space pause · r restart (tap to exit on touch)</span>
+    <span class="keyword-text">background</span>   - <span class="normal-text">Choose saved ambient JIN2 art. Type background to list choices, or background off.</span>
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
     <span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
@@ -579,12 +574,14 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
 			return crittersCommand(argument);
-		case "blackhole":
-		case "nighttide":
-		case "catknight":
+		case "background":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
-			return jin2Command(cmd);
+			return backgroundCommand(argument);
+		case "birthday":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return backgroundCommand("birthday");
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -812,11 +809,6 @@ let initialWidth = window.innerWidth; // Store the initial width
 
 window.addEventListener("resize", function () {
 	let currentWidth = window.innerWidth; // Get the new width
-	// Keep the art overlay open while its full-window canvas resizes.
-	if (window.KraJin2 && window.KraJin2.isOpen()) {
-		initialWidth = currentWidth;
-		return;
-	}
 
 	if (currentWidth !== initialWidth) {
 		location.reload(); // Reload only if the width has changed
@@ -1666,40 +1658,71 @@ function crittersCommand(arg) {
 	}
 })();
 
-/* JIN2 ASCII code art: loaded only by these commands or the screenshot query. */
-const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight" };
-let jin2Loading;
+/* JIN2 ambient backgrounds. Night Tide is the first-visit default. */
+const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight", rose: "rose", snowman: "don't melt", goodluck: "good luck", birthday: "birthday cake" };
+const BACKGROUND_CHOICES = ["blackhole", "nighttide", "catknight", "rose", "snowman", "goodluck", "off"];
+const jin2Background = { choice: "off", status: "off", sequence: 0, loading: null };
 function jin2Load() {
 	if (window.KraJin2) return Promise.resolve();
-	if (jin2Loading) return jin2Loading;
-	jin2Loading = new Promise((resolve, reject) => {
+	if (jin2Background.loading) return jin2Background.loading;
+	jin2Background.loading = new Promise((resolve, reject) => {
 		const el = document.createElement("script");
-		el.src = "jin2.js?v=1";
+		el.src = "jin2.js?v=background1";
 		el.onload = resolve;
-		el.onerror = () => { el.remove(); jin2Loading = null; reject(new Error("load failed")); };
+		el.onerror = () => { el.remove(); jin2Background.loading = null; reject(new Error("load failed")); };
 		document.head.appendChild(el);
 	});
-	return jin2Loading;
+	return jin2Background.loading;
 }
-function jin2Command(piece, options) {
-	const credit = `${JIN2_PIECES[piece]} — ASCII art by JIN2 (@jin_22ee), adapted under his personal-use license`;
-	// Defer even cached opens so the command's credit is printed first.
-	setTimeout(() => jin2Load().then(() => window.KraJin2.open(piece, options)).catch(() => {
+async function backgroundSelect(piece, options = {}) {
+	const sequence = ++jin2Background.sequence;
+	jin2Background.choice = piece;
+	jin2Background.status = piece === "off" ? "off" : "loading";
+	if (options.persist !== false) {
+		try { localStorage.setItem("kraterm-background", piece); } catch (_) { /* Keep the session choice if storage is unavailable. */ }
+	}
+	if (window.KraJin2) window.KraJin2.stop();
+	if (piece === "off") return;
+	try {
+		// The command's credit is printed before even a cached player starts.
+		await Promise.resolve();
+		await jin2Load();
+		if (sequence !== jin2Background.sequence) return;
+		await window.KraJin2.start(piece, options);
+		if (sequence === jin2Background.sequence) jin2Background.status = "ready";
+	} catch (_) {
+		if (sequence !== jin2Background.sequence) return;
+		jin2Background.status = "error";
 		const line = document.createElement("div");
 		line.className = "error-text";
-		line.textContent = "Could not load JIN2 ASCII art. Run the command to retry.";
+		line.textContent = "Could not load JIN2 background. Run background <piece> to retry.";
 		document.getElementById("output").appendChild(line);
-	}), 0);
-	return `<span class="normal-text">${credit}</span>`;
+	}
 }
-(function jin2ReviewQuery() {
-	const query = new URLSearchParams(location.search), piece = query.get("art");
-	if (!Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece)) return;
-	const start = () => {
-		const rawTime = Number(query.get("t") || 0);
-		const line = document.createElement("div");
-		line.innerHTML = jin2Command(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true});
-		document.getElementById("output").appendChild(line);
+function backgroundCommand(argument) {
+	const piece = argument.trim().toLowerCase();
+	const title = Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece) ? JIN2_PIECES[piece] : "background";
+	const credit = `${title} — ASCII art by JIN2 (@jin_22ee), adapted under his personal-use license`;
+	const usage = `Choices: ${BACKGROUND_CHOICES.join(", ")}. Usage: background &lt;piece&gt; | background off`;
+	if (!piece) return `<span class="normal-text">${credit}<br>Background: ${jin2Background.choice} (${jin2Background.status}). ${usage}</span>`;
+	if (piece !== "off" && !Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece)) {
+		return `<span class="normal-text">${credit}<br>${usage}</span>`;
+	}
+	backgroundSelect(piece);
+	return `<span class="normal-text">${credit}<br>${piece === "off" ? "JIN2 background off." : `Background: ${piece}.`}</span>`;
+}
+(function backgroundRestore() {
+	const go = () => {
+		const query = new URLSearchParams(location.search), review = query.get("art");
+		if (Object.prototype.hasOwnProperty.call(JIN2_PIECES, review)) {
+			const rawTime = Number(query.get("t") || 0);
+			backgroundSelect(review, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true, persist: false});
+			return;
+		}
+		let saved = null;
+		try { saved = localStorage.getItem("kraterm-background"); } catch (_) { /* Use the first-visit default. */ }
+		const piece = saved === "off" || Object.prototype.hasOwnProperty.call(JIN2_PIECES, saved) ? saved : "nighttide";
+		backgroundSelect(piece, {persist: false});
 	};
-	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
 })();
