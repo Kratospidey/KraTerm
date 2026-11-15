@@ -708,10 +708,16 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 	opacity: 0.32;
 }
 body.has-jin2 #critters-canvas { z-index: 1; }
+body.has-jin2 {
+	display: flex;
+	flex-direction: column;
+}
 body.has-jin2 .terminal {
 	position: relative;
 	z-index: 2;
-	padding-bottom: 48px;
+	flex: 1 1 0%;
+	min-height: 0;
+	height: auto;
 	background-color: color-mix(in srgb, var(--background-color) 55%, transparent);
 }
 body.has-jin2 #output > div, body.has-jin2 #output pre {
@@ -726,11 +732,15 @@ body.has-jin2 .autocomplete-suggestions {
 	-webkit-box-decoration-break: clone;
 }
 #jin2-credit {
-	position: fixed;
-	left: 12px;
-	bottom: 8px;
+	/* A footer outside the terminal's scrollport reserves every wrapped line. */
+	position: relative;
+	order: 1;
+	flex: 0 0 auto;
+	align-self: flex-start;
+	margin: 8px 12px;
 	z-index: 3;
 	max-width: calc(100vw - 24px);
+	overflow-wrap: anywhere;
 	font: 10px/1.5 "Courier New", monospace;
 	color: var(--norm);
 	background: var(--background-color);
@@ -738,5 +748,5 @@ body.has-jin2 .autocomplete-suggestions {
 	pointer-events: none;
 }
 @media (max-width: 480px) {
-	#jin2-credit { bottom: 52px; }
+	body.has-jin2 #kt-sound-toggle, body.has-jin2 #kt-music-toggle { order: 2; }
 }
