@@ -1533,7 +1533,7 @@ function wrapMessageInSpeechBubble(message) {
 
 
 /* --- critters: ambient ASCII animals behind the terminal ---
-   Animation engine from github.com/DesignerStephen1/ascii-animals (MIT, see LICENSE-ascii-animals), bundled in critters.js. Off by default, loaded on first use. */
+   Animation engine from github.com/DesignerStephen1/ascii-animals (MIT, see LICENSE-ascii-animals), bundled in critters.js. Butterflies by default, loaded on demand. */
 const CRITTER_NAMES = {
 	butterflies: "butterflies", butterfly: "butterflies",
 	koi: "koi",
@@ -1636,7 +1636,11 @@ function crittersCommand(arg) {
 	return usage;
 }
 (function crittersRestore() {
-	const saved = localStorage.getItem("kraterm-critters");
+	// Butterflies are the default for fresh visitors; an explicit saved choice (including "off") wins.
+	let saved = localStorage.getItem("kraterm-critters");
+	if (saved === null) {
+		saved = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "off" : "butterflies";
+	}
 	if (saved && saved !== "off" && CRITTER_NAMES[saved]) {
 		const go = () => crittersStart(CRITTER_NAMES[saved]).catch(() => {});
 		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
