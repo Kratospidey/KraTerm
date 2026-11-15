@@ -1,0 +1,22 @@
+JIN2 ASCII code art — Black Hole, Night Tide, Cat Knight
+Copyright (c) 2026 JIN2 (@jin_22ee). All rights reserved.
+Source: https://github.com/JIN2-ASCII/-JIN2-ASCII
+
+These pieces are adapted from JIN2's ASCII code art, shared by JIN2 for
+personal projects with credit to @jin_22ee. Original art and code authorship
+belongs to JIN2 (@jin_22ee). The JavaScript follows his Python algorithms;
+the artwork is not claimed as original work by KraTerm.
+
+Personal use and experiments are permitted with credit to @jin_22ee.
+No commercial use: do not sell these pieces or modified versions, or use
+the code or its output in ads, products, client work, monetised videos,
+NFTs or templates without written permission from JIN2.
+Do not claim the artwork or original code as your own.
+
+Cat Knight's underlying photo belongs to its own creator. No images,
+videos, sprites or other source media assets from the JIN2 repository are
+included in this repo. The included catknight_frames.bin.gz contains only
+the converted precomputed letter indices, luminance, color tags, palette,
+zoom and wind from cat_knight_frames.npz, not the underlying photo.
+
+This software is provided "as is", without warranty of any kind.
