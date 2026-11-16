@@ -1,8 +1,23 @@
 // Optional regression checks: serve the site, install Playwright, then run this file.
 const {chromium} = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const baseURL = process.env.ART_TEST_URL || 'http://127.0.0.1:8000/';
 const pieces = ['blackhole', 'nighttide', 'catknight', 'rose', 'snowman', 'goodluck'];
+const reviewDir = process.env.ART_REVIEW_DIR;
+if (reviewDir) fs.mkdirSync(reviewDir, {recursive: true});
+const layers = page => page.evaluate(() => {
+    const visible = id => {
+        const e = document.getElementById(id);
+        return !!e && !e.hidden && getComputedStyle(e).display !== 'none' && getComputedStyle(e).visibility !== 'hidden';
+    };
+    return {
+        critters: {visible: visible('critters-canvas'), running: !!critters.engine?.raf && !critters.engine.disposed},
+        oneko: {visible: visible('oneko'), running: window.KraOneko?.getState().running || false},
+        jin2: {visible: visible('jin2-canvas'), running: window.KraJin2?.getState()?.running || false}
+    };
+});
 
 (async () => {
     const browser = await chromium.launch({executablePath: process.env.CHROMIUM_EXECUTABLE || undefined});
@@ -18,7 +33,10 @@ const pieces = ['blackhole', 'nighttide', 'catknight', 'rose', 'snowman', 'goodl
         await page.waitForTimeout(300);
         assert(requests.some(p => p.endsWith('/jin2.js')));
         assert(!requests.some(p => p.endsWith('/jin2-scenes.js') || p.includes('catknight_frames') || p.includes('goodluck-sprites')));
-        await page.waitForSelector('#critters-canvas');
+        assert.equal(await page.locator('#critters-canvas').count(), 0);
+        assert(!requests.some(p => p.endsWith('/critters.js')));
+        assert.equal(await page.evaluate(() => KraOneko.getState().running), false);
+        assert.equal(await page.locator('#oneko').isVisible(), false);
         assert.equal(await page.locator('#jin2-canvas').evaluate(c => getComputedStyle(c).pointerEvents), 'none');
         assert.equal(await page.locator('#jin2-canvas').getAttribute('tabindex'), null);
         assert.equal(await page.locator('[role=dialog]').count(), 0);
@@ -60,7 +78,8 @@ const pieces = ['blackhole', 'nighttide', 'catknight', 'rose', 'snowman', 'goodl
         await command('background off');
         assert.equal(await page.locator('#jin2-canvas').count(), 0);
         assert.equal(await page.locator('#jin2-credit').count(), 0);
-        assert.equal(await page.locator('#critters-canvas').count(), 1);
+        await page.waitForSelector('#critters-canvas');
+        assert.equal(await page.evaluate(() => KraOneko.getState().running), true);
         const countBefore = requests.filter(p => p.endsWith('/jin2.js')).length;
         await page.reload(); await page.waitForTimeout(1000);
         assert.equal(requests.filter(p => p.endsWith('/jin2.js')).length, countBefore);
@@ -93,13 +112,34 @@ const pieces = ['blackhole', 'nighttide', 'catknight', 'rose', 'snowman', 'goodl
         await page.waitForTimeout(200); assert.equal(await page.locator('#jin2-canvas').count(), 0);
         await command('critters koi'); await page.waitForFunction(() => critters.animal === 'koi');
         await command('background snowman'); await ready('snowman');
-        assert.equal(await page.locator('#critters-canvas').count(), 1);
+        assert.equal(await page.locator('#critters-canvas').isVisible(), false);
+        const suspended = await page.evaluate(() => ({critterTime: critters.engine.flock.time, cat: KraOneko.getState()}));
+        await page.waitForTimeout(250);
+        assert.equal(await page.evaluate(() => critters.engine.flock.time), suspended.critterTime);
+        assert.equal(await page.evaluate(() => critters.engine.raf), 0);
+        assert.equal(await page.evaluate(() => KraOneko.getState().frames), suspended.cat.frames);
+        assert.equal(suspended.cat.running, false);
+        await page.emulateMedia({reducedMotion: 'reduce'});
+        await page.waitForTimeout(100);
+        assert.equal(await page.evaluate(() => critters.engine.flock.time), suspended.critterTime);
+        await page.emulateMedia({reducedMotion: 'no-preference'});
+        await page.waitForTimeout(100);
+        assert.equal(await page.evaluate(() => critters.engine.raf), 0);
+        assert.equal(await page.evaluate(() => localStorage.getItem('kraterm-critters')), 'koi');
+        await command('critters jellyfish');
+        await page.waitForFunction(() => ambient.owner === 'critters' && critters.animal === 'jellyfish');
+        assert.equal(await page.locator('#jin2-canvas').count(), 0);
+        assert.equal(await page.evaluate(() => localStorage.getItem('kraterm-background')), 'snowman');
+        assert.equal(await page.evaluate(() => jin2Background.status), 'suspended');
+        assert.equal(await page.evaluate(() => KraOneko.getState().running), true);
+        await command('background snowman'); await ready('snowman');
         await command('themes github-light');
         assert.equal(await page.locator('body').getAttribute('data-theme'), 'github-light');
         assert.equal(await page.locator('#jin2-canvas').count(), 1);
         await command('critters off'); assert.equal(await page.locator('#critters-canvas').count(), 0);
         assert.equal(await page.locator('#jin2-canvas').count(), 1);
         await command('background off');
+        assert.equal(await page.locator('#critters-canvas').count(), 0); // Saved off stays off.
         for (const piece of pieces) {
             await command(piece);
             assert.equal(await page.locator('#jin2-canvas').count(), 0);
@@ -132,6 +172,84 @@ const pieces = ['blackhole', 'nighttide', 'catknight', 'rose', 'snowman', 'goodl
         await mobile.touchscreen.tap(180, 400);
         assert.equal(await mobile.locator('#jin2-canvas').count(), 1);
         await mobile.close();
+        for (const viewport of [{width: 1429, height: 804}, {width: 1280, height: 960}, {width: 390, height: 844}]) {
+            const view = await browser.newPage({viewport, isMobile: viewport.width === 390, hasTouch: viewport.width === 390});
+            view.on('pageerror', e => errors.push(e.message));
+            await view.addInitScript(() => {
+                localStorage.setItem('kraterm-sound', 'off'); localStorage.setItem('kraterm-music', 'off');
+                const draw = CanvasRenderingContext2D.prototype.drawImage;
+                CanvasRenderingContext2D.prototype.drawImage = function (...args) {
+                    if (this.canvas.id === 'jin2-canvas' && args.length === 5 && args[1] <= 0 && args[2] <= 0
+                        && args[1] + args[3] >= innerWidth && args[2] + args[4] >= innerHeight) window.artBounds = args.slice(1);
+                    return draw.apply(this, args);
+                };
+            });
+            const capture = async name => {
+                const state = await layers(view);
+                console.log('LAYERS', viewport.width, name, JSON.stringify(state));
+                if (reviewDir) await view.screenshot({path: path.join(reviewDir, `${viewport.width}-${name}.png`)});
+                return state;
+            };
+            const jin2Only = async name => {
+                const state = await capture(name);
+                assert.equal(state.jin2.visible, true);
+                assert.deepEqual(state.critters, {visible: false, running: false});
+                assert.deepEqual(state.oneko, {visible: false, running: false});
+            };
+            await view.goto(baseURL); await view.waitForSelector('#jin2-canvas[data-ready=true]');
+            await view.locator('#kraterm-boot').waitFor({state: 'detached'});
+            await jin2Only('fresh-default');
+            assert.equal(await view.evaluate(() => localStorage.getItem('kraterm-critters')), null);
+            await view.evaluate(() => localStorage.setItem('kraterm-critters', 'butterflies'));
+            await view.reload(); await view.waitForSelector('#jin2-canvas[data-ready=true]');
+            await view.locator('#kraterm-boot').waitFor({state: 'detached'});
+            await jin2Only('saved-critters');
+            assert.equal(await view.evaluate(() => localStorage.getItem('kraterm-critters')), 'butterflies');
+            await view.evaluate(() => backgroundSelect('off'));
+            await view.waitForSelector('#critters-canvas:visible');
+            let state = await capture('background-off');
+            assert.deepEqual(state.jin2, {visible: false, running: false});
+            assert.deepEqual(state.critters, {visible: true, running: true});
+            assert.deepEqual(state.oneko, {visible: true, running: true});
+            await view.evaluate(() => backgroundSelect('nighttide'));
+            await view.waitForSelector('#jin2-canvas[data-ready=true]');
+            await view.locator('#input').fill('critters koi'); await view.locator('#input').press('Enter');
+            await view.waitForFunction(() => ambient.owner === 'critters' && critters.animal === 'koi');
+            state = await capture('critters-selected');
+            assert.deepEqual(state.jin2, {visible: false, running: false});
+            assert.deepEqual(state.critters, {visible: true, running: true});
+            assert.deepEqual(state.oneko, {visible: true, running: true});
+            assert.equal(await view.evaluate(() => localStorage.getItem('kraterm-background')), 'nighttide');
+            for (const piece of [...pieces, 'birthday']) {
+                await view.evaluate(p => backgroundSelect(p, {time: p === 'blackhole' ? 7.8 : 13, paused: true, persist: false}), piece);
+                await view.waitForSelector('#jin2-canvas[data-ready=true]');
+                await view.evaluate(() => { document.getElementById('output').innerHTML = processCommand('welcome'); document.querySelector('.terminal').scrollTop = 0; });
+                await jin2Only(`${piece}-profile`);
+                const backing = await view.evaluate(() => {
+                    const blocks = [...document.querySelectorAll('#output > div, #output pre, #output .profile-column')];
+                    const lines = [...document.querySelectorAll('.profile-line')];
+                    const terminal = document.querySelector('.terminal').getBoundingClientRect();
+                    const credit = document.getElementById('jin2-credit').getBoundingClientRect();
+                    return {transparent: blocks.every(e => getComputedStyle(e).backgroundColor === 'rgba(0, 0, 0, 0)'),
+                        backed: lines.length > 50 && lines.every(e => getComputedStyle(e).backgroundColor === 'rgb(33, 29, 27)' && getComputedStyle(e).display === 'inline'),
+                        bounds: window.artBounds, width: innerWidth, height: innerHeight,
+                        geometry: terminal.x === 0 && terminal.y === 0 && terminal.width === innerWidth && terminal.bottom + 8 <= credit.top + .01};
+                });
+                assert(backing.transparent && backing.backed && backing.geometry);
+                const [x, y, w, h] = backing.bounds;
+                assert(x <= .01 && y <= .01 && x + w >= backing.width - .01 && y + h >= backing.height - .01);
+                if (reviewDir) {
+                    const hide = await view.addStyleTag({content: '.terminal { visibility: hidden; }'});
+                    await view.screenshot({path: path.join(reviewDir, `${viewport.width}-${piece}-art.png`)});
+                    await hide.evaluate(e => e.remove());
+                }
+            }
+            // A late critters load must not steal the slot from a newer background.
+            await view.evaluate(() => { crittersStart('jellyfish'); backgroundSelect('nighttide', {paused: true}); });
+            await view.waitForSelector('#jin2-canvas[data-ready=true]');
+            await jin2Only('selection-race');
+            await view.close();
+        }
         assert.deepEqual(errors, []);
         console.log('PASS default/persistence/off, lazy assets/cache, hidden birthday, input/history/theme/critters, reduced motion, hidden-tab stop/resume, budget cap, races, debug override, failure/retry.');
     } finally { await browser.close(); }

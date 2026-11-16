@@ -333,6 +333,8 @@
         document.body.appendChild(credit);
         document.body.classList.add('has-jin2');
         const ctx = canvas.getContext('2d'), art = surface(W, H), artCtx = art.getContext('2d');
+        const backdrop = surface(1, 1), backdropCtx = backdrop.getContext('2d');
+        const subject = piece !== 'blackhole' && piece !== 'nighttide';
         const glows = [[4, 5, 0.75], [8, 22, 0.45]].map(([k, radius, alpha]) => {
             const layer = surface(Math.floor(W / k), Math.floor(H / k));
             return {layer, context: layer.getContext('2d'), radius: radius / k, alpha};
@@ -378,7 +380,11 @@
             const width = innerWidth, height = innerHeight;
             ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
             ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height);
-            const scale = Math.min(width / W, height / H), dw = W * scale, dh = H * scale;
+            // Sea/disk cover the viewport. Portrait subjects retain their complete
+            // composition; a continuous ASCII field fills the outer viewport.
+            const fitSubject = subject && width / height > W / H;
+            if (fitSubject) ctx.drawImage(backdrop, 0, 0, width, height);
+            const scale = (fitSubject ? Math.min : Math.max)(width / W, height / H), dw = W * scale, dh = H * scale;
             const dx = (width - dw) / 2, dy = (height - dh) / 2;
             ctx.drawImage(art, dx, dy, dw, dh);
             ctx.globalCompositeOperation = 'lighter';
@@ -394,6 +400,17 @@
             const dpr = Math.min(devicePixelRatio || 1, 2);
             canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr);
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            if (subject) {
+                backdrop.width = innerWidth; backdrop.height = innerHeight;
+                backdropCtx.fillStyle = '#000'; backdropCtx.fillRect(0, 0, innerWidth, innerHeight);
+                backdropCtx.font = '11px Consolas, Menlo, monospace';
+                const rng = random(2026);
+                for (let i = 0; i < Math.ceil(innerWidth * innerHeight / 2800); i++) {
+                    const x = rng() * innerWidth, y = rng() * innerHeight, light = 65 + Math.floor(rng() * 80);
+                    backdropCtx.fillStyle = `rgb(${light},${light + 5},${light + 15})`;
+                    backdropCtx.fillText('.:+*'[Math.floor(rng() * 4)], x, y);
+                }
+            }
             if (ready && !document.hidden) present();
         }
         function drawFrame() {
@@ -435,7 +452,7 @@
             stats.averageCostMs = stats.frames ? stats.averageCostMs * 0.8 + stats.frameCostMs * 0.2 : stats.frameCostMs;
             stats.frames++;
             // Ambient duty: at most 30fps, and about 20% synchronous CPU time.
-            // Heavy pieces stay available, with more time for typing and critters.
+            // Heavy pieces stay available, with more time for typing.
             stats.intervalMs = Math.max(1000 / 30, stats.averageCostMs * 5);
             canvas.dataset.time = t.toFixed(4); canvas.dataset.frames = String(stats.frames);
             canvas.dataset.paused = String(paused || reduced.matches);

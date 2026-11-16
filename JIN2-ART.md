@@ -1,11 +1,16 @@
 # JIN2 ambient backgrounds
 
 Run the site with `python3 -m http.server 8000`. The terminal stays interactive
-while JIN2 art plays in a fixed canvas behind it, alongside any critters.
+while JIN2 art plays in a fixed canvas behind it. JIN2, critters and the
+oneko cursor cat use one ambient selection: JIN2 hides and pauses both other
+engines; selecting critters suspends JIN2 and restores oneko alongside critters.
 
 - `background` lists the choices and current selection.
 - `background blackhole|nighttide|catknight|rose|snowman|goodluck` selects a piece.
-- `background off` removes the JIN2 layer. It does not disable critters.
+- `background off` removes JIN2 and resumes the saved critters choice (including
+  off) and oneko. Neither engine's saved preference is overwritten by suspension.
+- `critters <species>` selects critters and suspends JIN2 without changing the
+  saved JIN2 choice. A later `background <piece>` takes the slot back.
 - The choice persists in `localStorage["kraterm-background"]`. A valid saved
   choice wins; the first-visit default is **nighttide**. Invalid saved values
   fall back to nighttide. Storage failure still allows a session selection.
@@ -19,18 +24,28 @@ while JIN2 art plays in a fixed canvas behind it, alongside any critters.
 Every use of `background` prints the JIN2 personal-use credit. Each active
 background retains a small `@jin_22ee · 2026` signature; Cat Knight also says
 `photo belongs to its creator`. The signature sits above mobile audio controls.
-The terminal reserves a small bottom lane so the credit does not cover input.
+The credit occupies a non-scrolling footer, whose intrinsic wrapped height
+is reserved outside the terminal scrollport at every viewport width.
 
 ## Readability and layers
 
-The art canvas has `pointer-events: none`, no focus target, and 32% opacity.
-It paints at z-index 0, critters at 1 when JIN2 is active, and the terminal at 2.
-The credit is a noninteractive corner label at 3; boot, oneko, pixel effects
-and the existing sound/music controls retain their own higher layers.
+The art canvas has `pointer-events: none`, no focus target, and 85% opacity.
+The sea and disk use proportional cover scaling. On wide screens the other
+five pieces keep their complete subjects with proportional fit scaling; a
+deterministic ASCII star field extends their black background to the viewport
+edges. Portrait screens fill their height and crop outer horizontal edges.
+This avoids letterbox bars, stretched glyphs, cropped heads and clipped birthday
+text on laptops, while keeping the art large on mobile. The
+extension is presentation-only; source frame generation and data are unchanged.
+It paints at z-index 0 and the terminal at 2; critters and oneko are hidden
+and have no scheduled animation while JIN2 owns the slot. The credit footer
+is at 3. Boot, pixel effects and sound/music controls keep their existing layers.
 
-The terminal has a 55% theme-colored scrim. Output blocks, inline text,
-autocomplete suggestions and the input line have opaque backplates using
-`--background-color`. Theme foreground colors, fonts, commands and controls
+The terminal has a 25% theme-colored scrim. Inline text, autocomplete suggestions
+and the input line have opaque backplates using `--background-color`. Output
+blocks, pre elements and profile column wrappers stay transparent. Each logo,
+portrait and profile line has an inline backing with `box-decoration-break:
+clone`, including wrapped field values; there is no opaque profile slab. Theme foreground colors, fonts, commands and controls
 are preserved. With JIN2 off, these additional terminal styles are absent.
 The original width-change reload behavior is restored; saved choices survive it.
 
@@ -44,8 +59,11 @@ art brightness. The handoff contains the images and exact scan criterion/results
 ## Loading and ambient performance
 
 New JIN2 requests on a normal first visit: **jin2.js only**, for nighttide's
-first paint. Night Tide's grid and wave math are generated locally. The site's
-existing critters restore/default logic runs independently and is unchanged.
+first paint. Night Tide's grid and wave math are generated locally. The critters
+module is not requested until critters actually take the slot, either through a
+command or `background off`. A suspended, already-loaded critters engine keeps
+its flock and tuning and cancels its rAF; oneko keeps its position and idle state.
+Selection generations prevent delayed loaders from stealing a newer selection.
 
 | Selection | Additional first-use work |
 | --- | --- |
@@ -70,9 +88,10 @@ synchronous renderer time: the frame interval is at least five times the
 smoothed frame cost. A timer waits until the next due frame, then uses rAF;
 there is no busy rAF polling between expensive frames. Animation time advances
 by visible wall time, so lower sampling does not turn a 20s loop into minutes.
-This leaves room for typing and the independent critters render loop.
+This leaves room for typing. Critters do not run concurrently with JIN2.
 
-Headless Chromium, 1280x960, default butterflies active, audio disabled to
+Historical task-3 measurements (before exclusivity/full-screen cover):
+headless Chromium, 1280x960, default butterflies active, audio disabled to
 isolate rendering; five warmup frames then 25 live frames per piece:
 
 | Piece | Mean frame ms | Median ms | P95 ms | Observed ambient fps |
@@ -163,11 +182,16 @@ needed to use the site.
 The browser test covers default loading, persistence/off, registry/help,
 autocomplete, hidden Birthday, all seven selections, input and focus, one-time
 assets, reduced-motion stills, hidden-tab cancellation/resume (simulated
-visibility events), adaptive budget, selection races, critters/theme independence,
+visibility events), adaptive budget, selection races, exclusive ambient ownership,
+oneko suspension/resume, transparent profile blocks with opaque inline lines,
 debug overrides, failure/retry, and mobile credit placement/touch-through.
+It enumerates visible/running engines at 1429x804, 1280x960 and 390x844, and
+checks full-viewport presentation bounds, unchanged terminal width/origin, and reserved
+credit space. Set `ART_REVIEW_DIR` to save each state and all seven scene renders.
 The handoff also includes benchmark/brightness scripts, raw measurements,
 readability screenshots, full final file contents, data manifest and patch/bundle.
 `critters.js`, the scene algorithms, source assets and license are unchanged in
-task 3. Boot, oneko, sounds, image conversion and other command implementations
-are retained; only JIN2 command integration and the obsolete overlay resize
-guard changed in script.js.
+this fix. Boot, sounds, image conversion and other command implementations are
+retained. oneko gains a small suspend/resume/state hook; its existing movement,
+idle and persistence code is preserved. Critters composite over the plain page
+with their original 0.4 opacity and screen blend when JIN2 is off.

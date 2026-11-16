@@ -705,9 +705,9 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 	height: 100dvh;
 	z-index: 0;
 	pointer-events: none;
-	opacity: 0.32;
+	opacity: 0.85;
 }
-body.has-jin2 #critters-canvas { z-index: 1; }
+body.has-jin2 #critters-canvas { display: none; }
 body.has-jin2 {
 	display: flex;
 	flex-direction: column;
@@ -718,12 +718,7 @@ body.has-jin2 .terminal {
 	flex: 1 1 0%;
 	min-height: 0;
 	height: auto;
-	background-color: color-mix(in srgb, var(--background-color) 55%, transparent);
-}
-body.has-jin2 #output > div, body.has-jin2 #output pre {
-	background-color: var(--background-color);
-	width: fit-content;
-	max-width: 100%;
+	background-color: color-mix(in srgb, var(--background-color) 25%, transparent);
 }
 body.has-jin2 #output span, body.has-jin2 #output a, body.has-jin2 #input-line,
 body.has-jin2 .autocomplete-suggestions {
@@ -731,6 +726,7 @@ body.has-jin2 .autocomplete-suggestions {
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
 }
+body.has-jin2 #output .profile-column { background-color: transparent; }
 #jin2-credit {
 	/* A footer outside the terminal's scrollport reserves every wrapped line. */
 	position: relative;
