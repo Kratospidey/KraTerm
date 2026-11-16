@@ -24,12 +24,13 @@ engines; selecting critters suspends JIN2 and restores oneko alongside critters.
 Every use of `background` prints the JIN2 personal-use credit. Each active
 background retains a small `@jin_22ee · 2026` signature; Cat Knight also says
 `photo belongs to its creator`. The signature sits above mobile audio controls.
-The credit occupies a non-scrolling footer, whose intrinsic wrapped height
-is reserved outside the terminal scrollport at every viewport width.
+The credit occupies an opaque non-scrolling footer cell outside the clipped
+terminal scrollport. Audio controls occupy separate cells beside it on desktop
+and below it on mobile; wrapped credits reserve their full height.
 
 ## Readability and layers
 
-The art canvas has `pointer-events: none`, no focus target, and 85% opacity.
+The art canvas has `pointer-events: none`, no focus target, and 60% opacity.
 The sea and disk use proportional cover scaling. On wide screens the other
 five pieces keep their complete subjects with proportional fit scaling; a
 deterministic ASCII star field extends their black background to the viewport
@@ -41,11 +42,13 @@ It paints at z-index 0 and the terminal at 2; critters and oneko are hidden
 and have no scheduled animation while JIN2 owns the slot. The credit footer
 is at 3. Boot, pixel effects and sound/music controls keep their existing layers.
 
-The terminal has a 25% theme-colored scrim. Inline text, autocomplete suggestions
+The terminal has a 35% theme-colored scrim. Inline text, autocomplete suggestions
 and the input line have opaque backplates using `--background-color`. Output
-blocks, pre elements and profile column wrappers stay transparent. Each logo,
-portrait and profile line has an inline backing with `box-decoration-break:
-clone`, including wrapped field values; there is no opaque profile slab. Theme foreground colors, fonts, commands and controls
+blocks, pre elements and profile column wrappers stay transparent. The logo and portrait are explicitly
+decorative ASCII: their entire subtrees have transparent backgrounds, including
+all whitespace. Only readable profile lines and command output get inline
+backing with `box-decoration-break: clone`, including wrapped field values;
+there is no opaque profile slab or banner strip. Theme foreground colors, fonts, commands and controls
 are preserved. With JIN2 off, these additional terminal styles are absent.
 The original width-change reload behavior is restored; saved choices survive it.
 
@@ -183,11 +186,12 @@ The browser test covers default loading, persistence/off, registry/help,
 autocomplete, hidden Birthday, all seven selections, input and focus, one-time
 assets, reduced-motion stills, hidden-tab cancellation/resume (simulated
 visibility events), adaptive budget, selection races, exclusive ambient ownership,
-oneko suspension/resume, transparent profile blocks with opaque inline lines,
+oneko suspension/resume, transparent decorative ASCII with backed readable lines,
 debug overrides, failure/retry, and mobile credit placement/touch-through.
 It enumerates visible/running engines at 1429x804, 1280x960 and 390x844, and
 checks full-viewport presentation bounds, unchanged terminal width/origin, and reserved
-credit space. Set `ART_REVIEW_DIR` to save each state and all seven scene renders.
+credit/control cells through top, middle and bottom scroll positions. Set
+`ART_REVIEW_DIR` to save each state and all seven scene renders.
 The handoff also includes benchmark/brightness scripts, raw measurements,
 readability screenshots, full final file contents, data manifest and patch/bundle.
 `critters.js`, the scene algorithms, source assets and license are unchanged in

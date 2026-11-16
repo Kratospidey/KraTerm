@@ -705,20 +705,23 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 	height: 100dvh;
 	z-index: 0;
 	pointer-events: none;
-	opacity: 0.85;
+	opacity: 0.6;
 }
 body.has-jin2 #critters-canvas { display: none; }
 body.has-jin2 {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) max-content;
+	grid-template-rows: minmax(0, 1fr) auto auto;
 }
 body.has-jin2 .terminal {
 	position: relative;
 	z-index: 2;
-	flex: 1 1 0%;
+	grid-area: 1 / 1 / 2 / -1;
+	min-width: 0;
 	min-height: 0;
 	height: auto;
-	background-color: color-mix(in srgb, var(--background-color) 25%, transparent);
+	contain: paint;
+	background-color: color-mix(in srgb, var(--background-color) 35%, transparent);
 }
 body.has-jin2 #output span, body.has-jin2 #output a, body.has-jin2 #input-line,
 body.has-jin2 .autocomplete-suggestions {
@@ -727,22 +730,38 @@ body.has-jin2 .autocomplete-suggestions {
 	-webkit-box-decoration-break: clone;
 }
 body.has-jin2 #output .profile-column { background-color: transparent; }
+body.has-jin2 #output .decorative-ascii,
+body.has-jin2 #output .decorative-ascii * { background-color: transparent; }
 #jin2-credit {
-	/* A footer outside the terminal's scrollport reserves every wrapped line. */
+	/* Opaque footer cells sit outside the clipped terminal scrollport. */
 	position: relative;
-	order: 1;
-	flex: 0 0 auto;
-	align-self: flex-start;
-	margin: 8px 12px;
+	grid-area: 2 / 1 / 4 / 2;
+	display: flex;
+	align-items: flex-end;
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 8px 12px;
 	z-index: 3;
-	max-width: calc(100vw - 24px);
 	overflow-wrap: anywhere;
 	font: 10px/1.5 "Courier New", monospace;
-	color: var(--norm);
+	color: color-mix(in srgb, var(--norm) 80%, var(--background-color));
 	background: var(--background-color);
-	opacity: 0.8;
 	pointer-events: none;
 }
+body.has-jin2 #kt-sound-toggle, body.has-jin2 #kt-music-toggle {
+	position: static;
+	width: auto;
+	margin: 0;
+	background: var(--background-color);
+}
+body.has-jin2 #kt-music-toggle { grid-area: 2 / 2; }
+body.has-jin2 #kt-sound-toggle { grid-area: 3 / 2; }
 @media (max-width: 480px) {
-	body.has-jin2 #kt-sound-toggle, body.has-jin2 #kt-music-toggle { order: 2; }
+	body.has-jin2 {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr) auto auto auto;
+	}
+	#jin2-credit { grid-area: 2 / 1; }
+	body.has-jin2 #kt-sound-toggle { grid-area: 3 / 1; }
+	body.has-jin2 #kt-music-toggle { grid-area: 4 / 1; }
 }

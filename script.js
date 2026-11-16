@@ -84,8 +84,8 @@ function colorizeArtists(v) {
     return v;
 }
 
-function backedLines(text) {
-    return text.split("\n").map(line => line.trim() ? `<span class="profile-line">${escapeText(line.trimEnd())}</span>` : "").join("\n");
+function decorativeAscii(text) {
+    return `<span class="decorative-ascii">${escapeText(text)}</span>`;
 }
 
 function neofetchCard(portraitText) {
@@ -231,10 +231,10 @@ function neofetchCard(portraitText) {
     const text = fields.map(([k,v]) => `<span class="profile-line"><span class="keyword-text">${k}${v && k ? ":" : ""}</span> ${links[k] ? `<a class="active-text" href="${links[k]}">${v}</a>` : `<span style="color:white">${colorizeArtists(v)}</span>`}</span>`).join("\n");
     const narrow = window.innerWidth < 900;
     const size = narrow ? 6 : 7;
-    return `<span class="profile-column" style="display:${narrow ? "block" : "inline-block"};vertical-align:top;font-size:${size}px;line-height:${size * 1.15}px;white-space:pre;color:white;" role="img" aria-label="ASCII portrait of Param Singh Makwana">${backedLines(portraitText)}</span>${narrow ? "\n" : "   "}<span class="profile-column" style="display:inline-block;vertical-align:top;font-size:${narrow ? 10 : 13}px;line-height:${narrow ? 15 : 14}px;white-space:pre-wrap;max-width:100%;">${text}</span>\n`;
+    return `<span class="profile-column" style="display:${narrow ? "block" : "inline-block"};vertical-align:top;font-size:${size}px;line-height:${size * 1.15}px;white-space:pre;color:white;" role="img" aria-label="ASCII portrait of Param Singh Makwana">${decorativeAscii(portraitText)}</span>${narrow ? "\n" : "   "}<span class="profile-column" style="display:inline-block;vertical-align:top;font-size:${narrow ? 10 : 13}px;line-height:${narrow ? 15 : 14}px;white-space:pre-wrap;max-width:100%;">${text}</span>\n`;
 }
 
-const welcomeBanner = backedLines(`
+const welcomeBanner = decorativeAscii(`
     __ __            __                   _     __          
    / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
   / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
@@ -462,6 +462,27 @@ document.getElementById("input").addEventListener("keydown", function (event) {
 	terminal.scrollTop = terminal.scrollHeight;
 });
 function processCommand(command) {
+	const html = runCommand(command);
+	if (html === undefined) return html;
+	const template = document.createElement("template");
+	template.innerHTML = html;
+	const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT), nodes = [];
+	while (walker.nextNode()) nodes.push(walker.currentNode);
+	for (const node of nodes) {
+		if (!node.textContent.trim() || node.parentElement?.closest("span, a, .decorative-ascii")) continue;
+		const lines = document.createDocumentFragment();
+		node.textContent.split("\n").forEach((line, i) => {
+			if (i) lines.appendChild(document.createTextNode("\n"));
+			const part = document.createElement("span");
+			part.textContent = line;
+			lines.appendChild(line.trim() ? part : document.createTextNode(line));
+		});
+		node.replaceWith(lines);
+	}
+	return template.innerHTML;
+}
+
+function runCommand(command) {
 	// Split the command and its arguments
 	command = command.trim();
 	let tokens = command.split(" ");
@@ -898,7 +919,7 @@ function createCowsayMessage(message) {
 	const bubbleWrappedMessage = wrapMessageInSpeechBubble(message);
 
 	const cowAscii = `
-<pre>
+<pre class="decorative-ascii">
          \\   ^__^
           \\  (oo)\\_______
              (__)\\       )\\/\\

@@ -18,6 +18,21 @@ const layers = page => page.evaluate(() => {
         jin2: {visible: visible('jin2-canvas'), running: window.KraJin2?.getState()?.running || false}
     };
 });
+const footerLayout = page => page.evaluate(() => {
+    const box = selector => {
+        const r = document.querySelector(selector).getBoundingClientRect();
+        return {left: r.left, right: r.right, top: r.top, bottom: r.bottom};
+    };
+    const terminal = box('.terminal'), credit = box('#jin2-credit');
+    const controls = [box('#kt-sound-toggle'), box('#kt-music-toggle')];
+    const separate = (a, b) => a.right <= b.left + .01 || b.right <= a.left + .01 || a.bottom <= b.top + .01 || b.bottom <= a.top + .01;
+    const range = document.createRange(); range.selectNodeContents(document.getElementById('jin2-credit'));
+    const text = range.getBoundingClientRect();
+    return {terminal, credit, controls,
+        separated: [credit, ...controls].every(r => separate(terminal, r)) && controls.every(r => separate(credit, r)) && separate(...controls),
+        inset: text.top >= credit.top + 8 - .01 && text.bottom <= credit.bottom - 8 + .01,
+        opaque: getComputedStyle(document.getElementById('jin2-credit')).opacity === '1' && getComputedStyle(document.getElementById('jin2-credit')).backgroundColor === 'rgb(33, 29, 27)'};
+});
 
 (async () => {
     const browser = await chromium.launch({executablePath: process.env.CHROMIUM_EXECUTABLE || undefined});
@@ -74,6 +89,7 @@ const layers = page => page.evaluate(() => {
         assert.equal(requests.filter(p => p.endsWith('/phrases.json')).length, 1);
         await command('background catknight'); await ready('catknight');
         await page.reload(); await ready('catknight');
+        await page.locator('#kraterm-boot').waitFor({state: 'detached'});
         assert((await page.locator('#jin2-credit').textContent()).includes('photo belongs to its creator'));
         await command('background off');
         assert.equal(await page.locator('#jin2-canvas').count(), 0);
@@ -168,7 +184,8 @@ const layers = page => page.evaluate(() => {
         const creditBox = await mobile.locator('#jin2-credit').boundingBox();
         const soundBox = await mobile.locator('#kt-sound-toggle').boundingBox();
         const musicBox = await mobile.locator('#kt-music-toggle').boundingBox();
-        assert(creditBox.y + creditBox.height < Math.min(soundBox.y, musicBox.y));
+        assert(creditBox.y + creditBox.height <= Math.min(soundBox.y, musicBox.y) + .01);
+        assert((await footerLayout(mobile)).separated);
         await mobile.touchscreen.tap(180, 400);
         assert.equal(await mobile.locator('#jin2-canvas').count(), 1);
         await mobile.close();
@@ -228,14 +245,29 @@ const layers = page => page.evaluate(() => {
                 const backing = await view.evaluate(() => {
                     const blocks = [...document.querySelectorAll('#output > div, #output pre, #output .profile-column')];
                     const lines = [...document.querySelectorAll('.profile-line')];
+                    const decorations = [...document.querySelectorAll('.decorative-ascii, .decorative-ascii *')];
                     const terminal = document.querySelector('.terminal').getBoundingClientRect();
                     const credit = document.getElementById('jin2-credit').getBoundingClientRect();
                     return {transparent: blocks.every(e => getComputedStyle(e).backgroundColor === 'rgba(0, 0, 0, 0)'),
-                        backed: lines.length > 50 && lines.every(e => getComputedStyle(e).backgroundColor === 'rgb(33, 29, 27)' && getComputedStyle(e).display === 'inline'),
+                        backed: lines.length > 30 && lines.every(e => getComputedStyle(e).backgroundColor === 'rgb(33, 29, 27)' && getComputedStyle(e).display === 'inline'),
+                        decorative: decorations.length >= 2 && decorations.every(e => getComputedStyle(e).backgroundColor === 'rgba(0, 0, 0, 0)' && getComputedStyle(e).visibility === 'visible' && e.getBoundingClientRect().height > 0),
                         bounds: window.artBounds, width: innerWidth, height: innerHeight,
-                        geometry: terminal.x === 0 && terminal.y === 0 && terminal.width === innerWidth && terminal.bottom + 8 <= credit.top + .01};
+                        geometry: terminal.x === 0 && terminal.y === 0 && terminal.width === innerWidth && terminal.bottom <= credit.top + .01};
                 });
-                assert(backing.transparent && backing.backed && backing.geometry);
+                assert(backing.transparent && backing.backed && backing.decorative && backing.geometry);
+                const footer = await footerLayout(view);
+                assert(footer.separated && footer.inset && footer.opaque);
+                await view.evaluate(() => {
+                    const pre = document.createElement('pre');
+                    pre.textContent = Array.from({length: 160}, (_, i) => `Footer collision check ${i}`).join('\n');
+                    document.getElementById('output').appendChild(pre);
+                });
+                for (const fraction of [0, .5, 1]) {
+                    await view.evaluate(f => { const t = document.querySelector('.terminal'); t.scrollTop = f * (t.scrollHeight - t.clientHeight); }, fraction);
+                    assert((await footerLayout(view)).separated);
+                    if (reviewDir && fraction === 1 && piece === 'catknight') await view.screenshot({path: path.join(reviewDir, `${viewport.width}-footer-bottom.png`)});
+                }
+                await view.evaluate(() => { document.getElementById('output').lastElementChild.remove(); document.querySelector('.terminal').scrollTop = 0; });
                 const [x, y, w, h] = backing.bounds;
                 assert(x <= .01 && y <= .01 && x + w >= backing.width - .01 && y + h >= backing.height - .01);
                 if (reviewDir) {
@@ -250,6 +282,17 @@ const layers = page => page.evaluate(() => {
             await jin2Only('selection-race');
             await view.close();
         }
+        await page.evaluate(() => document.body.setAttribute('data-theme', 'default'));
+        for (const text of ['echo readable output', 'about', 'history', 'cowsay readable message']) {
+            const markup = await page.evaluate(text => processCommand(text), text);
+            assert(markup.includes('<span'));
+        }
+        const escaped = await page.evaluate(() => {
+            const t = document.createElement('template');
+            t.innerHTML = processCommand('echo <img src=x> & readable');
+            return {text: t.content.textContent, image: !!t.content.querySelector('img'), backed: !!t.content.querySelector('span')};
+        });
+        assert.deepEqual(escaped, {text: '<img src=x> & readable', image: false, backed: true});
         assert.deepEqual(errors, []);
         console.log('PASS default/persistence/off, lazy assets/cache, hidden birthday, input/history/theme/critters, reduced motion, hidden-tab stop/resume, budget cap, races, debug override, failure/retry.');
     } finally { await browser.close(); }
