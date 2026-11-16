@@ -20,6 +20,7 @@ const commands = [
 	"ascii",
 	"cowsay",
 	"critters",
+	"background",
 ];
 
 const themes = {
@@ -81,6 +82,10 @@ function colorizeArtists(v) {
         v = v.split(/(<span[^>]*>[\s\S]*?<\/span>)/g).map(p => p.startsWith("<span") ? p : p.split(n).join(h)).join("");
     }
     return v;
+}
+
+function backedLines(text) {
+    return text.split("\n").map(line => line.trim() ? `<span class="profile-line">${escapeText(line.trimEnd())}</span>` : "").join("\n");
 }
 
 function neofetchCard(portraitText) {
@@ -223,20 +228,24 @@ function neofetchCard(portraitText) {
     ]
 ];
     const links = {Contact:"mailto:contact@kratospidey.com",Website:"https://github.com/kratospidey",LinkedIn:"https://www.linkedin.com/in/kratospidey"};
-    const text = fields.map(([k,v]) => `<span class="keyword-text">${k}${v && k ? ":" : ""}</span> ${links[k] ? `<a class="active-text" href="${links[k]}">${v}</a>` : `<span style="color:white">${colorizeArtists(v)}</span>`}`).join("\n");
+    const text = fields.map(([k,v]) => `<span class="profile-line"><span class="keyword-text">${k}${v && k ? ":" : ""}</span> ${links[k] ? `<a class="active-text" href="${links[k]}">${v}</a>` : `<span style="color:white">${colorizeArtists(v)}</span>`}</span>`).join("\n");
     const narrow = window.innerWidth < 900;
     const size = narrow ? 6 : 7;
-    return `<span style="display:${narrow ? "block" : "inline-block"};vertical-align:top;font-size:${size}px;line-height:${size * 1.15}px;white-space:pre;color:white;" role="img" aria-label="ASCII portrait of Param Singh Makwana">${portraitText}</span>${narrow ? "\n" : "   "}<span style="display:inline-block;vertical-align:top;font-size:${narrow ? 10 : 13}px;line-height:${narrow ? 15 : 14}px;white-space:pre-wrap;max-width:100%;">${text}</span>\n`;
+    return `<span class="profile-column" style="display:${narrow ? "block" : "inline-block"};vertical-align:top;font-size:${size}px;line-height:${size * 1.15}px;white-space:pre;color:white;" role="img" aria-label="ASCII portrait of Param Singh Makwana">${backedLines(portraitText)}</span>${narrow ? "\n" : "   "}<span class="profile-column" style="display:inline-block;vertical-align:top;font-size:${narrow ? 10 : 13}px;line-height:${narrow ? 15 : 14}px;white-space:pre-wrap;max-width:100%;">${text}</span>\n`;
 }
 
-const welcomeText = `
-<pre class="enter-text" style="max-width:100%;overflow-x:auto;">
+const welcomeBanner = backedLines(`
     __ __            __                   _     __          
    / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
   / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
  / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
 /_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
                                /_/                 /____/   
+`);
+
+const welcomeText = `
+<pre class="enter-text" style="max-width:100%;overflow-x:auto;">
+${welcomeBanner}
 
 ${neofetchCard(portraitFull)}
 <span style="color: white">Welcome to KraTerm!</span>
@@ -249,12 +258,7 @@ ${neofetchCard(portraitFull)}
 
 const midWelcomeText = `
 <pre class="enter-text" style="max-width:100%;overflow-x:auto;">
-    __ __            __                   _     __          
-   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
- / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-                               /_/                 /____/   
+${welcomeBanner}
 
 ${neofetchCard(portraitMid)}
 <span style="color: white">Welcome to KraTerm!</span>
@@ -267,12 +271,7 @@ ${neofetchCard(portraitMid)}
 
 const smallWelcomeText = `
 <pre class="enter-text" style="font-size: clamp(0.5rem, 2.9vw, 1rem);">
-    __ __            __                   _     __          
-   / //_/_________ _/ /_____  _________  (_)___/ /__  __  __
-  / ,<  / ___/ __ \`/ __/ __ \\/ ___/ __ \\/ / __  / _ \\/ / / /
- / /| |/ /  / /_/ / /_/ /_/ (__  ) /_/ / / /_/ /  __/ /_/ / 
-/_/ |_/_/   \\__,_/\\__/\\____/____/ .___/_/\\__,_/\\___/\\__, /  
-                               /_/                 /____/   
+${welcomeBanner}
 
 ${neofetchCard(portraitSmall)}
 <span style="color: white">Welcome to KraTerm!</span>
@@ -390,6 +389,8 @@ const helpText = `
     <span class="keyword-text">ascii</span>        - <span class="normal-text">converts image to ascii text</span>
     <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
+    <span class="keyword-text">ascii art</span>
+    <span class="keyword-text">background</span>   - <span class="normal-text">Choose saved ambient JIN2 art. Type background to list choices, or background off.</span>
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
     <span class="error-text">Down Arrow</span>    => <span class="normal-text">Go down in history.</span>
@@ -571,6 +572,14 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
 			return crittersCommand(argument);
+		case "background":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return backgroundCommand(argument);
+		case "birthday":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return backgroundCommand("birthday");
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -1370,14 +1379,31 @@ function wrapMessageInSpeechBubble(message) {
       });
     }
     
-    window.requestAnimationFrame(onAnimationFrame);
+    nekoRaf = window.requestAnimationFrame(onAnimationFrame);
   }
 
   let lastFrameTimestamp;
+  let nekoRaf = 0, suspended = false;
+  function setSuspended(value) {
+    if (suspended === value) return;
+    suspended = value;
+    nekoEl.hidden = value;
+    cancelAnimationFrame(nekoRaf); nekoRaf = 0;
+    if (!value && nekoEl.isConnected) {
+      lastFrameTimestamp = undefined;
+      nekoRaf = requestAnimationFrame(onAnimationFrame);
+    }
+  }
+  window.KraOneko = {
+    suspend: () => setSuspended(true), resume: () => setSuspended(false),
+    getState: () => ({suspended, running: !!nekoRaf && nekoEl.isConnected,
+      visible: nekoEl.isConnected && !nekoEl.hidden, frames: frameCount})
+  };
 
   function onAnimationFrame(timestamp) {
+    nekoRaf = 0;
     // Stops execution if the neko element is removed from DOM
-    if (!nekoEl.isConnected) {
+    if (suspended || !nekoEl.isConnected) {
       return;
     }
     if (!lastFrameTimestamp) {
@@ -1387,7 +1413,7 @@ function wrapMessageInSpeechBubble(message) {
       lastFrameTimestamp = timestamp;
       frame();
     }
-    window.requestAnimationFrame(onAnimationFrame);
+    nekoRaf = window.requestAnimationFrame(onAnimationFrame);
   }
 
   function setSprite(name, frame) {
@@ -1544,6 +1570,24 @@ const CRITTER_NAMES = {
 	crabs: "crabs", crab: "crabs",
 };
 const critters = { engine: null, canvas: null, loading: null, animal: null };
+const ambient = { owner: null, sequence: 0 };
+function ambientSelect(owner) {
+	ambient.owner = owner;
+	if (owner === "jin2") {
+		if (critters.canvas) critters.canvas.hidden = true;
+		if (critters.engine) { critters.engine.visible = false; critters.engine.schedule(); }
+		window.KraOneko?.suspend();
+	} else {
+		window.KraOneko?.resume();
+	}
+	return ++ambient.sequence;
+}
+function crittersPreference() {
+	let saved = null;
+	try { saved = localStorage.getItem("kraterm-critters"); } catch (_) { /* Use the default. */ }
+	if (saved === null) return matchMedia("(prefers-reduced-motion: reduce)").matches ? "off" : "butterflies";
+	return CRITTER_NAMES[saved] || "off";
+}
 function crittersLoad() {
 	if (window.KraCritters) return Promise.resolve();
 	if (critters.loading) return critters.loading;
@@ -1568,8 +1612,12 @@ function crittersApplyTheme() {
 	if (critters.engine) critters.engine.setTheme(light ? "light" : "dark");
 }
 new MutationObserver(crittersApplyTheme).observe(document.body, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
-function crittersStart(animal) {
+function crittersStart(animal, persist = true) {
+	const sequence = ambientSelect("critters");
+	backgroundSuspend();
+	if (persist) localStorage.setItem("kraterm-critters", animal);
 	return crittersLoad().then(() => {
+		if (sequence !== ambient.sequence || ambient.owner !== "critters") return;
 		const K = window.KraCritters;
 		if (!critters.canvas) {
 			const c = document.createElement("canvas");
@@ -1579,17 +1627,29 @@ function crittersStart(animal) {
 			critters.canvas = c;
 		}
 		const tuning = { grid: 0 };
-		if (critters.engine) {
+		critters.canvas.hidden = false;
+		if (critters.engine && critters.animal !== animal) {
 			critters.engine.setAnimal(animal, tuning);
-		} else {
+		} else if (!critters.engine) {
 			critters.engine = new K.AnimalEngine(critters.canvas, { animal, theme: crittersIsLight() ? "light" : "dark", tuning });
+			// Observer/motion callbacks must not restart a suspended engine.
+			const engine = critters.engine, schedule = engine.schedule.bind(engine);
+			const drawStill = engine.drawStill.bind(engine);
+			engine.drawStill = () => { if (ambient.owner === "critters") drawStill(); };
+			engine.schedule = () => {
+				if (ambient.owner !== "critters") engine.visible = false;
+				schedule();
+				if (!engine.visible) engine.raf = 0;
+			};
 		}
 		critters.animal = animal;
+		critters.engine.visible = true;
+		critters.engine.schedule();
 		crittersApplyTheme();
-		localStorage.setItem("kraterm-critters", animal);
 	});
 }
 function crittersStop() {
+	if (ambient.owner === "critters") ambientSelect(null);
 	if (critters.engine) { critters.engine.destroy(); critters.engine = null; }
 	if (critters.canvas) { critters.canvas.remove(); critters.canvas = null; }
 	critters.animal = null;
@@ -1601,7 +1661,7 @@ function crittersCommand(arg) {
 	const names = "butterflies, koi, jellyfish, dragonflies, frogs, cranes, crabs";
 	const usage = `<span class="normal-text">Usage: critters &lt;${names}&gt; | off | tweaks | set &lt;knob&gt; &lt;value&gt;</span>`;
 	if (!sub) {
-		return (critters.animal ? `<span class="normal-text">Critters: ${critters.animal}. </span>` : `<span class="normal-text">Critters are off. </span>`) + usage;
+		return (ambient.owner === "jin2" ? `<span class="normal-text">Critters suspended; saved choice: ${crittersPreference()}. </span>` : critters.animal ? `<span class="normal-text">Critters: ${critters.animal}. </span>` : `<span class="normal-text">Critters are off. </span>`) + usage;
 	}
 	if (sub === "off") { crittersStop(); return `<span class="normal-text">Critters off.</span>`; }
 	if (CRITTER_NAMES[sub]) {
@@ -1635,14 +1695,83 @@ function crittersCommand(arg) {
 	}
 	return usage;
 }
-(function crittersRestore() {
-	// Butterflies are the default for fresh visitors; an explicit saved choice (including "off") wins.
-	let saved = localStorage.getItem("kraterm-critters");
-	if (saved === null) {
-		saved = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "off" : "butterflies";
+function crittersRestore() {
+	const saved = crittersPreference();
+	if (saved !== "off") return crittersStart(saved, false).catch(() => {});
+	ambientSelect(null);
+}
+
+/* JIN2 ambient backgrounds. Night Tide is the first-visit default. */
+const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight", rose: "rose", snowman: "don't melt", goodluck: "good luck", birthday: "birthday cake" };
+const BACKGROUND_CHOICES = ["blackhole", "nighttide", "catknight", "rose", "snowman", "goodluck", "off"];
+const jin2Background = { choice: "off", status: "off", sequence: 0, loading: null };
+function backgroundSuspend() {
+	++jin2Background.sequence;
+	if (jin2Background.choice !== "off") jin2Background.status = "suspended";
+	window.KraJin2?.stop();
+}
+function jin2Load() {
+	if (window.KraJin2) return Promise.resolve();
+	if (jin2Background.loading) return jin2Background.loading;
+	jin2Background.loading = new Promise((resolve, reject) => {
+		const el = document.createElement("script");
+		el.src = "jin2.js?v=background2";
+		el.onload = resolve;
+		el.onerror = () => { el.remove(); jin2Background.loading = null; reject(new Error("load failed")); };
+		document.head.appendChild(el);
+	});
+	return jin2Background.loading;
+}
+async function backgroundSelect(piece, options = {}) {
+	const sequence = ++jin2Background.sequence;
+	jin2Background.choice = piece;
+	jin2Background.status = piece === "off" ? "off" : "loading";
+	if (options.persist !== false) {
+		try { localStorage.setItem("kraterm-background", piece); } catch (_) { /* Keep the session choice if storage is unavailable. */ }
 	}
-	if (saved && saved !== "off" && CRITTER_NAMES[saved]) {
-		const go = () => crittersStart(CRITTER_NAMES[saved]).catch(() => {});
-		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
+	if (window.KraJin2) window.KraJin2.stop();
+	if (piece === "off") return crittersRestore();
+	ambientSelect("jin2");
+	try {
+		// The command's credit is printed before even a cached player starts.
+		await Promise.resolve();
+		await jin2Load();
+		if (sequence !== jin2Background.sequence) return;
+		await window.KraJin2.start(piece, options);
+		if (sequence === jin2Background.sequence) jin2Background.status = "ready";
+	} catch (_) {
+		if (sequence !== jin2Background.sequence) return;
+		jin2Background.status = "error";
+		const line = document.createElement("div");
+		line.className = "error-text";
+		line.textContent = "Could not load JIN2 background. Run background <piece> to retry.";
+		document.getElementById("output").appendChild(line);
 	}
+}
+function backgroundCommand(argument) {
+	const piece = argument.trim().toLowerCase();
+	const title = Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece) ? JIN2_PIECES[piece] : "background";
+	const credit = `${title} — ASCII art by JIN2 (@jin_22ee), adapted under his personal-use license`;
+	const usage = `Choices: ${BACKGROUND_CHOICES.join(", ")}. Usage: background &lt;piece&gt; | background off`;
+	if (!piece) return `<span class="normal-text">${credit}<br>Background: ${jin2Background.choice} (${jin2Background.status}). ${usage}</span>`;
+	if (piece !== "off" && !Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece)) {
+		return `<span class="normal-text">${credit}<br>${usage}</span>`;
+	}
+	backgroundSelect(piece);
+	return `<span class="normal-text">${credit}<br>${piece === "off" ? "JIN2 background off." : `Background: ${piece}.`}</span>`;
+}
+(function backgroundRestore() {
+	const go = () => {
+		const query = new URLSearchParams(location.search), review = query.get("art");
+		if (Object.prototype.hasOwnProperty.call(JIN2_PIECES, review)) {
+			const rawTime = Number(query.get("t") || 0);
+			backgroundSelect(review, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true, persist: false});
+			return;
+		}
+		let saved = null;
+		try { saved = localStorage.getItem("kraterm-background"); } catch (_) { /* Use the first-visit default. */ }
+		const piece = saved === "off" || Object.prototype.hasOwnProperty.call(JIN2_PIECES, saved) ? saved : "nighttide";
+		backgroundSelect(piece, {persist: false});
+	};
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
 })();
