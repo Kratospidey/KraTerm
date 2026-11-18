@@ -335,7 +335,8 @@
 
     async function open(piece, options = {}) {
         if (!['blackhole','nighttide','catknight'].includes(piece)) throw new Error('Unknown JIN2 piece.');
-        if (active) active.close();
+        active?.close();
+        window.KraDwc?.close();
         const reduced = matchMedia('(prefers-reduced-motion: reduce)');
         const canvas = document.createElement('canvas');
         canvas.id = 'jin2-canvas'; canvas.tabIndex = 0;
