@@ -67,10 +67,14 @@
         const zoom = 1 + 0.28 * cam, inc = INC + 0.09 * cam, w = spin(t);
         const flash = Math.exp(-sq((t - FLASH) / 0.22)), ringK = smooth((t - 0.3) / 2.2);
         const diskOn = smooth((t - 5) / 2.8), auraK = smooth((t - 2.2) / 1.8) * (1 - 0.65 * diskOn);
+        const span = R0 + diskOn * (R_OUT * 1.1 - R0);
+        const diskGrow = smooth((t - 5) / 0.8), diskFlash = 0.55 + 0.45 * smooth((t - FLASH + 0.3) / 0.4);
+        const haloGrow = smooth((t - 5) / 2.2), ringHeat = 0.9 + 0.3 * smooth((t - 5) / 2);
+        const laneLum = 0.3 * smooth((t - 4) / 3);
         let count = 0, heatMax = 0;
         for (let i = 0; i < g.char.length; i++) {
             const X = g.x[i] / zoom, Y = (g.y[i] + 0.02 * cam) / zoom;
-            const r = Math.hypot(X, Y), ang = Math.atan2(Y, X), rnd = g.rnd[i];
+            const r = Math.sqrt(X * X + Y * Y), ang = Math.atan2(Y, X), rnd = g.rnd[i];
             const ring = Math.exp(-sq((r - 1.02 * R0) / (0.045 * R0))) * smooth((ringK * 1.08 - mod(ang + Math.PI / 2, TAU) / TAU) / 0.08);
             const rings = gas(ang - TILT, R_IN + Math.max(r - R0, 0) * 2.6, t, w)[0];
             let puff = 0.5 + 0.5 * ripple(2 * ang, 5 * r - 0.45 * t, 0.35 * t);
@@ -78,20 +82,20 @@
             const reach = 0.32 * R0 * (0.7 + 0.6 * puff);
             const aura = auraK * Math.exp(-Math.pow(Math.max(r - R0, 0) / reach, 1.6)) * (0.6 + 0.4 * puff);
             const u = X * CT + Y * ST, v = -X * ST + Y * CT;
-            const rho = Math.max(Math.hypot(u, v / inc), 1e-12), phi = Math.atan2(v / inc, u);
+            const vi = v / inc;
+            const rho = Math.max(Math.sqrt(u * u + vi * vi), 1e-12), phi = Math.atan2(vi, u);
             const [streak, phase, lr] = gas(phi, rho, t, w);
             const edge = smooth((rho - R_IN) / (0.25 * R0)) * smooth((R_OUT - rho) / (2.2 * R0));
             let disk = 1.5 * edge * streak * R_IN / rho * (1 - 0.25 * u / Math.max(rho, 1e-6));
-            const span = R0 + diskOn * (R_OUT * 1.1 - R0);
-            disk *= smooth((t - 5) / 0.8) * smooth((span - Math.abs(u)) / (0.6 * R0)) * (0.55 + 0.45 * smooth((t - FLASH + 0.3) / 0.4));
+            disk *= diskGrow * smooth((span - Math.abs(u)) / (0.6 * R0)) * diskFlash;
             const top = 0.5 - 0.5 * Math.sin(ang - TILT), side = Math.pow(Math.abs(Math.cos(ang - TILT)), 10);
             const band = Math.exp(-sq(Math.max(r - 1.1 * R0, 0) / (0.2 * R0 + 0.24 * R0 * top + 0.45 * R0 * side))) * Math.exp(-sq(Math.min(r - 1.1 * R0, 0) / (0.2 * R0)));
             const haloRho = (1 - side) * (R_IN + Math.max(r - R0, 0) * 2.6) + side * Math.max(r, R_IN);
-            const halo = 1.2 * band * gas(ang - TILT, haloRho, t, w)[0] * (0.5 + 0.8 * top) * (1 - 0.25 * Math.cos(ang - TILT)) * smooth((t - 5) / 2.2);
+            const halo = 1.2 * band * gas(ang - TILT, haloRho, t, w)[0] * (0.5 + 0.8 * top) * (1 - 0.25 * Math.cos(ang - TILT)) * haloGrow;
             const shock = t > FLASH ? Math.exp(-sq((r - R0 - (t - FLASH) * 0.55) / 0.02)) * Math.exp(-(t - FLASH) / 0.5) * 0.9 : 0;
             let soft = 1 - (1 - clip(aura * 0.55)) * (1 - clip(halo)) * (1 - clip(disk));
             soft = Math.max(soft, disk, halo);
-            let heat = Math.max(ring * (0.9 + 0.3 * smooth((t - 5) / 2)), soft, shock) * (1 + 1.4 * flash);
+            let heat = Math.max(ring * ringHeat, soft, shock) * (1 + 1.4 * flash);
             const inside = r < R0 * 0.97;
             if (inside) heat = v > 0 && disk > 0.2 ? disk : 0;
             heatMax = Math.max(heatMax, heat);
@@ -106,7 +110,7 @@
             const star = !on && !inside && rnd < 0.0025;
             if (star) { char = AT[rnd < 0.0005 ? '+' : rnd < 0.0012 ? '*' : '.']; tag = 5; lum = 0.75 + 0.2 * Math.sin(0.8 * t + rnd * 9000); }
             const lane = Math.exp(-sq((-X * ST + Y * CT - 0.02) / 0.09));
-            if (!on && !star && !inside && rnd > 1 - 0.035 * lane && t > 4) { char = AT[rnd > 1 - 0.01 * lane ? ':' : ',']; tag = 6; lum = 0.3 * smooth((t - 4) / 3); }
+            if (!on && !star && !inside && rnd > 1 - 0.035 * lane && t > 4) { char = AT[rnd > 1 - 0.01 * lane ? ':' : ',']; tag = 6; lum = laneLum; }
             g.char[i] = char; g.tag[i] = tag; g.lum[i] = lum;
             if (char !== AT[' ']) count++;
         }
@@ -131,7 +135,8 @@
             const phase = new Float64Array(g.char.length), keep = new Float64Array(phase.length);
             for (let i = 0; i < phase.length; i++) {
                 const z = EYE / Math.max(g.y[i] - HORIZON, 1e-3), xw = g.x[i] * z;
-                keep[i] = Math.exp(-sq(k * Math.hypot(dx * cw * z, dz * row * z * z / EYE) / 1.4));
+                const footprintX = dx * cw * z, footprintZ = dz * row * z * z / EYE;
+                keep[i] = Math.exp(-sq(k * Math.sqrt(footprintX * footprintX + footprintZ * footprintZ) / 1.4));
                 phase[i] = k * (dx * xw + dz * z) + 3.7 * lam;
             }
             return {amp, k, omega, dx, dz, phase, keep};
@@ -147,15 +152,17 @@
     }
 
     function nighttide(g, t) {
-        const row = 1 / g.rows;
+        const row = 1 / g.rows, belowHorizon = HORIZON + 0.5 * row;
+        const swells = g.swells.map(s => ({...s, timePhase: s.omega * t}));
         const waves = [];
         for (let n = Math.floor((t - 12) / PERIOD); n <= Math.floor(t / PERIOD); n++) {
-            const b = g.breakers[mod(n, 8)], columns = [];
+            const breakerIndex = mod(n, 8), b = g.breakers[breakerIndex], columns = [];
+            const seed = b.seed, waveTime = t - n * PERIOD - b.late;
             for (let c = 0; c < g.cols; c++) {
-                const X = g.x[c], seed = b.seed;
-                const brk = Math.max((0.35 + 0.65 * b.size) * smooth((noise(1.7 * X + seed, seed, mod(n, 8)) + 0.45 * b.size + 0.2) / 0.9), 0.35);
+                const X = g.x[c];
+                const brk = Math.max((0.35 + 0.65 * b.size) * smooth((noise(1.7 * X + seed, seed, breakerIndex) + 0.45 * b.size + 0.2) / 0.9), 0.35);
                 const peel = b.angle * X + b.bend * X * X + 0.15 * Math.sin(2 * X + seed) + 0.06 * Math.sin(5.3 * X - seed);
-                const a = t - n * PERIOD - b.late + peel, since = a - b.ts;
+                const a = waveTime + peel, since = a - b.ts;
                 const grow = sq(clip(a / b.ts)) * (a > 0), tall = b.rise * grow * (1 - smooth(since / 0.5));
                 const roll = Math.max(since, 0), burst = Math.sin(Math.PI * clip(since / 1.3));
                 const lumps = 0.55 + 0.45 * Math.abs(Math.sin(31 * X + 2.1 * noise(5 * X, 0.4 * t, n) + 1.5 * t));
@@ -166,7 +173,7 @@
         let count = 0, foamSum = 0;
         for (let i = 0; i < g.char.length; i++) {
             const X = g.x[i], Y = g.y[i], rnd = g.rnd[i], hash = g.hash[i];
-            const below = Y > HORIZON + 0.5 * row, z = EYE / Math.max(Y - HORIZON, 1e-3), xw = X * z;
+            const below = Y > belowHorizon, z = EYE / Math.max(Y - HORIZON, 1e-3), xw = X * z;
             const water = below && z >= SHORE, beach = below && z < SHORE;
             // Nothing above the horizon is lit except the static star field.
             if (!below) {
@@ -177,8 +184,8 @@
                 continue;
             }
             let sx = 0, sz = 0, hgt = 0;
-            for (const s of g.swells) {
-                const ph = s.phase[i] - s.omega * t, sin = Math.sin(ph), steep = s.amp * s.k * s.keep[i];
+            for (const s of swells) {
+                const ph = s.phase[i] - s.timePhase, sin = Math.sin(ph), steep = s.amp * s.k * s.keep[i];
                 const slope = steep * Math.cos(ph) / (1 - 0.5 * steep * sin);
                 sx += slope * s.dx; sz += slope * s.dz; hgt += s.amp * sin * s.keep[i];
             }
@@ -235,8 +242,8 @@
                 }
             }
             foamSum += foam;
-            const nl = Math.hypot(sx, 1, sz), nx = -sx / nl, ny = 1 / nl, nz = -sz / nl;
-            const vl = Math.hypot(xw, EYE, z), vx = xw / vl, vy = -EYE / vl, vz = z / vl;
+            const nl = Math.sqrt(sx * sx + 1 + sz * sz), nx = -sx / nl, ny = 1 / nl, nz = -sz / nl;
+            const vl = Math.sqrt(xw * xw + EYE * EYE + z * z), vx = xw / vl, vy = -EYE / vl, vz = z / vl;
             const dot = vx * nx + vy * ny + vz * nz, ry = vy - 2 * dot * ny;
             const facing = clip(-dot), fresnel = 0.03 + 0.97 * Math.pow(1 - facing, 5);
             const sky = 0.35 + 0.65 * sq(1 - clip(ry)), dim = 0.45 + 0.55 * smooth((Y - HORIZON) / 0.2);
@@ -306,6 +313,25 @@
             return Uint8Array.from({length: cw * ch}, (_, i) => pixels[i * 4 + 3]);
         });
     }
+    function tintedGlyphAtlas(cw, ch, fontSize, colors) {
+        const columns = CHARS.length - 1, c = surface(columns * cw, colors.length * ch);
+        const ctx = c.getContext('2d');
+        ctx.font = `${fontSize}px Consolas, Menlo, "DejaVu Sans Mono", monospace`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        for (let tag = 0; tag < colors.length; tag++) {
+            const [red, green, blue] = colors[tag];
+            for (let char = 1; char < CHARS.length; char++) {
+                const x = (char - 1) * cw, y = tag * ch;
+                // source-in must affect only this tile, preserving earlier tiles.
+                ctx.save(); ctx.beginPath(); ctx.rect(x, y, cw, ch); ctx.clip();
+                ctx.fillStyle = '#fff'; ctx.fillText(CHARS[char], x + cw / 2, y + ch / 2);
+                ctx.globalCompositeOperation = 'source-in';
+                ctx.fillStyle = `rgb(${red},${green},${blue})`; ctx.fillRect(x, y, cw, ch);
+                ctx.restore();
+            }
+        }
+        return c;
+    }
 
     async function open(piece, options = {}) {
         if (!['blackhole','nighttide','catknight'].includes(piece)) throw new Error('Unknown JIN2 piece.');
@@ -321,11 +347,14 @@
         const scrolls = [document.scrollingElement, document.querySelector('.terminal')].filter(Boolean).map(el => [el, el.scrollLeft, el.scrollTop]);
         document.body.appendChild(canvas); canvas.focus({preventScroll: true});
         const ctx = canvas.getContext('2d'), art = surface(W, H), artCtx = art.getContext('2d');
+        const overlay = surface(W, H), overlayCtx = overlay.getContext('2d');
+        const overlayImage = overlayCtx.createImageData(W, H), brightCells = [];
+        resetArt();
         const glows = [[4,5,0.75],[8,22,0.45]].map(([k, radius, alpha]) => {
             const layer = surface(Math.floor(W / k), Math.floor(H / k));
             return {layer, context: layer.getContext('2d'), radius: radius / k, alpha};
         });
-        let cat, g, atlas, pixels, image, colors, cw, ch, fade;
+        let cat, g, atlas, masks, colors, cw, ch, fade;
         let closed = false, raf = 0, last = 0, nextFrame = 0, ready = false, errorText = '';
         let t = Number.isFinite(options.time) ? mod(options.time, LOOP) : reduced.matches ? 13 : 0;
         let paused = !!options.paused;
@@ -350,7 +379,7 @@
             if (e.repeat) return;
             if (e.key === 'Escape' || e.key.toLowerCase() === 'q') close();
             else if (e.key === ' ' && !reduced.matches) { paused = !paused; cancelAnimationFrame(raf); raf = 0; resetClock(); schedule(); }
-            else if (e.key.toLowerCase() === 'r' && ready) { t = 0; pixels.fill(0); drawFrame(); resetClock(); schedule(); }
+            else if (e.key.toLowerCase() === 'r' && ready) { t = 0; resetArt(); drawFrame(); resetClock(); schedule(); }
         }
         window.addEventListener('keydown', key, true);
         canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); });
@@ -363,7 +392,7 @@
         window.addEventListener('resize', resize, true);
         function motionChange() {
             cancelAnimationFrame(raf); raf = 0;
-            if (reduced.matches && ready) { t = 13; pixels.fill(0); drawFrame(); }
+            if (reduced.matches && ready) { t = 13; resetArt(); drawFrame(); }
             resetClock(); schedule();
         }
         reduced.addEventListener('change', motionChange);
@@ -411,23 +440,50 @@
                 for (let i = 0; i < size; i++) { g.lum[i] = cat.data[start + size + i] / 255; if (g.char[i] !== AT[' ']) count++; }
                 info = {count, hud: `zoom ${cat.zoom[f].toFixed(2)}   wind ${cat.wind[f].toFixed(2)}`};
             } else info = piece === 'blackhole' ? blackhole(g, t) : nighttide(g, t);
+            artCtx.globalCompositeOperation = 'source-over'; artCtx.globalAlpha = 1;
+            artCtx.fillStyle = `rgba(0,0,0,${1 - fade})`; artCtx.fillRect(0, 0, W, H);
+            brightCells.length = 0;
             for (let cell = 0; cell < g.char.length; cell++) {
-                const glyph = atlas[g.char[cell]], color = colors[g.tag[cell]], lum = piece === 'blackhole' ? g.lum[cell] : clip(g.lum[cell]);
-                const red = clip(color[0] * lum, 0, 255) / 255, green = clip(color[1] * lum, 0, 255) / 255, blue = clip(color[2] * lum, 0, 255) / 255;
+                const char = g.char[cell];
+                if (char === AT[' ']) continue;
+                const lum = piece === 'blackhole' ? g.lum[cell] : clip(g.lum[cell]);
+                if (lum > 1) { brightCells.push(cell, lum); continue; }
+                const sx = (char - 1) * cw, sy = g.tag[cell] * ch;
                 const x = cell % g.cols * cw, y = Math.floor(cell / g.cols) * ch;
-                for (let gy = 0; gy < ch; gy++) {
-                    let dest = ((y + gy) * W + x) * 4;
-                    for (let gx = 0; gx < cw; gx++, dest += 4) {
-                        const mask = glyph[gy * cw + gx];
-                        pixels[dest] = Math.max(pixels[dest] * fade, mask * red);
-                        pixels[dest + 1] = Math.max(pixels[dest + 1] * fade, mask * green);
-                        pixels[dest + 2] = Math.max(pixels[dest + 2] * fade, mask * blue);
-                        pixels[dest + 3] = 255;
+                artCtx.globalCompositeOperation = 'lighten'; artCtx.globalAlpha = clip(lum);
+                artCtx.drawImage(atlas, sx, sy, cw, ch, x, y, cw, ch);
+            }
+            if (brightCells.length) {
+                const pixels = overlayImage.data;
+                pixels.fill(0);
+                for (let i = 0; i < brightCells.length; i += 2) {
+                    const cell = brightCells[i], lum = brightCells[i + 1];
+                    const glyph = masks[g.char[cell]], color = colors[g.tag[cell]];
+                    const red = clip(color[0] * lum, 0, 255) / 255, green = clip(color[1] * lum, 0, 255) / 255, blue = clip(color[2] * lum, 0, 255) / 255;
+                    const x = cell % g.cols * cw, y = Math.floor(cell / g.cols) * ch;
+                    for (let gy = 0; gy < ch; gy++) {
+                        let dest = ((y + gy) * W + x) * 4;
+                        for (let gx = 0; gx < cw; gx++, dest += 4) {
+                            const mask = glyph[gy * cw + gx];
+                            pixels[dest] = mask * red;
+                            pixels[dest + 1] = mask * green;
+                            pixels[dest + 2] = mask * blue;
+                            pixels[dest + 3] = 255;
+                        }
                     }
                 }
+                overlayCtx.putImageData(overlayImage, 0, 0);
+                artCtx.globalCompositeOperation = 'lighten'; artCtx.globalAlpha = 1;
+                artCtx.drawImage(overlay, 0, 0);
             }
-            artCtx.putImageData(image, 0, 0); present();
+            artCtx.globalAlpha = 1; artCtx.globalCompositeOperation = 'source-over';
+            present();
         }
+        function resetArt() {
+            artCtx.globalCompositeOperation = 'source-over'; artCtx.globalAlpha = 1;
+            artCtx.fillStyle = '#000'; artCtx.fillRect(0, 0, W, H);
+        }
+
         function schedule() {
             if (!closed && ready && !raf) {
                 if (!paused && !reduced.matches && !document.hidden) raf = requestAnimationFrame(tick);
@@ -441,7 +497,7 @@
                 t += Math.min((now - last) / 1000, 1 / 15); last = now;
                 // Preserve the cadence when rAF arrives a little late.
                 nextFrame = Math.max(nextFrame + 1000 / 30, now);
-                if (t >= LOOP) { t = mod(t, LOOP); if (piece !== 'nighttide') pixels.fill(0); }
+                if (t >= LOOP) { t = mod(t, LOOP); if (piece !== 'nighttide') resetArt(); }
                 drawFrame();
             }
             schedule();
@@ -459,8 +515,9 @@
             if (piece === 'nighttide') prepareTide(g);
             colors = cat ? cat.colors : piece === 'blackhole' ? BH_COLORS : NT_COLORS;
             fade = piece === 'nighttide' ? 0.5 : 0.4;
-            atlas = glyphAtlas(cw, ch, piece === 'nighttide' ? 10 : 12);
-            image = artCtx.createImageData(W, H); pixels = image.data; ready = true;
+            atlas = tintedGlyphAtlas(cw, ch, piece === 'nighttide' ? 10 : 12, colors);
+            masks = glyphAtlas(cw, ch, piece === 'nighttide' ? 10 : 12);
+            ready = true;
             canvas.dataset.ready = 'true'; drawFrame(); resetClock(); schedule();
         } catch (error) {
             if (!closed) { errorText = `${error.message} Press esc to exit.`; canvas.dataset.error = error.message; present(); }
