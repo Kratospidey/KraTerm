@@ -699,24 +699,31 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 
 /* Brighter prompt, and a prompt line that is easy to hit */
 .prompt .username {
+	color: var(--command);
 	font-weight: bold;
 	filter: brightness(1.35);
 	text-shadow: 0 0 8px var(--command), 0 0 2px var(--command);
 }
-.prompt .normal-text {
+.prompt-symbol {
 	color: #f2f2f2;
+}
+.prompt .normal-text {
+	color: var(--enter);
+	text-shadow: 0 0 6px var(--enter);
 }
 .prompt {
 	color: #f2f2f2;
+	text-shadow: 0 0 3px #f2f2f2;
 	flex: none;
 }
 :is([data-theme="solarized-light"], [data-theme="github-light"], [data-theme="atom-light"]) .prompt,
+:is([data-theme="solarized-light"], [data-theme="github-light"], [data-theme="atom-light"]) .prompt-symbol,
 :is([data-theme="solarized-light"], [data-theme="github-light"], [data-theme="atom-light"]) .prompt .normal-text {
 	color: var(--norm);
+	text-shadow: none;
 }
 #input-line {
 	min-height: 32px;
-	cursor: text;
 }
 .input {
 	flex: 1 1 auto;

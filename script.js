@@ -393,7 +393,7 @@ const helpText = `
     <span class="keyword-text">ascii</span>        - <span class="normal-text">converts image to ascii text</span>
     <span class="keyword-text">cowsay</span>        - <span class="normal-text">cow says :D</span>
 
-    <span class="keyword-text">ascii art</span>
+    <span class="keyword-text">ascii art</span> - <span class="normal-text">type one by itself:</span>
     <span class="keyword-text">blackhole</span>    - <span class="normal-text">JIN2's accretion disk, drawn in letters.</span>
     <span class="keyword-text">nighttide</span>    - <span class="normal-text">JIN2's moonlit sea and breaking waves.</span>
     <span class="keyword-text">catknight</span>    - <span class="normal-text">JIN2's Cat Knight, 600 frames of ASCII art.</span>
@@ -618,7 +618,7 @@ function setUsername(newUsername) {
 		// Update the username in the prompt for future input lines
 		const currentPrompt = document.querySelector(".prompt");
 		if (currentPrompt) {
-			currentPrompt.innerHTML = `<span class="username keyword-text">${escapeText(newUsername.trim())}</span><span style="color: white;">@</span><span class="normal-text">terminal.kratospidey.com</span>:~$`;
+			currentPrompt.innerHTML = `<span class="username keyword-text">${escapeText(newUsername.trim())}</span><span class="prompt-symbol">@</span><span class="normal-text">terminal.kratospidey.com</span>:~$`;
 		}
 
 		return `<span class="normal-text">Username changed to </span> <span class="keyword-text">${escapeText(newUsername.trim())}</span>`;
