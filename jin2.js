@@ -428,7 +428,8 @@
             ctx.fillStyle = '#6e6878'; ctx.fillText(errorText || info.hud, pad, height - 66, width - 2 * pad);
             ctx.fillText(`letters ${info.count.toLocaleString('en-US', {minimumIntegerDigits: 5})}`, pad, height - 48);
             if (reduced.matches) ctx.fillText('(still frame — reduced motion)', pad, height - 30);
-            ctx.fillStyle = '#57505f'; ctx.fillText('esc exit · space pause · r restart', pad, height - 14);
+            const hint = matchMedia('(pointer: coarse)').matches ? 'tap exit' : 'esc exit · space pause · r or click restart';
+            ctx.fillStyle = '#57505f'; ctx.fillText(hint, pad, height - 14);
             ctx.fillStyle = '#ff7ab6'; ctx.textAlign = 'right';
             ctx.fillText(`${Math.floor(t * 2) % 2 === 0 ? '●' : ' '} t ${t.toFixed(2).padStart(5, '0')}s${paused && !reduced.matches ? ' · paused' : ''}`, width - pad, 24);
             canvas.dataset.time = t.toFixed(4); canvas.dataset.paused = String(paused || reduced.matches);

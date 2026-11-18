@@ -1674,7 +1674,7 @@ function jin2Load() {
 	if (jin2Loading) return jin2Loading;
 	jin2Loading = new Promise((resolve, reject) => {
 		const el = document.createElement("script");
-		el.src = "jin2.js?v=1";
+		el.src = "jin2.js?v=2";
 		el.onload = resolve;
 		el.onerror = () => { el.remove(); jin2Loading = null; reject(new Error("load failed")); };
 		document.head.appendChild(el);
