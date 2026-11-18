@@ -346,12 +346,16 @@
         const ranges = Array.from({length: selection.rangeCount}, (_, i) => selection.getRangeAt(i).cloneRange());
         const scrolls = [document.scrollingElement, document.querySelector('.terminal')].filter(Boolean).map(el => [el, el.scrollLeft, el.scrollTop]);
         document.body.appendChild(canvas); canvas.focus({preventScroll: true});
-        const ctx = canvas.getContext('2d'), art = surface(W, H), artCtx = art.getContext('2d');
-        const overlay = surface(W, H), overlayCtx = overlay.getContext('2d');
-        const overlayImage = overlayCtx.createImageData(W, H), brightCells = [];
+        // Black Hole's expanded disk reaches past the old 1080-wide grid and was
+        // clipped at the left/right edges; it gets a wider art surface (184 cols,
+        // +/-0.673 world units > the disk's 0.653). Other pieces keep 1080x960.
+        const artW = piece === 'blackhole' ? 1288 : W, artH = H;
+        const ctx = canvas.getContext('2d'), art = surface(artW, artH), artCtx = art.getContext('2d');
+        const overlay = surface(artW, artH), overlayCtx = overlay.getContext('2d');
+        const overlayImage = overlayCtx.createImageData(artW, artH), brightCells = [];
         resetArt();
         const glows = [[4,5,0.75],[8,22,0.45]].map(([k, radius, alpha]) => {
-            const layer = surface(Math.floor(W / k), Math.floor(H / k));
+            const layer = surface(Math.floor(artW / k), Math.floor(artH / k));
             return {layer, context: layer.getContext('2d'), radius: radius / k, alpha};
         });
         let cat, g, atlas, masks, colors, cw, ch, fade;
@@ -403,7 +407,7 @@
             const width = innerWidth, height = innerHeight;
             ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.filter = 'none';
             ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height);
-            const scale = Math.min(width / W, height / H), dw = W * scale, dh = H * scale, dx = (width - dw) / 2, dy = (height - dh) / 2;
+            const scale = Math.min(width / artW, height / artH), dw = artW * scale, dh = artH * scale, dx = (width - dw) / 2, dy = (height - dh) / 2;
             ctx.drawImage(art, dx, dy, dw, dh);
             if (ready) {
                 ctx.globalCompositeOperation = 'lighter';
@@ -419,19 +423,30 @@
             }
             const pad = Math.min(32, width * 0.04), font = width < 500 ? 11 : 13;
             ctx.font = `${font}px Consolas, Menlo, monospace`; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
-            // Solid backing keeps the HUD legible over bright foam and grass.
-            ctx.fillStyle = '#000c'; ctx.fillRect(0, height - 112, width, 112);
-            ctx.fillStyle = '#787080';
             const photoCredit = '· photo belongs to its creator';
-            ctx.fillText(`@jin_22ee · 2026${piece === 'catknight' && width >= 540 ? ' ' + photoCredit : ''}`, pad, height - 103);
-            if (piece === 'catknight' && width < 540) ctx.fillText(photoCredit, pad, height - 87);
-            ctx.fillStyle = '#6e6878'; ctx.fillText(errorText || info.hud, pad, height - 66, width - 2 * pad);
-            ctx.fillText(`letters ${info.count.toLocaleString('en-US', {minimumIntegerDigits: 5})}`, pad, height - 48);
-            if (reduced.matches) ctx.fillText('(still frame — reduced motion)', pad, height - 30);
+            const lines = [];
+            lines.push([`@jin_22ee · 2026${piece === 'catknight' && width >= 540 ? ' ' + photoCredit : ''}`, pad, height - 103, '#787080']);
+            if (piece === 'catknight' && width < 540) lines.push([photoCredit, pad, height - 87, '#787080']);
+            lines.push([errorText || info.hud, pad, height - 66, '#6e6878']);
+            lines.push([`letters ${info.count.toLocaleString('en-US', {minimumIntegerDigits: 5})}`, pad, height - 48, '#6e6878']);
+            if (reduced.matches) lines.push(['(still frame — reduced motion)', pad, height - 30, '#6e6878']);
             const hint = matchMedia('(pointer: coarse)').matches ? 'tap exit' : 'esc exit · space pause · r or click restart';
-            ctx.fillStyle = '#57505f'; ctx.fillText(hint, pad, height - 14);
+            lines.push([hint, pad, height - 14, '#57505f']);
+            // Per-line backing keeps the HUD legible without a full-width dark band over the art.
+            ctx.fillStyle = '#000c';
+            for (const [text, x, y] of lines) {
+                if (!text) continue;
+                ctx.fillRect(x - 6, y - 3, Math.min(ctx.measureText(text).width, width - 2 * pad) + 12, font + 7);
+            }
+            for (const [text, x, y, color] of lines) {
+                if (!text) continue;
+                ctx.fillStyle = color; ctx.fillText(text, x, y, width - 2 * pad);
+            }
+            const clock = `${Math.floor(t * 2) % 2 === 0 ? '●' : ' '} t ${t.toFixed(2).padStart(5, '0')}s${paused && !reduced.matches ? ' · paused' : ''}`;
+            ctx.fillStyle = '#000c';
+            ctx.fillRect(width - pad - ctx.measureText(clock).width - 6, 21, ctx.measureText(clock).width + 12, font + 7);
             ctx.fillStyle = '#ff7ab6'; ctx.textAlign = 'right';
-            ctx.fillText(`${Math.floor(t * 2) % 2 === 0 ? '●' : ' '} t ${t.toFixed(2).padStart(5, '0')}s${paused && !reduced.matches ? ' · paused' : ''}`, width - pad, 24);
+            ctx.fillText(clock, width - pad, 24);
             canvas.dataset.time = t.toFixed(4); canvas.dataset.paused = String(paused || reduced.matches);
         }
         function drawFrame() {
@@ -445,7 +460,7 @@
                 info = {count, hud: `zoom ${cat.zoom[f].toFixed(2)}   wind ${cat.wind[f].toFixed(2)}`};
             } else info = piece === 'blackhole' ? blackhole(g, t) : nighttide(g, t);
             artCtx.globalCompositeOperation = 'source-over'; artCtx.globalAlpha = 1;
-            artCtx.fillStyle = `rgba(0,0,0,${1 - fade})`; artCtx.fillRect(0, 0, W, H);
+            artCtx.fillStyle = `rgba(0,0,0,${1 - fade})`; artCtx.fillRect(0, 0, artW, artH);
             brightCells.length = 0;
             for (let cell = 0; cell < g.char.length; cell++) {
                 const char = g.char[cell];
@@ -466,7 +481,7 @@
                     const red = clip(color[0] * lum, 0, 255) / 255, green = clip(color[1] * lum, 0, 255) / 255, blue = clip(color[2] * lum, 0, 255) / 255;
                     const x = cell % g.cols * cw, y = Math.floor(cell / g.cols) * ch;
                     for (let gy = 0; gy < ch; gy++) {
-                        let dest = ((y + gy) * W + x) * 4;
+                        let dest = ((y + gy) * artW + x) * 4;
                         for (let gx = 0; gx < cw; gx++, dest += 4) {
                             const mask = glyph[gy * cw + gx];
                             pixels[dest] = mask * red;
@@ -485,7 +500,7 @@
         }
         function resetArt() {
             artCtx.globalCompositeOperation = 'source-over'; artCtx.globalAlpha = 1;
-            artCtx.fillStyle = '#000'; artCtx.fillRect(0, 0, W, H);
+            artCtx.fillStyle = '#000'; artCtx.fillRect(0, 0, artW, artH);
         }
 
         function schedule() {
@@ -515,7 +530,7 @@
             if (piece === 'catknight') cat = await loadCat();
             if (closed) return;
             cw = piece === 'nighttide' ? 6 : 7; ch = piece === 'nighttide' ? 9 : 11;
-            g = grid(Math.floor(W / cw), Math.floor(H / ch), cw, ch, piece === 'blackhole' ? 7 : 9);
+            g = grid(Math.floor(artW / cw), Math.floor(artH / ch), cw, ch, piece === 'blackhole' ? 7 : 9);
             if (piece === 'nighttide') prepareTide(g);
             colors = cat ? cat.colors : piece === 'blackhole' ? BH_COLORS : NT_COLORS;
             fade = piece === 'nighttide' ? 0.5 : 0.4;

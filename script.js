@@ -23,6 +23,8 @@ const commands = [
 	"blackhole",
 	"nighttide",
 	"catknight",
+	"eiffel",
+	"universe",
 ];
 
 const themes = {
@@ -397,6 +399,8 @@ const helpText = `
     <span class="keyword-text">blackhole</span>    - <span class="normal-text">JIN2's accretion disk, drawn in letters.</span>
     <span class="keyword-text">nighttide</span>    - <span class="normal-text">JIN2's moonlit sea and breaking waves.</span>
     <span class="keyword-text">catknight</span>    - <span class="normal-text">JIN2's Cat Knight, 600 frames of ASCII art.</span>
+    <span class="keyword-text">eiffel</span>       - <span class="normal-text">@dwcminh.ascii's Eiffel Tower: it rises, lights up, fireworks.</span>
+    <span class="keyword-text">universe</span>     - <span class="normal-text">@dwcminh.ascii's rocket to the Milky Way in one unbroken shot.</span>
     <span class="normal-text">esc exit · space pause · r restart (tap to exit on touch)</span>
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
@@ -585,6 +589,11 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
 			return jin2Command(cmd);
+		case "eiffel":
+		case "universe":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			return dwcCommand(cmd);
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -814,6 +823,10 @@ window.addEventListener("resize", function () {
 	let currentWidth = window.innerWidth; // Get the new width
 	// Keep the art overlay open while its full-window canvas resizes.
 	if (window.KraJin2 && window.KraJin2.isOpen()) {
+		initialWidth = currentWidth;
+		return;
+	}
+	if (window.KraDwc && window.KraDwc.isOpen()) {
 		initialWidth = currentWidth;
 		return;
 	}
@@ -1692,13 +1705,44 @@ function jin2Command(piece, options) {
 	}), 0);
 	return `<span class="normal-text">${credit}</span>`;
 }
+
+/* @dwcminh.ascii ASCII art (Eiffel Tower, Universe): loaded only by these commands or the screenshot query. */
+const DWC_PIECES = { eiffel: "eiffel tower", universe: "universe" };
+let dwcLoading;
+function dwcLoad() {
+	if (window.KraDwc) return Promise.resolve();
+	if (dwcLoading) return dwcLoading;
+	dwcLoading = new Promise((resolve, reject) => {
+		const el = document.createElement("script");
+		el.src = "dwcminh.js?v=1";
+		el.onload = resolve;
+		el.onerror = () => { el.remove(); dwcLoading = null; reject(new Error("load failed")); };
+		document.head.appendChild(el);
+	});
+	return dwcLoading;
+}
+function dwcCommand(piece, options) {
+	const credit = `${DWC_PIECES[piece]} — ASCII art by @dwcminh.ascii, adapted under his personal-use license`;
+	// Defer even cached opens so the command's credit is printed first.
+	setTimeout(() => dwcLoad().then(() => window.KraDwc.open(piece, options)).catch(() => {
+		const line = document.createElement("div");
+		line.className = "error-text";
+		line.textContent = "Could not load the ASCII art. Run the command to retry.";
+		document.getElementById("output").appendChild(line);
+	}), 0);
+	return `<span class="normal-text">${credit}</span>`;
+}
 (function jin2ReviewQuery() {
 	const query = new URLSearchParams(location.search), piece = query.get("art");
-	if (!Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece)) return;
+	const isJin2 = Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece);
+	const isDwc = Object.prototype.hasOwnProperty.call(DWC_PIECES, piece);
+	if (!isJin2 && !isDwc) return;
 	const start = () => {
 		const rawTime = Number(query.get("t") || 0);
 		const line = document.createElement("div");
-		line.innerHTML = jin2Command(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true});
+		line.innerHTML = isDwc
+			? dwcCommand(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true})
+			: jin2Command(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true});
 		document.getElementById("output").appendChild(line);
 	};
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
@@ -1711,6 +1755,7 @@ function jin2Command(piece, options) {
 	if (!terminal || !input) return;
 	terminal.addEventListener("click", (event) => {
 		if (window.KraJin2 && window.KraJin2.isOpen()) return;
+		if (window.KraDwc && window.KraDwc.isOpen()) return;
 		if (event.target.closest("a, button, input, [contenteditable='true']")) return;
 		const selection = window.getSelection();
 		if (selection && !selection.isCollapsed) return;
