@@ -712,7 +712,7 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 }
 :is([data-theme="solarized-light"], [data-theme="github-light"], [data-theme="atom-light"]) .prompt,
 :is([data-theme="solarized-light"], [data-theme="github-light"], [data-theme="atom-light"]) .prompt .normal-text {
-	color: var(--command);
+	color: var(--norm);
 }
 #input-line {
 	min-height: 32px;
