@@ -379,10 +379,13 @@
             if (e.repeat) return;
             if (e.key === 'Escape' || e.key.toLowerCase() === 'q') close();
             else if (e.key === ' ' && !reduced.matches) { paused = !paused; cancelAnimationFrame(raf); raf = 0; resetClock(); schedule(); }
-            else if (e.key.toLowerCase() === 'r' && ready) { t = 0; resetArt(); drawFrame(); resetClock(); schedule(); }
+            else if (e.key.toLowerCase() === 'r') restart();
+        }
+        function restart() {
+            if (ready) { t = 0; resetArt(); drawFrame(); resetClock(); schedule(); }
         }
         window.addEventListener('keydown', key, true);
-        canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); });
+        canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); else if (e.pointerType === 'mouse') restart(); });
         canvas.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); }, {passive: false});
         function resize() {
             const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -497,7 +500,7 @@
                 t += Math.min((now - last) / 1000, 1 / 15); last = now;
                 // Preserve the cadence when rAF arrives a little late.
                 nextFrame = Math.max(nextFrame + 1000 / 30, now);
-                if (t >= LOOP) { t = mod(t, LOOP); if (piece !== 'nighttide') resetArt(); }
+                if (piece === 'catknight' && t >= LOOP) { t = mod(t, LOOP); resetArt(); }
                 drawFrame();
             }
             schedule();
