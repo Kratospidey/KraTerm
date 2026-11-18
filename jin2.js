@@ -355,9 +355,7 @@
         window.addEventListener('keydown', key, true);
         canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); });
         canvas.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); }, {passive: false});
-        function resize(e) {
-            // The terminal's existing width-change reload must not interrupt an overlay.
-            e?.stopImmediatePropagation();
+        function resize() {
             const dpr = Math.min(devicePixelRatio || 1, 2);
             canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr);
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0); present();
