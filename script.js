@@ -1703,3 +1703,24 @@ function jin2Command(piece, options) {
 	};
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();
+
+/* Click or tap anywhere on the terminal to focus the prompt (not on links, buttons or a text selection). */
+(function inputFocusArea() {
+	const terminal = document.querySelector(".terminal");
+	const input = document.getElementById("input");
+	if (!terminal || !input) return;
+	terminal.addEventListener("click", (event) => {
+		if (window.KraJin2 && window.KraJin2.isOpen()) return;
+		if (event.target.closest("a, button, input, [contenteditable='true']")) return;
+		const selection = window.getSelection();
+		if (selection && !selection.isCollapsed) return;
+		const y = terminal.scrollTop;
+		input.focus({ preventScroll: true });
+		const range = document.createRange();
+		range.selectNodeContents(input);
+		range.collapse(false);
+		selection.removeAllRanges();
+		selection.addRange(range);
+		terminal.scrollTop = y;
+	});
+})();

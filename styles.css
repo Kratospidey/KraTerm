@@ -696,3 +696,26 @@ html, body, a, button, #input, .terminal, [contenteditable] {
 }
 body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; z-index: 1; }
 #critters-canvas.light { mix-blend-mode: multiply; opacity: 0.35; }
+
+/* Brighter prompt, and a prompt line that is easy to hit */
+.prompt .username {
+	font-weight: bold;
+	filter: brightness(1.35);
+	text-shadow: 0 0 8px var(--command), 0 0 2px var(--command);
+}
+.prompt .normal-text {
+	color: #f2f2f2;
+}
+.prompt {
+	color: #f2f2f2;
+	flex: none;
+}
+.input-line {
+	min-height: 32px;
+	cursor: text;
+}
+.input {
+	flex: 1 1 auto;
+	min-height: 28px;
+	line-height: 28px;
+}
