@@ -731,6 +731,17 @@ body.has-critters .terminal, #critters-canvas ~ .terminal { position: relative; 
 	line-height: 28px;
 }
 
+@media (any-pointer: coarse) {
+	html, .terminal, .art-gallery {
+		touch-action: manipulation;
+		touch-action: pan-x pan-y;
+	}
+
+	#input {
+		font-size: max(16px, 1em);
+	}
+}
+
 /* Fullscreen ASCII art and the gallery dialog. */
 #ascii-rest-canvas {
 	position: fixed;

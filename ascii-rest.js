@@ -188,12 +188,7 @@ async function open(piece, options = {}) {
             resetClock();
         }
     }, {capture: true, signal});
-    canvas.addEventListener('pointerdown', event => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.pointerType === 'mouse') restart();
-        else close();
-    }, {signal});
+    bindArtPointerControls(canvas, close, restart);
     canvas.addEventListener('wheel', event => event.preventDefault(), {passive: false, signal});
     canvas.addEventListener('blur', () => canvas.focus({preventScroll: true}), {signal});
     window.addEventListener('resize', resize, {signal});

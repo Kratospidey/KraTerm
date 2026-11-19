@@ -144,7 +144,8 @@
             if (ready) { position = 0; resetArt(); drawFrame(); resetClock(); schedule(); }
         }
         window.addEventListener('keydown', key, true);
-        canvas.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (e.pointerType === 'touch' || e.pointerType === 'pen') close(); else if (e.pointerType === 'mouse') restart(); });
+        // Gallery previews load in a non-interactive iframe without the terminal script.
+        window.bindArtPointerControls?.(canvas, close, restart);
         canvas.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); }, {passive: false});
         function resize() {
             const dpr = Math.min(devicePixelRatio || 1, 2);

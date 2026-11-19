@@ -1712,8 +1712,62 @@ function crittersCommand(arg) {
 	}
 })();
 
+// Safari can ignore the viewport scale limits for touch gestures.
+const coarsePointer = matchMedia("(any-pointer: coarse)");
+for (const type of ["gesturestart", "gesturechange"]) {
+	document.addEventListener(type, event => {
+		if (coarsePointer.matches) event.preventDefault();
+	}, {passive: false});
+}
+document.addEventListener("touchmove", event => {
+	if (event.touches.length > 1) event.preventDefault();
+}, {passive: false});
+
+// All fullscreen players use the same tap rules.
+function bindArtPointerControls(canvas, close, restart) {
+	const activePointers = new Set();
+	let tap;
+
+	canvas.addEventListener("pointerdown", event => {
+		event.preventDefault();
+		event.stopPropagation();
+		activePointers.add(event.pointerId);
+		if (activePointers.size > 1) {
+			tap = null;
+		} else if (event.pointerType === "mouse") {
+			restart();
+		} else if (event.isPrimary) {
+			tap = event;
+		}
+		canvas.setPointerCapture(event.pointerId);
+	});
+
+	function movedTooFar(event) {
+		return Math.hypot(event.clientX - tap.clientX, event.clientY - tap.clientY) >= 10;
+	}
+
+	canvas.addEventListener("pointermove", event => {
+		if (tap?.pointerId === event.pointerId && movedTooFar(event)) tap = null;
+	});
+
+	canvas.addEventListener("pointerup", event => {
+		activePointers.delete(event.pointerId);
+		if (tap?.pointerId !== event.pointerId) return;
+		const isTap = !movedTooFar(event) && event.timeStamp - tap.timeStamp <= 300;
+		tap = null;
+		if (isTap) close();
+	});
+
+	for (const type of ["pointercancel", "lostpointercapture"]) {
+		canvas.addEventListener(type, event => {
+			activePointers.delete(event.pointerId);
+			if (tap?.pointerId === event.pointerId) tap = null;
+		});
+	}
+}
+
 /* JIN2 ASCII code art: loaded only by these commands or the screenshot query. */
-const JIN2_SCRIPT = "jin2.js?v=3";
+const JIN2_SCRIPT = "jin2.js?v=mobile-fix1";
 const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight" };
 let jin2Loading;
 function jin2Load() {
@@ -1741,7 +1795,7 @@ function jin2Command(piece, options) {
 }
 
 /* @dwcminh.ascii ASCII art (Eiffel Tower, Universe): loaded only by these commands or the screenshot query. */
-const DWC_SCRIPT = "dwcminh.js?v=2";
+const DWC_SCRIPT = "dwcminh.js?v=mobile-fix1";
 const DWC_PIECES = { eiffel: "eiffel tower", universe: "universe" };
 let dwcLoading;
 function dwcLoad() {
@@ -1768,7 +1822,7 @@ function dwcCommand(piece, options) {
 	return `<span class="normal-text">${credit}</span>`;
 }
 function asciiRestLoad() {
-	return import("./ascii-rest.js?v=ascii-rest-gallery1");
+	return import("./ascii-rest.js?v=mobile-fix1");
 }
 
 function asciiRestError(error) {
