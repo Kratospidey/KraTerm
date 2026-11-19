@@ -1,6 +1,23 @@
 function escapeText(value) { return String(value).replace(/[&<>"\']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#39;"}[c])); }
 const startTime = Date.now();
 
+const ASCII_REST_PIECES = Object.fromEntries([
+	["tokyo-rain", "Tokyo Rain", 5],
+	["kyoto-dusk", "Kyoto Dusk", 7],
+	["lantern-lake", "Lantern Lake", 8],
+	["marine-drive", "Marine Drive", 9],
+	["snow-train", "Snow Train", 6],
+	["aurora-fjord", "Aurora Fjord", 8],
+	["varanasi-ghats", "Varanasi Ghats", 7],
+	["taj-dawn", "Taj Dawn", 9],
+	["kite-festival", "Kite Festival", 5],
+	["night-highway", "Night Highway", 6],
+	["deep-reef", "Deep Reef", 8],
+].map(([slug, name, still]) => {
+	const command = slug.replaceAll("-", "");
+	return [command, {command, slug, name, still, source: "ascii.rest · @bas3line"}];
+}));
+
 const commands = [
 	"echo",
 	"clear",
@@ -25,6 +42,8 @@ const commands = [
 	"catknight",
 	"eiffel",
 	"universe",
+	"art",
+	...Object.keys(ASCII_REST_PIECES),
 ];
 
 const themes = {
@@ -401,6 +420,9 @@ const helpText = `
     <span class="keyword-text">catknight</span>    - <span class="normal-text">JIN2's Cat Knight, 600 frames of ASCII art.</span>
     <span class="keyword-text">eiffel</span>       - <span class="normal-text">@dwcminh.ascii's Eiffel Tower: it rises, lights up, fireworks.</span>
     <span class="keyword-text">universe</span>     - <span class="normal-text">@dwcminh.ascii's rocket to the Milky Way in one unbroken shot.</span>
+    <span class="keyword-text">art</span>          - <span class="normal-text">Browse all fullscreen ASCII art.</span>
+${Object.values(ASCII_REST_PIECES).map(({command, name}) =>
+	`    <span class="keyword-text">${command}</span>${" ".repeat(14 - command.length)}- <span class="normal-text">${name} by @bas3line / ascii.rest.</span>`).join("\n")}
     <span class="normal-text">esc exit · space pause · r restart (tap to exit on touch)</span>
 
     <span class="error-text">Up Arrow</span>      => <span class="normal-text">Go up in history.</span>
@@ -594,6 +616,12 @@ function processCommand(command) {
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
 			return dwcCommand(cmd);
+		case "art":
+			commandHistory.push(command);
+			historyIndex = commandHistory.length;
+			setTimeout(() => asciiRestLoad().then(module => module.gallery(artGalleryPieces(), launchArt))
+				.catch(asciiRestError), 0);
+			return;
 		case "cowsay":
 			commandHistory.push(command);
 			historyIndex = commandHistory.length;
@@ -603,6 +631,11 @@ function processCommand(command) {
 			return processCowsayCommand("moo");
 
 		default:
+			if (Object.hasOwn(ASCII_REST_PIECES, cmd)) {
+				commandHistory.push(command);
+				historyIndex = commandHistory.length;
+				return asciiRestCommand(cmd);
+			}
 			return `<span class="error-text">Command</span> <span class="keyword-text">${escapeText(command)}</span> <span class="error-text">not found.</span> 
             <span class="error-text">For a list of commands, type</span> <span class="keyword-text">help</span><span class="error-text">.</span>`;
 	}
@@ -1680,6 +1713,7 @@ function crittersCommand(arg) {
 })();
 
 /* JIN2 ASCII code art: loaded only by these commands or the screenshot query. */
+const JIN2_SCRIPT = "jin2.js?v=3";
 const JIN2_PIECES = { blackhole: "black hole", nighttide: "night tide", catknight: "cat knight" };
 let jin2Loading;
 function jin2Load() {
@@ -1687,7 +1721,7 @@ function jin2Load() {
 	if (jin2Loading) return jin2Loading;
 	jin2Loading = new Promise((resolve, reject) => {
 		const el = document.createElement("script");
-		el.src = "jin2.js?v=3";
+		el.src = JIN2_SCRIPT;
 		el.onload = resolve;
 		el.onerror = () => { el.remove(); jin2Loading = null; reject(new Error("load failed")); };
 		document.head.appendChild(el);
@@ -1707,6 +1741,7 @@ function jin2Command(piece, options) {
 }
 
 /* @dwcminh.ascii ASCII art (Eiffel Tower, Universe): loaded only by these commands or the screenshot query. */
+const DWC_SCRIPT = "dwcminh.js?v=2";
 const DWC_PIECES = { eiffel: "eiffel tower", universe: "universe" };
 let dwcLoading;
 function dwcLoad() {
@@ -1714,7 +1749,7 @@ function dwcLoad() {
 	if (dwcLoading) return dwcLoading;
 	dwcLoading = new Promise((resolve, reject) => {
 		const el = document.createElement("script");
-		el.src = "dwcminh.js?v=2";
+		el.src = DWC_SCRIPT;
 		el.onload = resolve;
 		el.onerror = () => { el.remove(); dwcLoading = null; reject(new Error("load failed")); };
 		document.head.appendChild(el);
@@ -1732,17 +1767,60 @@ function dwcCommand(piece, options) {
 	}), 0);
 	return `<span class="normal-text">${credit}</span>`;
 }
-(function jin2ReviewQuery() {
+function asciiRestLoad() {
+	return import("./ascii-rest.js?v=ascii-rest-gallery1");
+}
+
+function asciiRestError(error) {
+	console.error(error);
+	const line = document.createElement("div");
+	line.className = "error-text";
+	line.textContent = "Could not load the ASCII art. Run the command to retry.";
+	document.getElementById("output").appendChild(line);
+}
+
+function asciiRestCommand(command, options) {
+	const piece = ASCII_REST_PIECES[command];
+	setTimeout(() => asciiRestLoad().then(module => module.open(piece, options)).catch(asciiRestError), 0);
+	return `<span class="normal-text">${piece.name} - animated ASCII art by @bas3line / ascii.rest, MIT license</span>`;
+}
+
+function artGalleryPieces() {
+	const legacy = (command, name, still, source, script, player, width, height) =>
+		({command, name, still, source, legacy: {script, player, width, height}});
+	return [
+		...Object.values(ASCII_REST_PIECES),
+		legacy("blackhole", "Black Hole", 13, "JIN2 · @jin_22ee", JIN2_SCRIPT, "KraJin2", 1288, 960),
+		legacy("nighttide", "Night Tide", 13, "JIN2 · @jin_22ee", JIN2_SCRIPT, "KraJin2", 1080, 960),
+		legacy("catknight", "Cat Knight", 13, "JIN2 · @jin_22ee", JIN2_SCRIPT, "KraJin2", 1080, 960),
+		legacy("eiffel", "Eiffel Tower", 16, "@dwcminh.ascii", DWC_SCRIPT, "KraDwc", 792, 1036),
+		legacy("universe", "Universe", 20, "@dwcminh.ascii", DWC_SCRIPT, "KraDwc", 792, 1036),
+	];
+}
+
+function launchArt(command) {
+	const output = document.getElementById("output");
+	const prompt = document.createElement("div");
+	prompt.className = "input-line";
+	prompt.innerHTML = `${getCurrentPrompt()}<div>${escapeText(command)}</div>`;
+	const line = document.createElement("div");
+	line.innerHTML = processCommand(command);
+	output.append(prompt, line);
+	terminal.scrollTop = terminal.scrollHeight;
+}
+
+(function artReviewQuery() {
 	const query = new URLSearchParams(location.search), piece = query.get("art");
 	const isJin2 = Object.prototype.hasOwnProperty.call(JIN2_PIECES, piece);
 	const isDwc = Object.prototype.hasOwnProperty.call(DWC_PIECES, piece);
-	if (!isJin2 && !isDwc) return;
+	const isAsciiRest = Object.hasOwn(ASCII_REST_PIECES, piece);
+	if (!isJin2 && !isDwc && !isAsciiRest) return;
 	const start = () => {
 		const rawTime = Number(query.get("t") || 0);
 		const line = document.createElement("div");
-		line.innerHTML = isDwc
-			? dwcCommand(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true})
-			: jin2Command(piece, {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true});
+		const options = {time: Number.isFinite(rawTime) ? rawTime : 0, paused: true};
+		const run = isAsciiRest ? asciiRestCommand : isDwc ? dwcCommand : jin2Command;
+		line.innerHTML = run(piece, options);
 		document.getElementById("output").appendChild(line);
 	};
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
